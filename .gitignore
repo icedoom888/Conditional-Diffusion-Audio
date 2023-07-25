@@ -9,3 +9,6 @@ tester.ipynb
 process_lj.py
 .vscode
 *.egg-info
+*.zip
+samples
+wandb
