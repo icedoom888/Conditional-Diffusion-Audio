@@ -9,7 +9,7 @@ import utils as vits_utils
 import torch
 from text import text_to_sequence
 import commons
-
+from transformers import AutoTokenizer, ClapTextModelWithProjection, ClapConfig
 
 def get_text(text, hps):
     text_norm = text_to_sequence(text, hps.data.text_cleaners)
@@ -123,3 +123,17 @@ def get_text_to_Z(net_g):
             y_mask = net_out[2]
         return z, y_mask
     return text_to_Z
+
+
+def get_text_embedder(model="CLAP"):
+    if model == "CLAP":
+        model = ClapTextModelWithProjection.from_pretrained("laion/clap-htsat-unfused")
+        tokenizer = AutoTokenizer.from_pretrained("laion/clap-htsat-unfused")
+
+        def text_embedder(text):
+            tokens = tokenizer(text, padding=True, return_tensors="pt")
+            embeds = model(**tokens)['text_embeds']
+            return embeds
+        return text_embedder
+    else:
+        raise NotImplementedError

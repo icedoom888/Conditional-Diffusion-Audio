@@ -1,3 +1,11 @@
 build
 __pycache__
 vits/monotonic_align/vits
+*.pth
+*.pt
+DUMMY1
+LJS_Processed
+tester.ipynb
+process_lj.py
+.vscode
+*.egg-info
