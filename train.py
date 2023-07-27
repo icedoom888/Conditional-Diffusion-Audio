@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from diffusers.optimization import get_scheduler
-from diffusers.training_utils import EMAModel
+from diffusers.training_utils import EMAModel, set_seed
 from tqdm.auto import tqdm
 import custom_dataset
 from torchvision.utils import save_image
@@ -15,6 +15,7 @@ from audio_diffusion_pytorch import DiffusionModel, UNetV0, VDiffusion, VSampler
 from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model, get_Z_to_audio
 from einops import rearrange
 import wandb
+from torchaudio import save as save_audio
 
 logger = get_logger(__name__)
 
@@ -26,6 +27,8 @@ def main(conf):
     output_dir = train_args.output_dir
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(os.path.join(output_dir, "samples"), exist_ok=True)
+    # seed alls
+    set_seed(42)
 
     accelerator = Accelerator(
         gradient_accumulation_steps=train_args.gradient_accumulation_steps,
@@ -87,6 +90,8 @@ def main(conf):
 
     model, optimizer, train_dataloader, val_dataloader, lr_scheduler = accelerator.prepare(model, optimizer, train_dataloader, val_dataloader, lr_scheduler)
     global_step = 0
+    
+    # set seeds
 
 
     # load weights
@@ -112,11 +117,15 @@ def main(conf):
 
 
     if accelerator.is_main_process:
+        # initialize wandb
         accelerator.init_trackers(
             project_name=train_args.wandb_project, 
             config=OmegaConf.to_container(conf, resolve=True),
             init_kwargs={"wandb": {"entity": "matvogel"}}
             )
+        # initialize vits functions
+        vits_model, hps = load_vits_model(hps_path="vits/configs/ljs_base.json", checkpoint_path="vits/pretrained_ljs.pth")
+        z_to_audio = get_Z_to_audio(vits_model)
     
     for epoch in range(train_args.start_epoch, train_args.num_epochs):
         progress_bar = tqdm(total=len(train_dataloader), initial=epoch, disable=not accelerator.is_local_main_process)
@@ -163,13 +172,13 @@ def main(conf):
                 "lr": lr_scheduler.get_last_lr()[0],
                 "step": global_step,
             }
-            if train_args.use_ema:
-                logs["ema_decay"] = ema_model.decay
             progress_bar.set_postfix(**logs)
+
             if (global_step) % train_args.wandb_log_every == 0 or global_step == 1:
                 wandb_log = logs.copy()
                 wandb_log.pop("step")
                 accelerator.log(wandb_log, step=global_step)
+
         progress_bar.close()
 
         accelerator.wait_for_everyone()
@@ -198,9 +207,13 @@ def main(conf):
 
                 z_audio = eval_batch["z_audio"]
                 z_audio_mask = eval_batch["z_audio_mask"]
+                y_mask = eval_batch["y_mask"]
                 z_text = eval_batch["z_text"]
                 z_text_mask = eval_batch["z_text_mask"]
                 embeds = eval_batch["clap_embed"]
+                # masking information
+                offset = eval_batch["offset"]
+                z_length = eval_batch["z_audio_length"]
 
                 # Turn noise into new audio sample with diffusion
                 initial_noise = torch.randn_like(z_audio)
@@ -218,15 +231,15 @@ def main(conf):
                     embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
                     num_steps=50 # Higher for better quality, suggested num_steps: 10-100
                 )
-                
+
                 # calculate loss between samples and original
                 eval_loss =loss_fn(model_samples, z_audio)
 
                 batch_images = rearrange(model_samples, "b c h w -> c h (b w)")
                 batch_gt = rearrange(z_audio, "b c h w -> c h (b w)")
                 # scale to 0-1
-                batch_images = (batch_images + 1) / 2
-                batch_gt = (batch_gt + 1) / 2
+                batch_images = custom_dataset.scale_0_1(batch_images)
+                batch_gt = custom_dataset.scale_0_1(batch_gt)
                 # save locally
                 save_image(batch_images, os.path.join(output_dir, "samples", f"model_samples_{epoch}.png"))
                 save_image(batch_gt, os.path.join(output_dir, "samples", f"gt_samples_{epoch}.png"))
@@ -237,14 +250,41 @@ def main(conf):
                 batch_images = batch_images.clamp(0, 255).long()
                 batch_gt = batch_gt.clamp(0, 255).long()
                 # create wandb images
-                batch_images = rearrange(batch_images, "c h w -> h w c").cpu().numpy().astype("uint8")
-                batch_gt = rearrange(batch_gt, "c h w -> h w c").cpu().numpy().astype("uint8")
-
+                batch_images = rearrange(batch_images, "c h w -> h w c").cpu().numpy()
+                batch_gt = rearrange(batch_gt, "c h w -> h w c").cpu().numpy()
                 images_model = wandb.Image(batch_images, caption="Model Samples")
                 images_gt = wandb.Image(batch_gt, caption="Ground Truth")
+
+                for i in range(model_samples.shape[0]):
+                    sample = model_samples[i]
+                    gt = z_audio[i]
+                    mask = y_mask[i]
+
+                    # cut padding
+                    sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
+                    gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
+                    mask = mask[:, offset[i]:offset[i]+z_length[i]]
+
+                    # pass through vocoder
+                    model_audio =  z_to_audio(z=sample, y_mask=mask).cpu().squeeze(0)
+                    gt_audio = z_to_audio(z=gt, y_mask=mask).cpu().squeeze(0)
+
+                    # save
+                    sample_path = os.path.join(output_dir, "samples", f"model_audio_{epoch}_{i}.wav")
+                    gt_path = os.path.join(output_dir, "samples", f"gt_audio_{epoch}_{i}.wav")
+                    save_audio(sample_path, model_audio, 22050)
+                    save_audio(gt_path, gt_audio, 22050)
+
+                    # log to wandb
+                    accelerator.log({"audio_examples":
+                                     [
+                                        wandb.Audio(sample_path, caption=f"Sample {i}", sample_rate=22050),
+                                        wandb.Audio(gt_path, caption=f"Ground Truth {i}", sample_rate=22050)
+                                     ]}, step=global_step)
+
+                # log to wandb
                 accelerator.log({"eval_loss": eval_loss.detach().item()}, step=global_step)
                 accelerator.log({"eval_images": [images_model, images_gt]}, step=global_step)
-
 
         accelerator.wait_for_everyone()
 
