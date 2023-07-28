@@ -12,3 +12,4 @@ process_lj.py
 *.zip
 samples
 wandb
+assets

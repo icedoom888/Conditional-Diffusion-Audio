@@ -35,6 +35,7 @@ model:
   attention_features: 64
   use_additional_time_conditioning: true
   use_initial_image: true
+  use_data_mask: true
   use_embedding_cfg: true
   embedding_max_length: 64
   embedding_features: 512

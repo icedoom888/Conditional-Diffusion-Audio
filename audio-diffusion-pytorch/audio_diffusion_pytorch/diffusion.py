@@ -87,6 +87,8 @@ class VDiffusion(Diffusion):
         # Get noise
         noise = torch.randn_like(x)
         # Combine input and noise weighted by half-circle
+        # The above code is not doing anything. It is just a list of words without any context or
+        # purpose.
         alphas, betas = self.get_alpha_beta(sigmas_batch)
         x_noisy = alphas * x + betas * noise
         v_target = alphas * noise - betas * x

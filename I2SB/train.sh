@@ -1,0 +1,1 @@
+TORCH_DISTRIBUTED_DEBUG=DETAIL python train.py --name V0_deep --n-gpu-per-node 1 --dataset-dir ../vits/LJS_Processed --batch-size 16 --microbatch 4 --ot-ode --beta-max 1.0 --model_conf_path configs/V0_img2img_deeper.yaml

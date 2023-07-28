@@ -26,14 +26,15 @@ training:
   start_epoch: 0
   num_train_steps: 0.5e+5
 model:
-  channels: [128, 256, 512, 512, 1024]
-  factors: [1, 2, 2, 2, 2]
-  layers: [1, 2, 2, 2, 2]
-  attentions: [0, 0, 0, 1, 1]
-  cross_attentions: [0, 0, 0, 1, 1]
-  attention_heads: 4
+  channels: [16, 32, 64, 128]
+  factors: [1, 2, 2, 2]
+  layers: [1, 2, 2, 2]
+  attentions: [0, 0, 0, 1]
+  cross_attentions: [0, 0, 0, 1]
+  attention_heads: 1
   attention_features: 64
   use_additional_time_conditioning: true
+  use_data_mask: true
   use_initial_image: true
   use_embedding_cfg: true
   embedding_max_length: 64
