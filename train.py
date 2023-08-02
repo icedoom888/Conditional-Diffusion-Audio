@@ -103,7 +103,6 @@ def main(conf):
         lr_scheduler.load_state_dict(state_dicts["lr_scheduler"])
         train_args.start_epoch = state_dicts["epoch"] + 1
         global_step = state_dicts["global_step"]
-        
     
     ema_model = EMAModel(
         getattr(model, "module", model),
@@ -114,7 +113,6 @@ def main(conf):
 
     if global_step > 0:
         ema_model.optimization_step = global_step
-
 
     if accelerator.is_main_process:
         # initialize wandb
@@ -227,7 +225,7 @@ def main(conf):
                     initial_noise, # NOISE | MASK | OPTIONAL(INIT IMAGE)
                     init_image=init_image,
                     features = z_text.mean(-3) if model_args.use_additional_time_conditioning else None,
-                    embedding=embeds,
+                    embedding=embeds, # ImageBind / CLAP
                     embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
                     num_steps=50 # Higher for better quality, suggested num_steps: 10-100
                 )
