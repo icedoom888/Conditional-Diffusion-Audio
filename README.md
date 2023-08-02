@@ -1,6 +1,11 @@
 # Conditional-Diffusion-Audio
 
-## Usage
+## Prerequisites
+- Python >= 3.7
+- Pytorch with cuda (tested on 1.13)
+- VITS installation including monotonic_align
+
+## Usage VITS functions
 There are additional functions in `vits/utils_diffusion.py` to extract the latents Z from VITS and to generate audio from the latents Z.
 
 ```python	
@@ -27,5 +32,25 @@ z, y_mask = text_to_z("Hello world.", hps=vits_hp) # returns z and y_mask direct
 
 ```
 
+## Oldscool Img2Img
+The code is in the root directory in `train.py`. It generates a UNET and Diffusion pipeline with audio-diffusion-pytorch and uses their loss calculation function. The training script is from Huggingface Mel Diffusion.
+
+### Installation
+```bash
+pip install -e ./audio-diffusion-pytorch
+pip install -e ./a-unet
+pip install -r requirements.txt
+```
+
+To run it generate a accelerate configuration and use `sh train_accelerate.sh`. For wandb run `wandb login` in the console.
+
+## I2SB
+Code is in I2SB.
+
 ## TODO
+- add sample script (with CFG)
+- add evaluation loss logging to wandb
+- generate bigger dataset
+- content based losses for traditional approaches
+- https://github.com/csteinmetz1/auraloss
 
