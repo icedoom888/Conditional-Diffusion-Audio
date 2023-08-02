@@ -27,8 +27,16 @@ from .diffusion import Diffusion
 
 from ipdb import set_trace as debug
 
+from torchaudio import save as save_audio
 from audio_diffusion_pytorch import UNetV0
 from omegaconf import OmegaConf
+import sys
+import os
+this_file_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
+sys.path.append(os.path.join(this_file_path, "..", ".."))
+from vits.utils_diffusion import load_vits_model, get_Z_to_audio
+
 
 def build_optimizer_sched(opt, net, log):
 
@@ -197,7 +205,7 @@ class Runner(object):
 
         assert x0.shape == x1.shape
 
-        return x0, x1, cond, embeds, x0_mask, x1_mask
+        return x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length
 
     def train(self, opt, train_dataset, val_dataset, corrupt_method):
         self.writer = util.build_log_writer(opt)
@@ -214,6 +222,15 @@ class Runner(object):
         self.resnet = build_resnet50().to(opt.device)
 
         net.train()
+
+        # load vits
+        if opt.global_rank == 0:
+            self.vits_model, hps = load_vits_model(
+                hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", "ljs_base.json"),
+                checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], "pretrained_ljs.pth")
+                )
+            self.z_to_audio = get_Z_to_audio(self.vits_model)
+
         n_inner_loop = opt.batch_size // (opt.global_size * opt.microbatch)
         for it in range(opt.num_itr):
             optimizer.zero_grad()
@@ -222,7 +239,7 @@ class Runner(object):
                 # ===== sample boundary pair =====
                 # TODO this is actually okay, the x0 is the end, x1 will be the start, mask is None, is not used and cond will be x1
                 #x0, x1, mask, y, cond = self.sample_batch(opt, train_loader, corrupt_method)
-                x0, x1, cond, embeds, x0_mask, x1_mask = self.sample_batch(opt, train_loader)
+                x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, train_loader)
 
                 # ===== compute loss =====
                 step = torch.randint(0, opt.interval, (x0.shape[0],))
@@ -352,23 +369,23 @@ class Runner(object):
         log = self.log
         log.info(f"========== Evaluation started: iter={it} ==========")
 
-        x0, x1, cond, embeds, x0_mask, x1_mask = self.sample_batch(opt, val_loader) # TODO this will be okay
+        x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, val_loader)
 
         x1 = x1.to(opt.device) # TODO load the actual target image
 
         xs, pred_x0s = self.ddpm_sampling(
-            opt, x1, x1_mask=x1_mask, embeds=embeds, cond=cond, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
+            opt, x1, x1_mask=x1_mask, embeds=embeds, cond=cond, nfe=200, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
         )
 
         log.info("Collecting tensors ...")
-        img_clean   = all_cat_cpu(opt, log, x0)
-        img_corrupt = all_cat_cpu(opt, log, x1)
+        img_target   = all_cat_cpu(opt, log, x0)
+        img_source = all_cat_cpu(opt, log, x1)
         #y           = all_cat_cpu(opt, log, y)
         xs          = all_cat_cpu(opt, log, xs)
         pred_x0s    = all_cat_cpu(opt, log, pred_x0s)
 
         batch, len_t, *xdim = xs.shape
-        assert img_clean.shape == img_corrupt.shape == (batch, *xdim)
+        assert img_target.shape == img_source.shape == (batch, *xdim)
         assert xs.shape == pred_x0s.shape
         #assert y.shape == (batch,)
         log.info(f"Generated recon trajectories: size={xs.shape}")
@@ -376,16 +393,42 @@ class Runner(object):
         def log_image(tag, img, nrow=10):
             self.writer.add_image(it, tag, tu.make_grid((img+1)/2, nrow=nrow)) # [1,1] -> [0,1] # TODO our images are not in -1 to 1
 
+        img_target_pred = xs[:, 0, ...]
+
+        # logging audio
+        for i in range(batch):
+            sample = img_target_pred[i]
+            gt = x0[i]
+            mask = y_mask[i]
+            
+            sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
+            gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
+            mask = mask[:, offset[i]:offset[i]+z_length[i]]
+
+            # pass through vocoder
+            model_audio =  self.z_to_audio(z=sample.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
+            gt_audio = self.z_to_audio(z=gt.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
+
+            # save
+            sample_path = os.path.join(opt.ckpt_path, "samples", str(it), f"model_audio_{i}.wav")
+            gt_path = os.path.join(opt.ckpt_path, "samples", str(it), f"gt_audio_{i}.wav")
+            os.makedirs(os.path.dirname(sample_path), exist_ok=True)
+            os.makedirs(os.path.dirname(gt_path), exist_ok=True)
+            save_audio(sample_path, model_audio, 22050)
+            save_audio(gt_path, gt_audio, 22050)
+            self.writer.add_sound(step=it, caption="model_audio", key="model_audio", sound_path=sample_path)
+            self.writer.add_sound(step=it, caption="gt_audio", key="gt_audio", sound_path=gt_path)
+
+
         #def log_accuracy(tag, img):
         #    pred = self.resnet(img.to(opt.device)) # input range [-1,1]
         #    accu = self.accuracy(pred, y.to(opt.device))
         #    self.writer.add_scalar(it, tag, accu)
 
         log.info("Logging images ...")
-        img_recon = xs[:, 0, ...]
-        log_image("image/clean",   img_clean)
-        log_image("image/corrupt", img_corrupt)
-        log_image("image/recon",   img_recon)
+        log_image("image/clean",   img_target) # target image
+        log_image("image/corrupt", img_source) # source image
+        log_image("image/recon",   img_target_pred)
         log_image("debug/pred_clean_traj", pred_x0s.reshape(-1, *xdim), nrow=len_t)
         log_image("debug/recon_traj",      xs.reshape(-1, *xdim),      nrow=len_t)
 

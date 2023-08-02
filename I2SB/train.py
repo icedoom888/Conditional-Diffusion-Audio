@@ -30,6 +30,7 @@ import colored_traceback.always
 from ipdb import set_trace as debug
 
 from custom_dataset import LJS_Latent
+import yaml
 
 RESULT_DIR = Path("results")
 
@@ -96,6 +97,9 @@ def create_training_options():
         opt.name = opt.corrupt
     opt.distributed = opt.n_gpu_per_node > 1
     opt.use_fp16 = False # disable fp16 for training
+
+    config = yaml.load(open(opt.model_conf_path, "r"), Loader=yaml.FullLoader)
+    opt.conf_file = config
 
     # log ngc meta data
     if "NGC_JOB_ID" in os.environ.keys():
