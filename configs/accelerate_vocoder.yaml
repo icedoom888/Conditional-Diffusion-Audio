@@ -1,13 +1,13 @@
 training:
   output_dir: V0_img2img_deeper
   data_root: data/processed_LJSpeech
-  wandb_project: natural-voices
+  wandb_project: natural_voices
   wandb_log_every: 100
-  train_batch_size: 8
+  train_batch_size: 32
   eval_batch_size: 4
-  num_epochs: 500
-  save_images_epochs: 1
-  save_model_epochs: 10
+  num_epochs: 1000
+  save_images_epochs: 10
+  save_model_epochs: 50
   gradient_accumulation_steps: 2
   loss_fn_diffusion: l1
   learning_rate: 1.e-4
@@ -26,15 +26,15 @@ training:
   start_epoch: 0
   num_train_steps: 0.5e+5
 model:
-  channels: [128, 256, 512, 512, 1024]
-  factors: [1, 2, 2, 2, 2]
-  layers: [1, 2, 2, 2, 2]
-  attentions: [0, 0, 0, 1, 1]
-  cross_attentions: [0, 0, 0, 1, 1]
-  attention_heads: 4
+  channels: [8, 32, 64, 128, 256, 512, 512, 1024, 1024]
+  factors: [1, 4, 4, 4, 2, 2, 2, 2, 2]
+  layers: [1, 2, 2, 2, 2, 2, 2, 4, 4]
+  attentions: [0, 0, 0, 0, 0, 1, 1, 1, 1]
+  cross_attentions: [0, 0, 0, 0, 0, 1, 1, 1, 1]
+  attention_heads: 12
   attention_features: 64
-  use_additional_time_conditioning: true
-  use_initial_image: true
+  use_additional_time_conditioning: false
+  use_initial_image: false
   use_embedding_cfg: true
   embedding_max_length: 64
   embedding_features: 512

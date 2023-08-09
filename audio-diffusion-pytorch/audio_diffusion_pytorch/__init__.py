@@ -17,4 +17,5 @@ from .models import (
     DiffusionUpsampler,
     DiffusionVocoder,
     EncoderBase,
+    ConditionalDiffusionVocoder,
 )

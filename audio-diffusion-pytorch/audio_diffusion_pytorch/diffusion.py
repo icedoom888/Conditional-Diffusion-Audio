@@ -87,8 +87,6 @@ class VDiffusion(Diffusion):
         # Get noise
         noise = torch.randn_like(x)
         # Combine input and noise weighted by half-circle
-        # The above code is not doing anything. It is just a list of words without any context or
-        # purpose.
         alphas, betas = self.get_alpha_beta(sigmas_batch)
         x_noisy = alphas * x + betas * noise
         v_target = alphas * noise - betas * x
@@ -187,6 +185,7 @@ class VSampler(Sampler):
 
         for i in progress_bar:
             # concat the conditional image with the noisy x
+            x_concat = x_noisy
             if init_image is not None:
                 x_concat = torch.cat([x_noisy, init_image], dim=1)
             # predict

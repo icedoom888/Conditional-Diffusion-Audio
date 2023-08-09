@@ -130,3 +130,91 @@ class LJS_Latent(Dataset):
         return data
 
 
+class LJS_Latent_Audio(Dataset):
+    def __init__(self, root, mode="train", max_len_seq=384, normalization=False):
+        super().__init__()
+        self.root = root
+        self.mode = mode
+        self.max_len_seq = max_len_seq
+        self.load_data()
+        self.normalize = normalization
+        self.normalize_z_audio = Normalize(mean=[Z_AUDIO_MEAN], std=[Z_AUDIO_STD])
+        self.normalize_z_text = Normalize(mean=[Z_TEXT_MEAN], std=[Z_TEXT_STD])
+        self.hop_length = 256
+
+    def load_data(self):
+        self.data = os.listdir(os.path.join(self.root, self.mode))
+        assert len(self.data) > 0, "No data found"
+    
+    def zero_pad_and_shift(self, data, random_offset=None):
+        canvas = torch.zeros((data.shape[-2], self.max_len_seq))
+        mask = canvas.clone()
+        canvas[:, random_offset:random_offset+data.shape[-1]] = data
+        mask[:, random_offset:random_offset+data.shape[-1]] = 1
+        return canvas, mask
+    
+    def zero_pad_and_shift_audio(self, data, random_offset=None):
+        canvas = torch.zeros(self.max_len_seq*self.hop_length)
+        mask = canvas.clone()
+        canvas[random_offset*self.hop_length:random_offset*self.hop_length+data.shape[0]] = data
+        mask[random_offset*self.hop_length:random_offset*self.hop_length+data.shape[0]] = 1
+        return canvas, mask
+    
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, index):
+        data = np.load(os.path.join(self.root, self.mode, self.data[index]))
+
+        # load data from npz file
+        audio=torch.from_numpy(data['audio'])
+        z_audio=torch.from_numpy(data["z_audio"])
+        y_mask=torch.from_numpy(data["y_mask"])
+        z_text=torch.from_numpy(data["z_text"])
+        clap_embed=torch.from_numpy(data["clap_embed"])
+
+        # cut if necessary
+        if int(np.floor(audio.shape[-1]/self.hop_length)) >= self.max_len_seq:
+            audio = audio[:, :, :self.max_len_seq*self.hop_length]
+        if z_audio.shape[-1] >= self.max_len_seq:
+            z_audio = z_audio[:, :, :self.max_len_seq]
+        if z_text.shape[-1] >= self.max_len_seq:
+            z_text = z_text[:, :, :self.max_len_seq]
+        if y_mask.shape[-1] >= self.max_len_seq:
+            y_mask = y_mask[:, :, :self.max_len_seq]
+        
+
+        # pad and shift randomly
+        audio_lenght, z_audio_length, z_text_length, y_mask_length = int(np.floor(audio.shape[-1]/self.hop_length)), z_audio.shape[-1], z_text.shape[-1], y_mask.shape[-1]
+        max_lengths = max(audio_lenght, z_audio_length, z_text_length, y_mask_length)
+        if max_lengths >= self.max_len_seq:
+            offset = 0
+        else:
+            offset = np.random.randint(0, self.max_len_seq - max_lengths)
+
+        audio, audio_mask = self.zero_pad_and_shift_audio(audio, offset)
+        z_audio, z_audio_mask = self.zero_pad_and_shift(z_audio, offset)
+        z_text, z_text_mask = self.zero_pad_and_shift(z_text, offset)
+        y_mask, y_mask_mask = self.zero_pad_and_shift(y_mask, offset)
+        # convert to torch tensors and return
+        data = dict(
+            audio=audio[None,:],
+            z_audio=z_audio,
+            z_audio_mask=z_audio_mask.long(),
+            z_text=z_text,
+            z_text_mask=z_text_mask.long(),
+            offset=offset,
+            z_audio_length=z_audio_length,
+            y_mask=y_mask,
+            clap_embed=clap_embed
+        )
+        return data
+
+if __name__ == "__main__":
+
+    dataset = LJS_Latent_Audio(root='/home/alberto/conditional-diffusion-audio/data/processed_LJSpeech', mode="train")
+
+    train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
+
+    for step, batch in enumerate(train_dataloader):
+        exit()

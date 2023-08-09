@@ -134,6 +134,7 @@ def get_text_embedder(model="CLAP"):
             tokens = tokenizer(text, padding=True, return_tensors="pt")
             embeds = model(**tokens)['text_embeds']
             return embeds
+        
         return text_embedder
     else:
         raise NotImplementedError

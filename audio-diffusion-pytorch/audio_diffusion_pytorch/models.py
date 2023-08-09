@@ -204,6 +204,72 @@ class DiffusionVocoder(DiffusionModel):
         # Get spectrogram, pack channels and flatten
         spectrogram = rearrange(self.to_spectrogram(x), "b c f l -> (b c) f l")
         spectrogram_flat = self.to_flat(spectrogram)
+
+        # Pack wave channels
+        x = rearrange(x, "b c t -> (b c) 1 t")
+        return super().forward(x, *args, append_channels=spectrogram_flat, **kwargs)
+
+    @torch.no_grad()
+    def sample(  # type: ignore
+        self, spectrogram: Tensor, generator: Optional[Generator] = None, **kwargs
+    ) -> Tensor:  # type: ignore
+        # Pack channels and flatten spectrogram
+        spectrogram, ps = pack([spectrogram], "* f l")
+        spectrogram_flat = self.to_flat(spectrogram)
+        # Get start noise and sample
+        noise = randn_like(spectrogram_flat, generator=generator)
+        waveform = super().sample(noise, append_channels=spectrogram_flat, **kwargs)
+        # Unpack wave channels
+        waveform = rearrange(waveform, "... 1 t -> ... t")
+        waveform = unpack(waveform, ps, "* t")[0]
+        return waveform
+
+
+class ConditionalDiffusionVocoder(DiffusionModel):
+
+    def __init__(
+        self,
+        net_t: Callable,
+        mel_channels: int,
+        mel_n_fft: int,
+        mel_hop_length: Optional[int] = None,
+        mel_win_length: Optional[int] = None,
+        in_channels: int = 1,  # Ignored: channels are automatically batched.
+        **kwargs,
+    ):
+        mel_hop_length = default(mel_hop_length, floor(mel_n_fft) // 4)
+        mel_win_length = default(mel_win_length, mel_n_fft)
+        mel_kwargs, kwargs = groupby("mel_", kwargs)
+        super().__init__(
+            net_t=AppendChannelsPlugin(net_t, channels=1),
+            in_channels=1,
+            **kwargs,
+        )
+        self.to_spectrogram = MelSpectrogram(
+            n_fft=mel_n_fft,
+            hop_length=mel_hop_length,
+            win_length=mel_win_length,
+            n_mel_channels=mel_channels,
+            **mel_kwargs,
+        )
+        self.to_flat = nn.ConvTranspose1d(
+            in_channels=mel_channels,
+            out_channels=1,
+            kernel_size=mel_win_length,
+            stride=mel_hop_length,
+            padding=(mel_win_length - mel_hop_length) // 2,
+            bias=False,
+        )
+
+    def flat(self, input_spec: Tensor) -> Tensor:
+        spectrogram = rearrange(input_spec.unsqueeze(1), "b c f l -> (b c) f l")
+        return self.to_flat(spectrogram)
+
+    
+    def forward(self, x: Tensor, input_spec: Tensor, *args, **kwargs) -> Tensor:  # type: ignore
+        # Get spectrogram, pack channels and flatten
+        spectrogram_flat = self.flat(input_spec)
+
         # Pack wave channels
         x = rearrange(x, "b c t -> (b c) 1 t")
         return super().forward(x, *args, append_channels=spectrogram_flat, **kwargs)
