@@ -147,6 +147,11 @@ class LJSSlidingWindow(Dataset):
             y_mask = y_mask[..., random_offset:random_offset+self.max_len_seq]
             z_text = z_text[..., random_offset:random_offset+self.max_len_seq]
             audio = audio[..., random_offset*self.z_to_audio:(random_offset+self.max_len_seq)*self.z_to_audio]
+
+            # make dummy masks
+            z_audio_mask = torch.ones_like(z_audio)
+            z_text_mask = torch.ones_like(z_text)
+            y_mask_mask = torch.ones_like(y_mask)
         else:
             # pad it
             z_audio, z_audio_mask = self.zero_pad(z_audio)
@@ -168,7 +173,12 @@ class LJSSlidingWindow(Dataset):
             y_mask=y_mask,
             z_text=z_text,
             clap_embed=clap_embed,
-            audio=audio
+            audio=audio,
+            z_audio_mask=z_audio_mask,
+            z_text_mask=z_text_mask,
+            y_mask_mask=y_mask_mask,
+            offset=0,
+            z_audio_length=z_audio.shape[-1],
         )
 
         return data

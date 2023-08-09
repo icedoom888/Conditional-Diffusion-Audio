@@ -263,15 +263,12 @@ class Runner(object):
                     xt, # latent sample at timestep t
                     time = step, # timestep 
                     features = x1.mean(-3) if self.conf.model.use_additional_time_conditioning else None, # embeds an image to additional embeddings that are added to the time embeddings TODO mload configuration of the embedder from the config file
-                    embedding = embeds # embedding for CFG
+                    embedding = embeds, # embedding for CFG
+                    embedding_mask_proba = 0.1
                 )
 
                 assert label.shape == pred.shape
-
-                #if mask is not None:
-                #    pred = mask * pred
-                #    label = mask * label
-
+                
                 loss = F.mse_loss(pred, label)
                 loss.backward()
 
@@ -297,6 +294,14 @@ class Runner(object):
                         "optimizer": optimizer.state_dict(),
                         "sched": sched.state_dict() if sched is not None else sched,
                     }, opt.ckpt_path / "latest.pt")
+                    if it % 10000 == 0:
+                        torch.save({
+                            "net": self.net.state_dict(),
+                            "ema": ema.state_dict(),
+                            "optimizer": optimizer.state_dict(),
+                            "sched": sched.state_dict() if sched is not None else sched,
+                        }, opt.ckpt_path / f"{it}.pt")
+                    
                     log.info(f"Saved latest({it=}) checkpoint to {opt.ckpt_path=}!")
                 if opt.distributed:
                     torch.distributed.barrier()
