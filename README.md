@@ -37,9 +37,10 @@ The code is in the root directory in `train.py`. It generates a UNET and Diffusi
 
 ### Installation
 ```bash
+pip install torch torchvision torchaudio
+pip install -r requirements.txt
 pip install -e ./audio-diffusion-pytorch
 pip install -e ./a-unet
-pip install -r requirements.txt
 ```
 
 To run it generate a accelerate configuration and use `sh train_accelerate.sh`. For wandb run `wandb login` in the console.

@@ -162,7 +162,10 @@ def main(conf):
                 optimizer.zero_grad()
 
             progress_bar.update(1)
-            global_step += 1
+
+            # update the step only if gradient was updated
+            if step % train_args.gradient_accumulation_steps == 0:
+                global_step += 1
 
             # Save logs
             logs = {
