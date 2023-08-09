@@ -30,6 +30,15 @@ from i2sb import ckpt_util
 
 import colored_traceback.always
 from ipdb import set_trace as debug
+from custom_dataset import LJS_Latent
+from torchaudio import save as save_audio
+
+import sys
+this_file_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
+sys.path.append(os.path.join(this_file_path, "..", ".."))
+from vits.utils_diffusion import load_vits_model, get_Z_to_audio
+import yaml
 
 RESULT_DIR = Path("results")
 
@@ -50,7 +59,7 @@ def build_subset_per_gpu(opt, dataset, log):
     # create index for each gpu
     total_idx = np.concatenate([np.arange(n_data), np.zeros(n_dump)]).astype(int)
     idx_per_gpu = total_idx.reshape(-1, n_gpu)[:, opt.global_rank]
-    log.info(f"[Dataset] Add {n_dump} data to the end to be devided by {n_gpu=}. Total length={len(total_idx)}!")
+    log.info(f"[Dataset] Add {n_dump} data to the end to be devided by {n_gpu}. Total length={len(total_idx)}!")
 
     # build subset
     indices = idx_per_gpu.tolist()
@@ -78,7 +87,7 @@ def build_partition(opt, full_dataset, log):
 
     indices = [i for i in range(start_idx, end_idx)]
     subset = Subset(full_dataset, indices)
-    log.info(f"[Dataset] Built partition={opt.partition}, {start_idx=}, {end_idx=}! Now size={len(subset)}!")
+    log.info(f"[Dataset] Built partition={opt.partition}, {start_idx}, {end_idx}! Now size={len(subset)}!")
     return subset
 
 def build_val_dataset(opt, log, corrupt_type):
@@ -140,17 +149,15 @@ def main(opt):
     nfe = opt.nfe or ckpt_opt.interval-1
 
     # build corruption method
-    corrupt_method = build_corruption(opt, log, corrupt_type=corrupt_type)
+    #corrupt_method = build_corruption(opt, log, corrupt_type=corrupt_type)
 
     # build imagenet val dataset
-    val_dataset = build_val_dataset(opt, log, corrupt_type)
+    val_dataset = LJS_Latent(root=opt.dataset_dir, mode="val")
     n_samples = len(val_dataset)
 
     # build dataset per gpu and loader
-    subset_dataset = build_subset_per_gpu(opt, val_dataset, log)
-    val_loader = DataLoader(subset_dataset,
-        batch_size=opt.batch_size, shuffle=False, pin_memory=True, num_workers=1, drop_last=False,
-    )
+    #subset_dataset = build_subset_per_gpu(opt, val_dataset, log)
+    val_loader = DataLoader(val_dataset,batch_size=opt.batch_size, shuffle=False, pin_memory=True, num_workers=1, drop_last=False,)
 
     # build runner
     runner = Runner(ckpt_opt, log, save_opt=False)
@@ -161,53 +168,58 @@ def main(opt):
         runner.net.diffusion_model.convert_to_fp16()
         runner.ema = ExponentialMovingAverage(runner.net.parameters(), decay=0.99) # re-init ema with fp16 weight
 
-    # create save folder
-    recon_imgs_fn = get_recon_imgs_fn(opt, nfe)
-    log.info(f"Recon images will be saved to {recon_imgs_fn}!")
+    vits_model, hps = load_vits_model(
+                hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", "ljs_base.json"),
+                checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], "pretrained_ljs.pth")
+                )
+    z_to_audio = get_Z_to_audio(vits_model)
+    
+    for loader_itr, data in enumerate(val_loader):
 
-    recon_imgs = []
-    ys = []
-    num = 0
-    for loader_itr, out in enumerate(val_loader):
+        if loader_itr > opt.sample_batches:
+            break
 
-        corrupt_img, x1, mask, cond, y = compute_batch(ckpt_opt, corrupt_type, corrupt_method, out)
+        x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = runner.sample_batch(opt, val_loader, data=data)
 
-        xs, _ = runner.ddpm_sampling(
-            ckpt_opt, x1, mask=mask, cond=cond, clip_denoise=opt.clip_denoise, nfe=nfe, verbose=opt.n_gpu_per_node==1
+        xs, pred_x0s = runner.ddpm_sampling(
+            opt, x1,
+            x1_mask=x1_mask,
+            embeds=embeds,
+            cond=cond,
+            nfe=opt.nfe,
+            cfg=opt.cfg,
+            clip_denoise=opt.clip_denoise,
+            verbose=opt.global_rank==0
         )
-        recon_img = xs[:, 0, ...].to(opt.device)
 
-        assert recon_img.shape == corrupt_img.shape
+        img_target_pred = xs[:, 0, ...]
+        batch, len_t, *xdim = xs.shape
 
-        if loader_itr == 0 and opt.global_rank == 0: # debug
-            os.makedirs(".debug", exist_ok=True)
-            tu.save_image((corrupt_img+1)/2, ".debug/corrupt.png")
-            tu.save_image((recon_img+1)/2, ".debug/recon.png")
-            log.info("Saved debug images!")
+        # logging audio
+        for i in range(batch):
+            sample = img_target_pred[i]
+            gt = x0[i]
+            mask = y_mask[i]
+            
+            sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
+            gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
+            mask = mask[:, offset[i]:offset[i]+z_length[i]]
 
-        # [-1,1]
-        gathered_recon_img = collect_all_subset(recon_img, log)
-        recon_imgs.append(gathered_recon_img)
+            # pass through vocoder
+            model_audio =  z_to_audio(z=sample.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
+            gt_audio = z_to_audio(z=gt.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
 
-        y = y.to(opt.device)
-        gathered_y = collect_all_subset(y, log)
-        ys.append(gathered_y)
+            # save
+            sample_path = os.path.join(RESULT_DIR, opt.ckpt, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{loader_itr}_{i}.wav")
+            gt_path = os.path.join(RESULT_DIR, opt.ckpt, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{loader_itr}_{i}.wav")
+            os.makedirs(os.path.dirname(sample_path), exist_ok=True)
+            os.makedirs(os.path.dirname(gt_path), exist_ok=True)
+            save_audio(sample_path, model_audio, 22050)
+            save_audio(gt_path, gt_audio, 22050)
 
-        num += len(gathered_recon_img)
-        log.info(f"Collected {num} recon images!")
         dist.barrier()
-
     del runner
-
-    arr = torch.cat(recon_imgs, axis=0)[:n_samples]
-    label_arr = torch.cat(ys, axis=0)[:n_samples]
-
-    if opt.global_rank == 0:
-        torch.save({"arr": arr, "label_arr": label_arr}, recon_imgs_fn)
-        log.info(f"Save at {recon_imgs_fn}")
     dist.barrier()
-
-    log.info(f"Sampling complete! Collect recon_imgs={arr.shape}, ys={label_arr.shape}")
 
 
 if __name__ == '__main__':
@@ -217,6 +229,14 @@ if __name__ == '__main__':
     parser.add_argument("--master-address", type=str,  default='localhost', help="address for master")
     parser.add_argument("--node-rank",      type=int,  default=0,           help="the index of node")
     parser.add_argument("--num-proc-node",  type=int,  default=1,           help="The number of nodes in multi node env")
+    parser.add_argument("--model_conf_path",type=str,  default=None,        help="path to model conf file")
+    parser.add_argument("--sample_batches", type=int,  default=5,           help="number of batches to sample")
+    parser.add_argument("--cond-x1",        action="store_true",             help="conditional the network on degraded images")
+    parser.add_argument("--add-x1-noise",   action="store_true",             help="add noise to conditional network")
+    parser.add_argument("--interval",       type=int,   default=1000,        help="number of interval")
+    parser.add_argument("--beta-max",       type=float, default=0.3,         help="max diffusion for the diffusion model")
+    # parser.add_argument("--beta-min",       type=float, default=0.1)
+    parser.add_argument("--ot-ode",         action="store_true",             help="use OT-ODE model")
 
     # data
     parser.add_argument("--image-size",     type=int,  default=256)
@@ -227,6 +247,7 @@ if __name__ == '__main__':
     parser.add_argument("--batch-size",     type=int,  default=32)
     parser.add_argument("--ckpt",           type=str,  default=None,        help="the checkpoint name from which we wish to sample")
     parser.add_argument("--nfe",            type=int,  default=None,        help="sampling steps")
+    parser.add_argument("--cfg",            type=float,default=1.0,         help="CFG scale")
     parser.add_argument("--clip-denoise",   action="store_true",            help="clamp predicted image to [-1,1] at each")
     parser.add_argument("--use-fp16",       action="store_true",            help="use fp16 network weight for faster sampling")
 
@@ -238,8 +259,11 @@ if __name__ == '__main__':
     )
     opt.update(vars(arg))
 
+    config = yaml.load(open(opt.model_conf_path, "r"), Loader=yaml.FullLoader)
+    opt.conf_file = config
+    
     # one-time download: ADM checkpoint
-    download_ckpt("data/")
+    #download_ckpt("data/")
 
     set_seed(opt.seed)
 

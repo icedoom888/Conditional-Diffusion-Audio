@@ -112,13 +112,13 @@ def get_text_to_Z(net_g):
         text_to_Z (function): A function that takes text and returns the latent space representation.
     """
 
-    def text_to_Z(text, hps,  noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None):
+    def text_to_Z(text, hps,  noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None, y_lengths=None):
         stn_tst = get_text(text, hps)
         with torch.no_grad():
             x_tst = stn_tst.cuda().unsqueeze(0)
             x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
             # sid = torch.LongTensor([1]).cuda() speaker ID
-            net_out = net_g.infer(x_tst, x_tst_lengths,  noise_scale=noise_scale, length_scale=length_scale, noise_scale_w=noise_scale_w, max_len=max_len)
+            net_out = net_g.infer(x_tst, x_tst_lengths,  noise_scale=noise_scale, length_scale=length_scale, noise_scale_w=noise_scale_w, max_len=max_len, y_lengths=y_lengths)
             z = net_out[3][0]
             y_mask = net_out[2]
         return z, y_mask

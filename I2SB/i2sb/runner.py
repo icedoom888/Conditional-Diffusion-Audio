@@ -122,6 +122,7 @@ class Runner(object):
             modulation_features = 1024,
             use_time_conditioning = True,
         )
+
         self.ema = ExponentialMovingAverage(self.net.parameters(), decay=opt.ema)
 
         if opt.load: # TODO check if this works
@@ -149,12 +150,12 @@ class Runner(object):
         if clip_denoise: pred_x0.clamp_(-1., 1.)
         return pred_x0
 
-    def sample_batch(self, opt, loader):
+    def sample_batch(self, opt, loader, data=None):
         #if opt.corrupt == "mixture":
         #    clean_img, corrupt_img, y = next(loader) # TODO we can just use this one, y is not used at all
         #    mask = None # we can use use a mask but not here, the mask is only used for inpainting, we use it for sampling only
 
-        data = next(loader)
+        data = next(loader) if data is None else data
         clean_img = data["z_audio"]
         x0_mask = data["z_audio_mask"]
         y_mask = data["y_mask"]
@@ -307,7 +308,7 @@ class Runner(object):
         self.writer.close()
 
     @torch.no_grad()
-    def ddpm_sampling(self, opt, x1, x1_mask=None, embeds=None, cond=None, clip_denoise=False, nfe=None, log_count=10, verbose=True):
+    def ddpm_sampling(self, opt, x1, x1_mask=None, embeds=None, cond=None, clip_denoise=False, nfe=None, log_count=10, verbose=True, cfg=1.0):
 
         # create discrete time steps that split [0, INTERVAL] into NFE sub-intervals.
         # e.g., if NFE=2 & INTERVAL=1000, then STEPS=[0, 500, 999] and 2 network
@@ -320,7 +321,7 @@ class Runner(object):
         log_count = min(len(steps)-1, log_count)
         log_steps = [steps[i] for i in util.space_indices(len(steps)-1, log_count)]
         assert log_steps[0] == 0
-        self.log.info(f"[DDPM Sampling] steps={opt.interval}, {nfe=}, {log_steps=}!")
+        self.log.info(f"[DDPM Sampling] steps={opt.interval}, nfe={nfe}, log_steps={log_steps}!")
 
         x1 = x1.to(opt.device)
         if cond is not None: cond = cond.to(opt.device)
@@ -332,7 +333,7 @@ class Runner(object):
         with self.ema.average_parameters():
             self.net.eval()
 
-            def pred_x0_fn(xt, step):
+            def pred_x0_fn(xt, step, cfg=1.0):
                 step = torch.full((xt.shape[0],), step, device=opt.device, dtype=torch.long)
                 
                 xt_total = None
@@ -349,13 +350,14 @@ class Runner(object):
                     xt if xt_total is None else xt_total, # latent sample at timestep t
                     time = step, # timestep 
                     features = x1.mean(-3) if self.conf.model.use_additional_time_conditioning else None, # embeds an image to additional embeddings that are added to the time embeddings TODO mload configuration of the embedder from the config file
-                    embedding = embeds # embedding for CFG
+                    embedding = embeds, # embedding for CFG
+                    embedding_scale = cfg
                 )
 
                 return self.compute_pred_x0(step, xt, out, clip_denoise=clip_denoise)
 
             xs, pred_x0 = self.diffusion.ddpm_sampling(
-                steps, pred_x0_fn, x1, ot_ode=opt.ot_ode, log_steps=log_steps, verbose=verbose,
+                steps, pred_x0_fn, x1, ot_ode=opt.ot_ode, log_steps=log_steps, verbose=verbose, cfg=cfg
             )
 
         b, *xdim = x1.shape
