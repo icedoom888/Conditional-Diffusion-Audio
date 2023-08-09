@@ -99,6 +99,7 @@ class LJSSlidingWindow(Dataset):
             std=[Z_TEXT_STD if mean_on == "text" else Z_AUDIO_STD]
             )
         self.load_data()
+        print(f"Created {self.mode} dataset with {len(self)} samples")
     
     def normalize(self, x):
         x = self.z_normalize(x)
@@ -140,7 +141,6 @@ class LJSSlidingWindow(Dataset):
         if seq_len > self.max_len_seq:
             # take random slize
             random_offset = torch.randint(0, seq_len - self.max_len_seq, (1,)).item()
-            random_offset_sec = random_offset * self.z_to_audio / self.sr
 
             # take slices
             z_audio = z_audio[..., random_offset:random_offset+self.max_len_seq]
@@ -158,7 +158,10 @@ class LJSSlidingWindow(Dataset):
             z_text, z_text_mask = self.zero_pad(z_text)
             y_mask, y_mask_mask = self.zero_pad(y_mask)
             audio = torch.cat([audio, torch.zeros((1, max(0, self.max_len_seq*self.z_to_audio - audio.shape[-1])))], dim=-1)
-
+        
+        # make sure audio is perfect length
+        audio = audio[..., :self.max_len_seq*self.z_to_audio]
+        
         if self.normalization:
             z_audio = self.normalize(z_audio)
             z_text = self.normalize(z_text)
@@ -167,19 +170,19 @@ class LJSSlidingWindow(Dataset):
         # random audio phase flip
         if torch.rand((1,)).item() > 0.5:
             audio = -audio
-        
-        data = dict(
-            z_audio=z_audio,
-            y_mask=y_mask,
-            z_text=z_text,
-            clap_embed=clap_embed,
-            audio=audio,
-            z_audio_mask=z_audio_mask,
-            z_text_mask=z_text_mask,
-            y_mask_mask=y_mask_mask,
-            offset=0,
-            z_audio_length=z_audio.shape[-1],
-        )
+
+        data = {
+            "z_audio": z_audio,
+            "y_mask": y_mask,
+            "z_text": z_text,
+            "clap_embed": clap_embed,
+            "audio": audio,
+            "z_audio_mask": z_audio_mask,
+            "z_text_mask": z_text_mask,
+            "y_mask_mask": y_mask_mask,
+            "offset": 0,
+            "z_audio_length": self.max_len_seq,
+        }
 
         return data
         

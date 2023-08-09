@@ -1,6 +1,6 @@
 training:
   output_dir: V0_img2img_deeper
-  data_root: ../vits/LJS_Processed
+  data_root: ../vits/LJSProcessedFull
   vits_root: ../vits
   wandb_project: natural_voices
   wandb_log_every: 50

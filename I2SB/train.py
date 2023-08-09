@@ -29,7 +29,7 @@ from i2sb import Runner, download_ckpt
 import colored_traceback.always
 from ipdb import set_trace as debug
 
-from custom_dataset import LJS_Latent
+from custom_dataset import LJS_Latent, LJSSlidingWindow
 import yaml
 
 RESULT_DIR = Path("results")
@@ -136,8 +136,8 @@ def main(opt):
     # build imagenet dataset TODO add own datasets
     #train_dataset = imagenet.build_lmdb_dataset(opt, log, train=True)
     #val_dataset   = imagenet.build_lmdb_dataset(opt, log, train=False)
-    train_dataset = LJS_Latent(root=opt.dataset_dir, mode="train")
-    val_dataset = LJS_Latent(root=opt.dataset_dir, mode="val")
+    train_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="train", normalize=False)
+    val_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="val", normalize=False)
     # note: images should be normalized to [-1,1] for corruption methods to work properly
 
     # Mathias: not needed

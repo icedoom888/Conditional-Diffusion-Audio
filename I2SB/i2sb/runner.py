@@ -151,11 +151,14 @@ class Runner(object):
         return pred_x0
 
     def sample_batch(self, opt, loader, data=None):
-        #if opt.corrupt == "mixture":
-        #    clean_img, corrupt_img, y = next(loader) # TODO we can just use this one, y is not used at all
-        #    mask = None # we can use use a mask but not here, the mask is only used for inpainting, we use it for sampling only
 
-        data = next(loader) if data is None else data
+        # safely get next batch
+        try:
+            data = next(loader) if data is None else data
+        except StopIteration:
+            loader = iter(loader)
+            data = next(loader) if data is None else data
+        
         clean_img = data["z_audio"]
         x0_mask = data["z_audio_mask"]
         y_mask = data["y_mask"]
@@ -166,38 +169,11 @@ class Runner(object):
         offset = data["offset"]
         z_length = data["z_audio_length"]
 
-        # set others to None
-        mask = None
-        y= None
-
-        #elif "inpaint" in opt.corrupt:
-        #    clean_img, y = next(loader)
-        #    with torch.no_grad():
-        #        corrupt_img, mask = corrupt_method(clean_img.to(opt.device))
-        #else:
-        #    clean_img, y = next(loader)
-        #    with torch.no_grad():
-        #        corrupt_img = corrupt_method(clean_img.to(opt.device))
-        #    mask = None
-
-        # os.makedirs(".debug", exist_ok=True)
-        # tu.save_image((clean_img+1)/2, ".debug/clean.png", nrow=4)
-        # tu.save_image((corrupt_img+1)/2, ".debug/corrupt.png", nrow=4)
-        # debug()
-
-        #y  = y.detach().to(opt.device) # TODO remove
         x0 = clean_img.detach().to(opt.device)
         x1 = corrupt_img.detach().to(opt.device)
         embeds = embeds.detach().to(opt.device)
         x0_mask = x0_mask.detach().to(opt.device)
         x1_mask = x1_mask.detach().to(opt.device)
-
-        # Mathias: not needed, this is inpainting
-        #if mask is not None:
-        #    mask = mask.detach().to(opt.device)
-        #    x1 = (1. - mask) * x1 + mask * torch.randn_like(x1)
-        
-        # TODO add the masking to the channels here so the model knows where to actually paint
 
         cond = x1.detach() if opt.cond_x1 else None # TODO load the conditioning here
 
@@ -219,9 +195,6 @@ class Runner(object):
         train_loader = util.setup_loader(train_dataset, opt.microbatch)
         val_loader   = util.setup_loader(val_dataset,   opt.microbatch)
 
-        self.accuracy = torchmetrics.Accuracy().to(opt.device)
-        self.resnet = build_resnet50().to(opt.device)
-
         net.train()
 
         # load vits
@@ -239,7 +212,6 @@ class Runner(object):
             for _ in range(n_inner_loop):
                 # ===== sample boundary pair =====
                 # TODO this is actually okay, the x0 is the end, x1 will be the start, mask is None, is not used and cond will be x1
-                #x0, x1, mask, y, cond = self.sample_batch(opt, train_loader, corrupt_method)
                 x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, train_loader)
 
                 # ===== compute loss =====
@@ -247,9 +219,6 @@ class Runner(object):
 
                 xt = self.diffusion.q_sample(step, x0, x1, ot_ode=opt.ot_ode) # gets the noisy latent at timestep t
                 label = self.compute_label(step, x0, xt)
-
-                # TODO check time embedding and if it corresponds to what happends below
-                # emb = self.time_embed(timestep_embedding(timesteps, self.model_channels))
 
                 # concat with mask for guidance in varying length inputs
                 if self.conf.model.use_data_mask:
@@ -331,10 +300,6 @@ class Runner(object):
         x1 = x1.to(opt.device)
         if cond is not None: cond = cond.to(opt.device)
 
-        #if mask is not None:
-        #    mask = mask.to(opt.device)
-        #    x1 = (1. - mask) * x1 + mask * torch.randn_like(x1)
-
         with self.ema.average_parameters():
             self.net.eval()
 
@@ -387,14 +352,12 @@ class Runner(object):
         log.info("Collecting tensors ...")
         img_target   = all_cat_cpu(opt, log, x0)
         img_source = all_cat_cpu(opt, log, x1)
-        #y           = all_cat_cpu(opt, log, y)
         xs          = all_cat_cpu(opt, log, xs)
         pred_x0s    = all_cat_cpu(opt, log, pred_x0s)
 
         batch, len_t, *xdim = xs.shape
         assert img_target.shape == img_source.shape == (batch, *xdim)
         assert xs.shape == pred_x0s.shape
-        #assert y.shape == (batch,)
         log.info(f"Generated recon trajectories: size={xs.shape}")
 
         def log_image(tag, img, nrow=10):
@@ -425,12 +388,6 @@ class Runner(object):
             save_audio(gt_path, gt_audio, 22050)
             self.writer.add_sound(step=it, caption="model_audio", key="model_audio", sound_path=sample_path)
             self.writer.add_sound(step=it, caption="gt_audio", key="gt_audio", sound_path=gt_path)
-
-
-        #def log_accuracy(tag, img):
-        #    pred = self.resnet(img.to(opt.device)) # input range [-1,1]
-        #    accu = self.accuracy(pred, y.to(opt.device))
-        #    self.writer.add_scalar(it, tag, accu)
 
         log.info("Logging images ...")
         log_image("image/clean",   img_target) # target image
