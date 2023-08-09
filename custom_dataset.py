@@ -141,6 +141,8 @@ class LJS_Latent_Audio(Dataset):
         self.normalize_z_audio = Normalize(mean=[Z_AUDIO_MEAN], std=[Z_AUDIO_STD])
         self.normalize_z_text = Normalize(mean=[Z_TEXT_MEAN], std=[Z_TEXT_STD])
         self.hop_length = 256
+        self.mean_pitch = 137.61
+        self.std_pitch = 49.64
 
     def load_data(self):
         self.data = os.listdir(os.path.join(self.root, self.mode))

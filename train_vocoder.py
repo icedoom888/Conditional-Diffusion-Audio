@@ -16,7 +16,7 @@ from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model,
 from einops import rearrange
 import wandb
 from torchaudio import save as save_audio
-from utils import print_sizes
+from utils import print_sizes, CompositeLoss
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -25,6 +25,7 @@ logger = get_logger(__name__)
 def main(conf):
     train_args = conf.training
     model_args = conf.model
+    loss_args = conf.loss
 
     # create working directory
     output_dir = train_args.output_dir
@@ -46,13 +47,9 @@ def main(conf):
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True)
 
     # setup diffusion loss
-    if train_args.loss_fn_diffusion == "l1":
-        loss_fn = torch.nn.functional.l1_loss
-    elif train_args.loss_fn_diffusion == "l2":
-        loss_fn = torch.nn.functional.mse_loss
-    else:
-        raise NotImplementedError
+    loss_fn = CompositeLoss(loss_args)
 
+    # Set up model
     model = ConditionalDiffusionVocoder(
         mel_n_fft=1024, # Mel-spectrogram n_fft
         mel_channels=192, # Mel-spectrogram channels
@@ -148,7 +145,7 @@ def main(conf):
             input_spec = z_audio
             
             with accelerator.accumulate(model):
-                loss = model(
+                loss, loss_dict = model(
                     audio,
                     input_spec=input_spec,
                     embedding=embeds,
@@ -167,11 +164,16 @@ def main(conf):
             progress_bar.update(1)
             global_step += 1
 
+            # Save logs
             logs = {
                 "loss": loss.detach().item(),
                 "lr": lr_scheduler.get_last_lr()[0],
                 "step": global_step,
             }
+
+            for loss_name in loss_dict.keys():
+                logs[loss_name] = loss_dict[loss_name].detach().item()
+
             progress_bar.set_postfix(**logs)
 
             if (global_step) % train_args.wandb_log_every == 0 or global_step == 1:
@@ -224,7 +226,7 @@ def main(conf):
                 )
 
                 # calculate loss between samples and original
-                eval_loss=loss_fn(model_samples, audio)
+                eval_loss, eval_loss_dict = loss_fn(model_samples, audio)
 
                 for i in range(model_samples.shape[0]):
                     sample = model_samples[i]
@@ -242,9 +244,17 @@ def main(conf):
                                         wandb.Audio(sample_path, caption=f"Sample {i}", sample_rate=22050),
                                         wandb.Audio(gt_path, caption=f"Ground Truth {i}", sample_rate=22050)
                                      ]}, step=global_step)
+                # Save logs
+                eval_logs = {
+                    "loss": eval_loss.detach().item(),
+                }
+
+                for loss_name in eval_loss_dict.keys():
+                    eval_logs[loss_name] = eval_loss_dict[loss_name].detach().item()
 
                 # log to wandb
-                accelerator.log({"eval_loss": eval_loss.detach().item()}, step=global_step)
+                accelerator.log(eval_logs, step=global_step)
+
 
         accelerator.wait_for_everyone()
 

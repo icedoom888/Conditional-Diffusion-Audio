@@ -1,5 +1,5 @@
 training:
-  output_dir: V0_img2img_deeper
+  output_dir: results/vocoder_v1_multiloss
   data_root: data/processed_LJSpeech
   wandb_project: natural_voices
   wandb_log_every: 100
@@ -9,7 +9,6 @@ training:
   save_images_epochs: 10
   save_model_epochs: 50
   gradient_accumulation_steps: 2
-  loss_fn_diffusion: l1
   learning_rate: 1.e-4
   lr_scheduler: constant
   lr_warmup_steps: 500
@@ -25,6 +24,7 @@ training:
   mixed_precision: "fp16"
   start_epoch: 0
   num_train_steps: 0.5e+5
+  
 model:
   channels: [8, 32, 64, 128, 256, 512, 512, 1024, 1024]
   factors: [1, 4, 4, 4, 2, 2, 2, 2, 2]
@@ -39,4 +39,10 @@ model:
   embedding_max_length: 64
   embedding_features: 512
 
-
+loss:
+  use_l1: true
+  l1_weight: 1.0
+  use_l2: false
+  l2_weight: 1.0
+  use_mrstft: true
+  mrstft_weight: 0.5

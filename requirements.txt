@@ -15,3 +15,4 @@ tornado
 transformers
 typing_extensions
 wandb
+auraloss
