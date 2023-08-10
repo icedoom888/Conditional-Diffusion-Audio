@@ -1,6 +1,7 @@
 training:
-  output_dir: results/vocoder_v1_multiloss
-  data_root: data/processed_LJSpeech
+  output_dir: results/vocoder_v1_multiloss_long_dataset
+  data_root: data/LJSProcessedFull
+  dataset_name: LJSSlidingWindow
   wandb_project: natural_voices
   wandb_log_every: 100
   train_batch_size: 32

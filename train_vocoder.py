@@ -40,8 +40,18 @@ def main(conf):
         log_with="wandb"
     )
 
-    train_dataset = custom_dataset.LJS_Latent_Audio(root=train_args.data_root, mode="train")
-    val_dataset = custom_dataset.LJS_Latent_Audio(root=train_args.data_root, mode="val")
+    if train_args.dataset_name == 'LJSSlidingWindow':
+        print(f'Building dataset: {train_args.dataset_name}')
+        train_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="train")
+        val_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="val")
+    
+    elif train_args.dataset_name == 'LJS_Latent_Audio':
+        print(f'Building dataset: {train_args.dataset_name}')
+        train_dataset = custom_dataset.LJS_Latent_Audio(root=train_args.data_root, mode="train")
+        val_dataset = custom_dataset.LJS_Latent_Audio(root=train_args.data_root, mode="val")
+    
+    else:
+        raise ValueError
 
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.train_batch_size, shuffle=False)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True)
@@ -138,6 +148,12 @@ def main(conf):
             z_text = batch["z_text"]
             z_text_mask = batch["z_text_mask"]
             embeds = batch["clap_embed"]
+
+            if train_args.dataset_name == 'LJSSlidingWindow':
+                z_audio = torch.squeeze(z_audio, 1)
+                z_text = torch.squeeze(z_text, 1)
+                z_audio_mask = torch.squeeze(z_audio_mask, 1)
+                z_text_mask = torch.squeeze(z_text_mask, 1)
 
             # print_sizes(batch)
 
