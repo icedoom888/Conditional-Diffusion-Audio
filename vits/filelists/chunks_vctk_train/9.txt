@@ -1,0 +1,2000 @@
+DUMMY2/p261/p261_017.wav|100|Others have tried to explain the phenomenon physically.
+DUMMY2/p258/p258_082.wav|26|The city council is a major property owner in the area.
+DUMMY2/p329/p329_198.wav|103|Six of the asylum seekers left the offices, it was reported.
+DUMMY2/p323/p323_059.wav|34|It also condemned the suicide bombers.
+DUMMY2/p374/p374_108.wav|11|Lester was like that.
+DUMMY2/p297/p297_351.wav|42|Last night, she refused to comment on the accident.
+DUMMY2/p336/p336_206.wav|98|Do they play for the money?
+DUMMY2/p311/p311_085.wav|4|He added, We are not prepared for war.
+DUMMY2/p244/p244_239.wav|78|There was a lot of resentment.
+DUMMY2/p267/p267_027.wav|0|There is no reason at all.
+DUMMY2/p241/p241_052.wav|86|We've got a lot of respect for the Lions.
+DUMMY2/p277/p277_159.wav|89|They should come clean.
+DUMMY2/p336/p336_190.wav|98|The weekly average was three hours.
+DUMMY2/p345/p345_224.wav|82|But this is just the start.
+DUMMY2/p288/p288_317.wav|47|My whole life has changed.
+DUMMY2/p229/p229_211.wav|67|It's the same old story.
+DUMMY2/p241/p241_065.wav|86|He could make it.
+DUMMY2/p286/p286_250.wav|63|He does not much like the Liberal Democrats.
+DUMMY2/p361/p361_086.wav|79|It was exactly four months away.
+DUMMY2/p252/p252_020.wav|55|Many complicated ideas about the rainbow have been formed.
+DUMMY2/p347/p347_280.wav|46|I could feel the blood on my face.
+DUMMY2/p266/p266_342.wav|20|went on sale.
+DUMMY2/p318/p318_122.wav|19|It's a way of making a mark.
+DUMMY2/p239/p239_032.wav|48|That's all I was trying to do today.
+DUMMY2/p284/p284_122.wav|16|We recognise the important role of golf in attracting visitors.
+DUMMY2/p323/p323_231.wav|34|I am an estate agent.
+DUMMY2/p239/p239_438.wav|48|Last year's winner was Sergio Garcia.
+DUMMY2/p263/p263_063.wav|39|Hopefully, we have learned a lot from that game.
+DUMMY2/p273/p273_346.wav|56|The strong pound also took its toll.
+DUMMY2/p312/p312_249.wav|62|These will finally be corrected by next week.
+DUMMY2/p361/p361_225.wav|79|I don't know the full story.
+DUMMY2/p340/p340_176.wav|74|It should be scrapped.
+DUMMY2/p288/p288_302.wav|47|The most important thing is to get a programme for government.
+DUMMY2/p238/p238_340.wav|37|Today we must not repeat that mistake.
+DUMMY2/p274/p274_070.wav|32|What do we do ?)
+DUMMY2/p281/p281_024.wav|36|This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue.
+DUMMY2/p330/p330_032.wav|1|Mr Crawford is no stranger to Scottish Enterprise.
+DUMMY2/p243/p243_075.wav|53|I was returning a message he left on my mobile phone yesterday.
+DUMMY2/p261/p261_273.wav|100|Did he trip ?
+DUMMY2/p231/p231_263.wav|50|was everything done to save people ?
+DUMMY2/p363/p363_312.wav|6|His remit is specific.
+DUMMY2/p343/p343_263.wav|21|That idea is rubbish.
+DUMMY2/p306/p306_078.wav|12|We must move on.
+DUMMY2/p266/p266_337.wav|20|Two people were interviewed.
+DUMMY2/p261/p261_137.wav|100|We could easily have lost that game.
+DUMMY2/p316/p316_169.wav|85|Consumers will also benefit.
+DUMMY2/p268/p268_160.wav|87|We feel very comfortable in this international environment.
+DUMMY2/p232/p232_079.wav|96|He is now resident in England.
+DUMMY2/p249/p249_017.wav|80|Others have tried to explain the phenomenon physically.
+DUMMY2/p347/p347_121.wav|46|Whatever he does, however, it will be decisive.
+DUMMY2/p312/p312_087.wav|62|I was brought up in a mining background.
+DUMMY2/p292/p292_294.wav|13|That will be the key to success.
+DUMMY2/p237/p237_014.wav|61|To the Hebrews it was a token that there would be no more universal floods.
+DUMMY2/p228/p228_359.wav|57|We have to create a climate of trust, which is not easy.
+DUMMY2/p255/p255_093.wav|31|If you could find it.
+DUMMY2/p308/p308_328.wav|107|Charles Gordon, leader of Glasgow City Council declined to comment.
+DUMMY2/p283/p283_014.wav|95|To the Hebrews it was a token that there would be no more universal floods.
+DUMMY2/p304/p304_060.wav|72|Sadly, the game will never see his like again.
+DUMMY2/p308/p308_240.wav|107|I couldn't make out what was going on.
+DUMMY2/p280/p280_074.wav|52|But two groups refused to sign up.
+DUMMY2/p273/p273_197.wav|56|It was worth a photograph.
+DUMMY2/p248/p248_333.wav|99|I said that I had been raped.
+DUMMY2/p317/p317_285.wav|97|He also has a house in Italy.
+DUMMY2/p345/p345_114.wav|82|Let's get it on.
+DUMMY2/p326/p326_050.wav|28|They are all bright and different.
+DUMMY2/p374/p374_299.wav|11|That's what we're trying to achieve.
+DUMMY2/p318/p318_154.wav|19|The salary changes are long overdue.
+DUMMY2/p234/p234_140.wav|3|Actors like to be in the centre.
+DUMMY2/p286/p286_367.wav|63|I think we'll just keep it.
+DUMMY2/p283/p283_125.wav|95|Sport is good for you.
+DUMMY2/p336/p336_282.wav|98|I watch the other visitors.
+DUMMY2/p252/p252_383.wav|55|I got dropped for that game.
+DUMMY2/p229/p229_380.wav|67|Whether his stance is shared by the incoming manager is another matter.
+DUMMY2/p268/p268_329.wav|87|It seemed a moving and fitting tribute.
+DUMMY2/p374/p374_203.wav|11|Again, this was genuine loyalty being recognised.
+DUMMY2/p264/p264_484.wav|65|That is surely worth a try.)
+DUMMY2/p304/p304_367.wav|72|It was a discussion paper.
+DUMMY2/p317/p317_088.wav|97|We will see how he is after treatment.
+DUMMY2/p361/p361_322.wav|79|There was nowhere for him to go.
+DUMMY2/p339/p339_375.wav|18|She's the runner - she makes the decisions.
+DUMMY2/p255/p255_004.wav|31|We also need a small plastic snake and a big toy frog for the kids.
+DUMMY2/p310/p310_277.wav|17|This, he told the committee, was not forthcoming.
+DUMMY2/p239/p239_187.wav|48|This is a frightening development.
+DUMMY2/p312/p312_124.wav|62|Davis is very supportive, as a director.
+DUMMY2/p302/p302_018.wav|30|Aristotle thought that the rainbow was caused by reflection of the sun's rays by the rain.
+DUMMY2/p285/p285_338.wav|2|I'm very lucky.
+DUMMY2/p334/p334_310.wav|38|However, pensions and salaries have yet to be settled.
+DUMMY2/p311/p311_117.wav|4|They are all Arabs.
+DUMMY2/p339/p339_079.wav|18|What we were doing.
+DUMMY2/p347/p347_102.wav|46|I'm looking forward to that.
+DUMMY2/p294/p294_080.wav|104|One policeman was killed.
+DUMMY2/p334/p334_006.wav|38|When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow.
+DUMMY2/p300/p300_350.wav|102|Which Scot is likely to emulate his achievements?
+DUMMY2/p267/p267_239.wav|0|Those overseas offices were great.
+DUMMY2/p258/p258_346.wav|26|That is the very reason why it was so vital.
+DUMMY2/p293/p293_123.wav|23|Eriksson would have approved.
+DUMMY2/p250/p250_030.wav|24|This is a central issue.
+DUMMY2/p362/p362_277.wav|15|They have a way of proclaiming themselves.
+DUMMY2/p303/p303_103.wav|44|He went to see what he could learn.
+DUMMY2/p363/p363_127.wav|6|He is the man to beat.
+DUMMY2/p260/p260_056.wav|81|I expect a rapid response.
+DUMMY2/p308/p308_297.wav|107|I'm trying to stay open on that.
+DUMMY2/p330/p330_294.wav|1|Just watch the videos and you'll see it.
+DUMMY2/p326/p326_190.wav|28|You've just got to move on.
+DUMMY2/p280/p280_205.wav|52|Hague will be leader at the election after next.
+DUMMY2/p234/p234_007.wav|3|The rainbow is a division of white light into many beautiful colors.
+DUMMY2/p305/p305_059.wav|54|Three further cases were confirmed yesterday in Scotland.
+DUMMY2/p277/p277_029.wav|89|The abuse of elderly people was appalling.
+DUMMY2/p232/p232_394.wav|96|The charity also has a project in Moscow in Russia.
+DUMMY2/p293/p293_231.wav|23|I think in three dimensions.
+DUMMY2/p314/p314_259.wav|51|I thought that all musicians were the same.
+DUMMY2/p304/p304_148.wav|72|Do not listen to them.
+DUMMY2/p232/p232_243.wav|96|It's a lovely, lovely film.
+DUMMY2/p245/p245_004.wav|59|We also need a small plastic snake and a big toy frog for the kids.
+DUMMY2/p343/p343_119.wav|21|The hearing was expected to last six weeks.
+DUMMY2/p270/p270_139.wav|8|Italy was just behind the US.
+DUMMY2/p231/p231_008.wav|50|These take the shape of a long round arch, with its path high above, and its two ends apparently beyond the horizon.
+DUMMY2/p251/p251_369.wav|9|That would help.
+DUMMY2/p262/p262_252.wav|45|I didn't need to watch it on the video.
+DUMMY2/p232/p232_260.wav|96|The bottom line is that we had to get a win.
+DUMMY2/p318/p318_157.wav|19|I am not blaming audiences.
+DUMMY2/p339/p339_110.wav|18|But it was only a matter of time.
+DUMMY2/p286/p286_213.wav|63|We've had an enjoyable adventure.
+DUMMY2/p362/p362_030.wav|15|But there are no plans.
+DUMMY2/p308/p308_122.wav|107|Glasgow is making inroads in some areas.
+DUMMY2/p305/p305_024.wav|54|This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue.
+DUMMY2/p313/p313_189.wav|76|They were that poor.
+DUMMY2/p244/p244_026.wav|78|It may be good for the soul.
+DUMMY2/p334/p334_388.wav|38|I just don't know where he is.
+DUMMY2/p253/p253_255.wav|70|They must play for each other.
+DUMMY2/p238/p238_259.wav|37|Arsenal refused to be evicted.
+DUMMY2/p303/p303_172.wav|44|Stevenson was arrested on Monday morning.
+DUMMY2/p351/p351_116.wav|33|It's the way we go about it.
+DUMMY2/p292/p292_385.wav|13|Everyone could see the joke.
+DUMMY2/p306/p306_029.wav|12|Of course, this is nice to hear.
+DUMMY2/p268/p268_188.wav|87|They keep the atmosphere in mind.
+DUMMY2/p311/p311_417.wav|4|He also called in at another farm.
+DUMMY2/p347/p347_061.wav|46|This is only the start of my season.
+DUMMY2/p299/p299_154.wav|58|Yet it is unlikely to be either full, or final.
+DUMMY2/p280/p280_008.wav|52|These take the shape of a long round arch, with its path high above, and its two ends apparently beyond the horizon.
+DUMMY2/p307/p307_351.wav|22|He knew it would cost him millions.
+DUMMY2/p236/p236_061.wav|75|The tournament has now been cancelled.
+DUMMY2/p361/p361_170.wav|79|There is no signature.
+DUMMY2/p254/p254_264.wav|41|They want to shut the Scottish Office.
+DUMMY2/p330/p330_139.wav|1|It's like a garage.
+DUMMY2/p284/p284_242.wav|16|Now, suddenly, we have this new landscape.
+DUMMY2/p277/p277_107.wav|89|I wish I had put on a brighter tie.
+DUMMY2/p259/p259_075.wav|7|I've had it for the exams.)
+DUMMY2/p270/p270_385.wav|8|Here is a weather forecast for the weekend.
+DUMMY2/p255/p255_109.wav|31|I came to complete.
+DUMMY2/p257/p257_358.wav|105|Whether his stance is shared by the incoming manager is another matter.
+DUMMY2/p263/p263_303.wav|39|John was there already in spirit.
+DUMMY2/p311/p311_380.wav|4|And it covers the spectrum.
+DUMMY2/p297/p297_175.wav|42|There will be tough opponents to this report.
+DUMMY2/p256/p256_081.wav|90|I've got the shirt.
+DUMMY2/p293/p293_215.wav|23|We expect to come through on Thursday.
+DUMMY2/p225/p225_303.wav|101|And it had been a marvellous occasion.
+DUMMY2/p258/p258_157.wav|26|Military action is the only option we have on the table today.
+DUMMY2/p317/p317_267.wav|97|I have spoken to head office.
+DUMMY2/p301/p301_180.wav|91|I always loved the lightning in the movies.
+DUMMY2/p285/p285_309.wav|2|She is very distinctive.
+DUMMY2/p297/p297_109.wav|42|You need insurance to bring people in.
+DUMMY2/p266/p266_414.wav|20|But we finished the show.
+DUMMY2/p300/p300_264.wav|102|History may repeat itself with Billy Elliot.
+DUMMY2/p281/p281_128.wav|36|That is far too high.
+DUMMY2/p275/p275_225.wav|40|Clearly, the stakes are high.
+DUMMY2/p284/p284_309.wav|16|The report will go before the Scottish Parliament, probably in early autumn.
+DUMMY2/p307/p307_191.wav|22|We are seeking funds from government departments.
+DUMMY2/p274/p274_274.wav|32|We accept the new rules.)
+DUMMY2/p261/p261_021.wav|100|The difference in the rainbow depends considerably upon the size of the drops, and the width of the colored band increases as the size of the drops increases.
+DUMMY2/p273/p273_012.wav|56|Throughout the centuries people have explained the rainbow in various ways.
+DUMMY2/p260/p260_322.wav|81|The election is total confusion and chaos.
+DUMMY2/p335/p335_186.wav|49|McCall is unlikely to change a winning team.
+DUMMY2/p230/p230_010.wav|35|People look, but no one ever finds it.
+DUMMY2/p376/p376_005.wav|71|"She can scoop these things into three red bags, and we will go meet her Wednesday at the train station. "
+DUMMY2/p307/p307_150.wav|22|But it looks good for next year.
+DUMMY2/p295/p295_130.wav|92|Five years later, the deception continued.
+DUMMY2/p280/p280_241.wav|52|Why change it ?
+DUMMY2/p308/p308_050.wav|107|I know a lot of people who don't.
+DUMMY2/p374/p374_196.wav|11|There isn't much of a scene in Austria.
+DUMMY2/p271/p271_120.wav|27|It's not fair.
+DUMMY2/p311/p311_007.wav|4|The rainbow is a division of white light into many beautiful colors.
+DUMMY2/p286/p286_221.wav|63|The result is utterly compelling.
+DUMMY2/p287/p287_265.wav|77|They must play for each other.
+DUMMY2/p364/p364_103.wav|88|Our legal advice is clear.
+DUMMY2/p343/p343_370.wav|21|There is always the smell.
+DUMMY2/p266/p266_196.wav|20|Tommy is not a problem.
+DUMMY2/p297/p297_362.wav|42|He had lost his confidence again.
+DUMMY2/p259/p259_292.wav|7|I rejected the idea of a separate residence.)
+DUMMY2/p272/p272_321.wav|69|You have to be able to deal with all age groups.
+DUMMY2/p250/p250_456.wav|24|But we have built a platform for next season.
+DUMMY2/p269/p269_252.wav|94|I should think so, too.
+DUMMY2/p271/p271_306.wav|27|Alex Smith has been a massive influence on my career as well.
+DUMMY2/p363/p363_417.wav|6|With him are the symbols of his faith.
+DUMMY2/p278/p278_296.wav|10|They failed to reach agreement yesterday.
+DUMMY2/p251/p251_187.wav|9|It was only later that the condition was diagnosed.
+DUMMY2/p305/p305_178.wav|54|He was lying face down in the water.
+DUMMY2/p247/p247_303.wav|14|Mr Clinton was asked about his memory.)
+DUMMY2/p303/p303_039.wav|44|We gave everything we had.
+DUMMY2/p244/p244_127.wav|78|According to criteria, he is qualified for Scotland.
+DUMMY2/p251/p251_226.wav|9|The Prime Minister has a huge regard for Mo.
+DUMMY2/p261/p261_222.wav|100|Seven people were critically injured.
+DUMMY2/p360/p360_262.wav|60|He could still be President.
+DUMMY2/p314/p314_187.wav|51|I certainly do not agree with that.
+DUMMY2/p287/p287_388.wav|77|My dad is all right.
+DUMMY2/p254/p254_388.wav|41|They really did a great job.
+DUMMY2/p263/p263_404.wav|39|He said the Parliament should be left to make its own decision.
+DUMMY2/p268/p268_025.wav|87|They might have asked, for goodness sake.
+DUMMY2/p234/p234_164.wav|3|Alice, the girl, was said by doctors to be in good condition.
+DUMMY2/p374/p374_385.wav|11|What's the best thing to do?
+DUMMY2/p230/p230_297.wav|35|The cause of the accident remained unclear.
+DUMMY2/p249/p249_335.wav|80|I must make that clear.
+DUMMY2/p240/p240_142.wav|93|Who would be right?
+DUMMY2/p298/p298_205.wav|68|I'm going with all three.
+DUMMY2/p284/p284_049.wav|16|Here's a clue.
+DUMMY2/p364/p364_143.wav|88|It is sponsored by The Herald.
+DUMMY2/p345/p345_117.wav|82|It is really good news.
+DUMMY2/p255/p255_224.wav|31|A final decision will be taken by First Minister Donald Dewar.
+DUMMY2/p268/p268_021.wav|87|The difference in the rainbow depends considerably upon the size of the drops, and the width of the colored band increases as the size of the drops increases.
+DUMMY2/p268/p268_366.wav|87|We can't give any figures for Edinburgh.
+DUMMY2/p303/p303_337.wav|44|Sentence was deferred for background reports.
+DUMMY2/p376/p376_186.wav|71|"I had a train to catch."
+DUMMY2/p255/p255_044.wav|31|I felt really good until Friday.
+DUMMY2/p277/p277_389.wav|89|The charity also has a project in Moscow in Russia.
+DUMMY2/p295/p295_092.wav|92|As a nation, we must become more active.
+DUMMY2/p305/p305_356.wav|54|The whole team was rubbish.
+DUMMY2/p317/p317_028.wav|97|It is so elusive and light.
+DUMMY2/p295/p295_261.wav|92|I think it'll be a great occasion.
+DUMMY2/p274/p274_386.wav|32|The pair are very much in love.)
+DUMMY2/p270/p270_112.wav|8|This is a step backwards.
+DUMMY2/p227/p227_237.wav|29|We can certainly build on this.
+DUMMY2/p280/p280_077.wav|52|I'd sign back up tomorrow if he was back on board.
+DUMMY2/p297/p297_201.wav|42|I think it will make a huge difference.
+DUMMY2/p297/p297_335.wav|42|His primary residence is Scotland.
+DUMMY2/p333/p333_179.wav|64|It is a job creation scheme.
+DUMMY2/p345/p345_325.wav|82|I am very happy with him.
+DUMMY2/p274/p274_408.wav|32|I was happy to be recognised by Mike Tyson.)
+DUMMY2/p259/p259_277.wav|7|You can feel at home in China.)
+DUMMY2/p245/p245_306.wav|59|We have waited a long time for this.
+DUMMY2/p225/p225_316.wav|101|It is beyond the government to deal with this tragedy.
+DUMMY2/p351/p351_419.wav|33|What's it for, after all?
+DUMMY2/p347/p347_332.wav|46|I know nothing about that.
+DUMMY2/p343/p343_163.wav|21|The latter way is my way.
+DUMMY2/p334/p334_271.wav|38|Charles Gordon, leader of the Glasgow City Council declined to comment.
+DUMMY2/p316/p316_093.wav|85|It's a much bigger problem.
+DUMMY2/p280/p280_003.wav|52|Six spoons of fresh snow peas, five thick slabs of blue cheese, and maybe a snack for her brother Bob.
+DUMMY2/p255/p255_339.wav|31|Today, we begin to answer that question.
+DUMMY2/p304/p304_408.wav|72|Like everything in Scotland, it takes time.
+DUMMY2/p283/p283_359.wav|95|The Premier League has been a huge success.
+DUMMY2/p313/p313_023.wav|76|If the red of the second bow falls upon the green of the first, the result is to give a bow with an abnormally wide yellow band, since red and green light when mixed form yellow.
+DUMMY2/p376/p376_245.wav|71|"We have got no money to go anywhere."
+DUMMY2/p238/p238_105.wav|37|Brian Wilson is a former Member to watch award winner.
+DUMMY2/p313/p313_316.wav|76|But then they scored their fourth.
+DUMMY2/p241/p241_155.wav|86|Was this element always there?
+DUMMY2/p301/p301_348.wav|91|He did not oppose the divorce.
+DUMMY2/p374/p374_349.wav|11|By hard work, is the answer.
+DUMMY2/p240/p240_055.wav|93|Rebuilding public transport was never going to happen overnight.
+DUMMY2/p297/p297_165.wav|42|Don't get me wrong.
+DUMMY2/p228/p228_199.wav|57|The appeal tribunal will give its decision at a later date.
+DUMMY2/p268/p268_269.wav|87|They could not match it.
+DUMMY2/p257/p257_094.wav|105|She told The Herald.
+DUMMY2/p281/p281_321.wav|36|He declined to reveal the offer price which was accepted.
+DUMMY2/p269/p269_222.wav|94|The council has proposed a temporary barrier to protect the monument.
+DUMMY2/p236/p236_057.wav|75|Over time, with patience and precision, the terrorists will be pursued.
+DUMMY2/p300/p300_338.wav|102|That decision was applauded by Williamson.
+DUMMY2/p238/p238_273.wav|37|Initial market reaction was close to euphoric.
+DUMMY2/p249/p249_094.wav|80|They lived for their children.
+DUMMY2/p306/p306_075.wav|12|She opens tonight in Glasgow, at the King's Theatre.
+DUMMY2/p284/p284_026.wav|16|We will be homeless.
+DUMMY2/p314/p314_216.wav|51|I looked forward to it.
+DUMMY2/p374/p374_097.wav|11|However, this is only the start.
+DUMMY2/p258/p258_388.wav|26|However, it is understood that offers of further payments are unlikely.
+DUMMY2/p282/p282_215.wav|83|Naturally enough, the letter in question was an E.
+DUMMY2/p239/p239_279.wav|48|Miller was every bit as happy.
+DUMMY2/p307/p307_183.wav|22|It has removed a bit of guilt.
+DUMMY2/p318/p318_032.wav|19|It was important to win the singles.
+DUMMY2/p274/p274_401.wav|32|He put some colour into Scottish history.)
+DUMMY2/p311/p311_045.wav|4|People acted too quickly.
+DUMMY2/p308/p308_161.wav|107|He will make an excellent chief inspector.
+DUMMY2/p247/p247_453.wav|14|It could cause a little bit of disruption.)
+DUMMY2/p294/p294_121.wav|104|We don't know what happened after.
+DUMMY2/p254/p254_343.wav|41|It is long gone.
+DUMMY2/p295/p295_312.wav|92|The quality of life is difficult for them.
+DUMMY2/p318/p318_084.wav|19|That's why the ministers resigned.
+DUMMY2/p255/p255_180.wav|31|Is Saddam a threat?
+DUMMY2/p241/p241_221.wav|86|You have to do your research.
+DUMMY2/p316/p316_163.wav|85|It would help to heal the wounds.
+DUMMY2/p273/p273_328.wav|56|Urgent action is needed to tackle this crisis.
+DUMMY2/p226/p226_068.wav|43|Scotland had great assets.
+DUMMY2/p245/p245_046.wav|59|Mexico City was a wonderful experience.
+DUMMY2/p233/p233_357.wav|84|Equity declined to comment.
+DUMMY2/p362/p362_409.wav|15|But it looks good for next year.
+DUMMY2/p300/p300_109.wav|102|There are some new buildings in there.
+DUMMY2/p260/p260_286.wav|81|This is a national crisis.
+DUMMY2/p260/p260_227.wav|81|The role was a knockout, but really difficult.
+DUMMY2/p335/p335_261.wav|49|Certainly, in terms of league position, we must be favourites.
+DUMMY2/p283/p283_083.wav|95|The girls are so lucky to be alive.
+DUMMY2/p284/p284_260.wav|16|I am just trying to do my job.
+DUMMY2/p311/p311_074.wav|4|Already the children are dying.
+DUMMY2/p278/p278_087.wav|10|It's not a holiday time for football players.
+DUMMY2/p299/p299_307.wav|58|This must have been severe.
+DUMMY2/p335/p335_406.wav|49|We are obviously disturbed by this case.
+DUMMY2/p233/p233_091.wav|84|However, we will obviously keep the matter under review.
+DUMMY2/p243/p243_188.wav|53|I didn't miss the big house at all.
+DUMMY2/p236/p236_457.wav|75|And she is very clear on this.
+DUMMY2/p263/p263_399.wav|39|Reaction from Scottish business leaders was mixed.
+DUMMY2/p279/p279_317.wav|25|My body is clearly capable.
+DUMMY2/p271/p271_042.wav|27|We will push.
+DUMMY2/p279/p279_232.wav|25|Jim Leighton will play in the Scottish Cup final.
+DUMMY2/p257/p257_303.wav|105|They wanted the club to make money.
+DUMMY2/p254/p254_059.wav|41|Life is good.
+DUMMY2/p275/p275_182.wav|40|Tony had arrived.
+DUMMY2/p345/p345_202.wav|82|But who is the killer?
+DUMMY2/p226/p226_118.wav|43|We have to look at everything before we make any final decision.
+DUMMY2/p361/p361_050.wav|79|It is the tip of the iceberg.
+DUMMY2/p262/p262_342.wav|45|I would miss him.
+DUMMY2/p297/p297_051.wav|42|I would like to stay with Rangers.
+DUMMY2/p351/p351_321.wav|33|However, it has had only a limited uptake.
+DUMMY2/p307/p307_390.wav|22|Even though the show is seriously exacting, physically demanding.
+DUMMY2/p295/p295_220.wav|92|The joint bid is still on course.
+DUMMY2/p339/p339_398.wav|18|My body is exhausted.
+DUMMY2/p280/p280_110.wav|52|Some young girls also came by last night.
+DUMMY2/p260/p260_178.wav|81|Four policemen were wounded.
+DUMMY2/p233/p233_280.wav|84|She has every confidence in his performance of his duties.
+DUMMY2/p263/p263_363.wav|39|The key player in this matter is now the Prime Minister.
+DUMMY2/p293/p293_148.wav|23|Sometimes you get them, sometimes you don't.
+DUMMY2/p360/p360_352.wav|60|Golf is not like that.
+DUMMY2/p300/p300_006.wav|102|When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow.
+DUMMY2/p361/p361_248.wav|79|However we must not be complacent.
+DUMMY2/p236/p236_198.wav|75|The report was welcomed by the Law Society of Scotland.
+DUMMY2/p363/p363_317.wav|6|Her concerns were not without foundation.
+DUMMY2/p237/p237_182.wav|61|One season, they might do well.
+DUMMY2/p275/p275_327.wav|40|Later in the day he was forced to explain his position.
+DUMMY2/p347/p347_352.wav|46|But, at the same time, they made you think about life.
+DUMMY2/p261/p261_331.wav|100|The whole matter is somewhat in the air.
+DUMMY2/p231/p231_052.wav|50|We have not given up hope.
+DUMMY2/p275/p275_082.wav|40|Florida is the pivotal state in the nation.
+DUMMY2/p339/p339_067.wav|18|And he's not a bigot.
+DUMMY2/p238/p238_058.wav|37|Have I really come to this ?
+DUMMY2/p334/p334_270.wav|38|Crucially, though, United were still alive.
+DUMMY2/p257/p257_217.wav|105|Naturally enough, the letter in question was an E.
+DUMMY2/p259/p259_360.wav|7|You may have a short memory.)
+DUMMY2/p316/p316_034.wav|85|There will always be problems on the way.
+DUMMY2/p247/p247_423.wav|14|That's been all around Europe with me.)
+DUMMY2/p225/p225_315.wav|101|The confidence is low, but it is a difficult thing to understand.
+DUMMY2/p294/p294_344.wav|104|Is a drug dealer?
+DUMMY2/p286/p286_065.wav|63|Until recently, she worked as a recruitment consultant in London.
+DUMMY2/p267/p267_181.wav|0|It is a common problem.
+DUMMY2/p335/p335_072.wav|49|Bin Laden was not mentioned.
+DUMMY2/p260/p260_344.wav|81|Two people were interviewed.
+DUMMY2/p239/p239_376.wav|48|It was launched in February last year.
+DUMMY2/p284/p284_279.wav|16|You feel very helpless.
+DUMMY2/p258/p258_259.wav|26|It will now relate to all public bodies in Scotland.
+DUMMY2/p323/p323_317.wav|34|This was not just incongruous.
+DUMMY2/p339/p339_122.wav|18|There could be a possible connection.
+DUMMY2/p333/p333_037.wav|64|They were urged to get themselves in order.
+DUMMY2/p282/p282_222.wav|83|I'd never seen a play about me.
+DUMMY2/p340/p340_266.wav|74|The people have been really friendly.
+DUMMY2/p294/p294_210.wav|104|This came as no great surprise to anyone.
+DUMMY2/p293/p293_282.wav|23|We very much regret that it has occurred.
+DUMMY2/p238/p238_386.wav|37|Why do it otherwise ?
+DUMMY2/p265/p265_102.wav|73|According to the criteria, he is qualified for Scotland.
+DUMMY2/p272/p272_046.wav|69|However, the decision has been welcomed by Scottish Enterprise officials.
+DUMMY2/p287/p287_247.wav|77|Persuaded to change his mind.
+DUMMY2/p317/p317_122.wav|97|Our home is your home.
+DUMMY2/p308/p308_313.wav|107|To all intents and purposes, he ran the show.
+DUMMY2/p345/p345_182.wav|82|You cannot enter the clubhouse.
+DUMMY2/p323/p323_057.wav|34|However this weekend it will be different.
+DUMMY2/p243/p243_127.wav|53|Now the life of this orchestra is very difficult.
+DUMMY2/p308/p308_234.wav|107|I'm pleased with the horse.
+DUMMY2/p298/p298_257.wav|68|They seem to be backing off from that.
+DUMMY2/p323/p323_388.wav|34|I always loved the lightning in the movies.
+DUMMY2/p282/p282_232.wav|83|The role was a knockout, but really difficult.
+DUMMY2/p257/p257_131.wav|105|Who will attend?
+DUMMY2/p293/p293_002.wav|23|Ask her to bring these things with her from the store.
+DUMMY2/p271/p271_441.wav|27|We were used.
+DUMMY2/p374/p374_330.wav|11|We certainly have to try something.
+DUMMY2/p274/p274_092.wav|32|It was clear on Thursday.)
+DUMMY2/p308/p308_049.wav|107|Happily we found it in the library.
+DUMMY2/p345/p345_019.wav|82|Since then physicists have found that it is not reflection, but refraction by the raindrops which causes the rainbows.
+DUMMY2/p341/p341_364.wav|66|What's happening to her?
+DUMMY2/p267/p267_374.wav|0|The marshall at the turn was great.
+DUMMY2/p261/p261_358.wav|100|There was some merit in that.
+DUMMY2/p306/p306_113.wav|12|Look at them after three days of rain.
+DUMMY2/p265/p265_172.wav|73|And she is a successful actor with three decades of experience.
+DUMMY2/p283/p283_287.wav|95|There is no change in principle from the White Paper.
+DUMMY2/p335/p335_314.wav|49|This time, for Rangers, it is certainly the latter.
+DUMMY2/p306/p306_278.wav|12|That, however, can only be achieved by constant investment.
+DUMMY2/p292/p292_174.wav|13|This is a very high price.
+DUMMY2/p293/p293_181.wav|23|However, it is believed they were from the Highlands.
+DUMMY2/p263/p263_337.wav|39|He has written to the minister after meetings on the island.
+DUMMY2/p254/p254_368.wav|41|But I managed.
+DUMMY2/p238/p238_246.wav|37|Then we will face the Danish champions.
+DUMMY2/p304/p304_081.wav|72|They had failed to explode.
+DUMMY2/p336/p336_351.wav|98|I am not a happy man.
+DUMMY2/p334/p334_021.wav|38|The difference in the rainbow depends considerably upon the size of the drops, and the width of the colored band increases as the size of the drops increases.
+DUMMY2/p335/p335_093.wav|49|We wanted it left for a wee while.
+DUMMY2/p247/p247_311.wav|14|The effect was almost magical.)
+DUMMY2/p236/p236_382.wav|75|We have to create a climate of trust, which is not easy.
+DUMMY2/p360/p360_070.wav|60|His presence was very important.
+DUMMY2/p274/p274_262.wav|32|He will go a long way.)
+DUMMY2/p283/p283_267.wav|95|She died in middle age.
+DUMMY2/p314/p314_255.wav|51|Tourism is a vital industry for Scotland.
+DUMMY2/p311/p311_223.wav|4|I think he's the favourite, no question.
+DUMMY2/p347/p347_345.wav|46|Our future was his future.
+DUMMY2/p281/p281_439.wav|36|It is never easy to win an Olympic gold medal.
+DUMMY2/p329/p329_364.wav|103|We didn't enjoy the first game, but today they were excellent.
+DUMMY2/p226/p226_082.wav|43|It is a terrible place.
+DUMMY2/p299/p299_357.wav|58|Nobody ever gets to see them.
+DUMMY2/p241/p241_336.wav|86|I'm so pleased the show has won a prize.
+DUMMY2/p284/p284_135.wav|16|I don't know the full story.
+DUMMY2/p295/p295_267.wav|92|However, the groups denied the claims.
+DUMMY2/p326/p326_108.wav|28|I just saw them for a few minutes.
+DUMMY2/p260/p260_111.wav|81|According to the criteria, he is qualified for Scotland.
+DUMMY2/p340/p340_055.wav|74|We did something about it.
+DUMMY2/p270/p270_455.wav|8|This is the stuff of live music.
+DUMMY2/p310/p310_192.wav|17|It's been very exciting, very challenging, and a privilege.
+DUMMY2/p281/p281_130.wav|36|There were no serious injuries.
+DUMMY2/p260/p260_168.wav|81|One season, they might do well.
+DUMMY2/p271/p271_373.wav|27|Washington is consumed by the crisis.
+DUMMY2/p268/p268_200.wav|87|But he admitted he could not speak for the new owner.
+DUMMY2/p225/p225_121.wav|101|You get a lot for your money.
+DUMMY2/p292/p292_067.wav|13|We tend to come good at the end.
+DUMMY2/p323/p323_352.wav|34|I'm trying to stay open on that.
+DUMMY2/p278/p278_394.wav|10|There isn't the seriousness of other businesses.
+DUMMY2/p266/p266_212.wav|20|The workers do not want to read about their futures in newspapers.
+DUMMY2/p243/p243_071.wav|53|It turned me against the whole system.
+DUMMY2/p362/p362_017.wav|15|Others have tried to explain the phenomenon physically.
+DUMMY2/p246/p246_108.wav|5|I had some time with Aston Villa.
+DUMMY2/p245/p245_260.wav|59|It is set in Paris.
+DUMMY2/p232/p232_379.wav|96|They have not done so this season so far.
+DUMMY2/p269/p269_242.wav|94|A succession of managers in the opera company resigned.
+DUMMY2/p271/p271_037.wav|27|It was clear.
+DUMMY2/p304/p304_269.wav|72|I needed a little man in the crowd.
+DUMMY2/p269/p269_184.wav|94|The conference is a chance for members to contribute to the debate.
+DUMMY2/p285/p285_102.wav|2|For these people, the ruling is very welcome.
+DUMMY2/p259/p259_181.wav|7|Phase one was a shambles.)
+DUMMY2/p251/p251_139.wav|9|I had decided to quit the show.
+DUMMY2/p279/p279_238.wav|25|Sadly, it sounds as if it is.
+DUMMY2/p292/p292_290.wav|13|He already had had complaints.
+DUMMY2/p269/p269_078.wav|94|He is now resident in England.
+DUMMY2/p313/p313_048.wav|76|We were very much a happy family.
+DUMMY2/p323/p323_141.wav|34|What exactly is your job?
+DUMMY2/p288/p288_016.wav|47|The Norsemen considered the rainbow as a bridge over which the gods passed from earth to their home in the sky.
+DUMMY2/p341/p341_059.wav|66|I know when my time is, it doesn't bother me.
+DUMMY2/p330/p330_145.wav|1|The results are sometimes contentious.
+DUMMY2/p237/p237_138.wav|61|They took a risk.
+DUMMY2/p347/p347_210.wav|46|They might also be reviewed by their colleagues.
+DUMMY2/p345/p345_090.wav|82|That, though, is an old story.
+DUMMY2/p335/p335_178.wav|49|Market research indicates that this is not feasible.
+DUMMY2/p341/p341_021.wav|66|The difference in the rainbow depends considerably upon the size of the drops, and the width of the colored band increases as the size of the drops increases.
+DUMMY2/p286/p286_272.wav|63|Tourism is a vital industry for Scotland.
+DUMMY2/p228/p228_145.wav|57|Wallace was a prisoner of war.
+DUMMY2/p345/p345_044.wav|82|Who wants to be a Millionaire?
+DUMMY2/p361/p361_424.wav|79|But what took them so long?
+DUMMY2/p267/p267_227.wav|0|William Hague delighted his party.
+DUMMY2/p311/p311_348.wav|4|He added that he felt undermined.
+DUMMY2/p314/p314_218.wav|51|I'd come back from London.
+DUMMY2/p286/p286_159.wav|63|There's only one team in Ayrshire.
+DUMMY2/p269/p269_155.wav|94|It would be a last resort.
+DUMMY2/p278/p278_209.wav|10|I am very realistic about these things.
+DUMMY2/p374/p374_161.wav|11|It is a step up.
+DUMMY2/p330/p330_122.wav|1|Some people still think she should be English.
+DUMMY2/p285/p285_084.wav|2|This is the start of our season.
+DUMMY2/p303/p303_033.wav|44|I think they should have more respect.
+DUMMY2/p237/p237_307.wav|61|Graeme was prepared.
+DUMMY2/p361/p361_149.wav|79|There are no second chances.
+DUMMY2/p310/p310_151.wav|17|And that was the adults.
+DUMMY2/p363/p363_185.wav|6|They were not consulted.
+DUMMY2/p301/p301_325.wav|91|Tourism is a vital industry for Scotland.
+DUMMY2/p244/p244_399.wav|78|I want this one to be different.
+DUMMY2/p295/p295_373.wav|92|The voices told me to do it.
+DUMMY2/p336/p336_301.wav|98|It was complete nonsense.
+DUMMY2/p264/p264_257.wav|65|We had a right to expect those days were over.)
+DUMMY2/p247/p247_269.wav|14|I didn't see the point.)
+DUMMY2/p273/p273_214.wav|56|He later paid a tribute to his opponent.
+DUMMY2/p297/p297_028.wav|42|Appointments should be made on merit.
+DUMMY2/p243/p243_387.wav|53|The cost of this failure will not hit the Commission.
+DUMMY2/p243/p243_120.wav|53|It is the right package for Scotland.
+DUMMY2/p256/p256_087.wav|90|Last week, he was taken into hospital.
+DUMMY2/p351/p351_086.wav|33|Friday night was a pretty good night.
+DUMMY2/p270/p270_238.wav|8|His background is firmly in venture capital.
+DUMMY2/p247/p247_153.wav|14|Does the name matter ?)
+DUMMY2/p225/p225_062.wav|101|I was very pleased with them today, though.
+DUMMY2/p270/p270_446.wav|8|They had learned from the lessons of the first game.
+DUMMY2/p318/p318_216.wav|19|We are still paying the price for that.
+DUMMY2/p277/p277_305.wav|89|We are a peaceful people.
+DUMMY2/p261/p261_270.wav|100|What was the matter for concern ?
+DUMMY2/p286/p286_094.wav|63|So what is the campaign about ?
+DUMMY2/p254/p254_301.wav|41|The court was shown a video of the house on that day.
+DUMMY2/p313/p313_085.wav|76|He has lost confidence and weight.
+DUMMY2/p312/p312_205.wav|62|They told him to go to drama school.
+DUMMY2/p251/p251_313.wav|9|These figures are truly awful.
+DUMMY2/p282/p282_158.wav|83|Words were not required.
+DUMMY2/p263/p263_402.wav|39|He replied that it was a dilemma.
+DUMMY2/p229/p229_173.wav|67|A Labour insider said it was far too close to call.
+DUMMY2/p293/p293_190.wav|23|The fire was falling from the sky.
+DUMMY2/p272/p272_224.wav|69|Half of young people had had contact with the police.
+DUMMY2/p312/p312_260.wav|62|It has to be long-term commitment.
+DUMMY2/p314/p314_341.wav|51|She had been sexually assaulted.
+DUMMY2/p323/p323_277.wav|34|One, the Acute Services Trust, will run the general hospital services.
+DUMMY2/p258/p258_281.wav|26|He has a wealth of experience.
+DUMMY2/p241/p241_257.wav|86|This court has made an order which has not been observed.
+DUMMY2/p374/p374_167.wav|11|I'd never given up on myself.
+DUMMY2/p255/p255_068.wav|31|There could be a way back.
+DUMMY2/p258/p258_025.wav|26|Johnson was pretty low.
+DUMMY2/p314/p314_278.wav|51|Birthdays are wonderful and terrible things.
+DUMMY2/p301/p301_356.wav|91|We are now setting about finding them.
+DUMMY2/p317/p317_319.wav|97|So he is open to ideas.
+DUMMY2/p246/p246_275.wav|5|She has fallen in love with Scotland, however.
+DUMMY2/p248/p248_005.wav|99|She can scoop these things into three red bags, and we will go meet her Wednesday at the train station.
+DUMMY2/p323/p323_205.wav|34|So other options had to be explored.
+DUMMY2/p299/p299_342.wav|58|The urgency is real.
+DUMMY2/p276/p276_362.wav|106|Walker plans to return indoors.
+DUMMY2/p329/p329_258.wav|103|In the event, it proved a largely uplifting experience.
+DUMMY2/p302/p302_037.wav|30|We used to keep our business rates.
+DUMMY2/p227/p227_370.wav|29|We need to be prepared.
+DUMMY2/p240/p240_250.wav|93|I was at the British Olympic Medical Centre, on Friday.
+DUMMY2/p305/p305_231.wav|54|I think, overall, they were the best team in the tournament.
+DUMMY2/p254/p254_009.wav|41|There is , according to legend, a boiling pot of gold at one end.
+DUMMY2/p300/p300_364.wav|102|It's an hour of the same response.
+DUMMY2/p267/p267_289.wav|0|Do I think about them often ?
+DUMMY2/p247/p247_337.wav|14|We will listen to any suggestion.)
+DUMMY2/p268/p268_246.wav|87|This wasn't just a big crowd.
+DUMMY2/p234/p234_079.wav|3|However, he stressed that no decision had yet been made.
+DUMMY2/p305/p305_174.wav|54|We begin, as ever, with a reminder of the end.
+DUMMY2/p333/p333_041.wav|64|We have nothing to say about that.
+DUMMY2/p334/p334_055.wav|38|It is something that we will put right.
+DUMMY2/p258/p258_213.wav|26|His third goal was superb.
+DUMMY2/p226/p226_261.wav|43|He has already suffered a good deal of unwanted attention.
+DUMMY2/p361/p361_210.wav|79|Their loss is heartbreaking.
+DUMMY2/p244/p244_075.wav|78|This time, it might be for real.
+DUMMY2/p279/p279_256.wav|25|That was a bonus, but it was not the main objective.
+DUMMY2/p261/p261_311.wav|100|He will address the nation this evening.
+DUMMY2/p269/p269_287.wav|94|They were too hard.
+DUMMY2/p229/p229_126.wav|67|Who would be a referee ?
+DUMMY2/p326/p326_146.wav|28|It changed my life.
+DUMMY2/p268/p268_331.wav|87|We have an election in eight days.
+DUMMY2/p282/p282_315.wav|83|I came into this world with nothing.
+DUMMY2/p261/p261_249.wav|100|I was just a kid.
+DUMMY2/p293/p293_284.wav|23|The BBC was a disgrace.
+DUMMY2/p257/p257_055.wav|105|Next league matches Celtic.
+DUMMY2/p345/p345_146.wav|82|For some, it was more painful than others.
+DUMMY2/p272/p272_319.wav|69|Is that an issue?
+DUMMY2/p232/p232_107.wav|96|While they went on holiday, we got the contract.
+DUMMY2/p376/p376_248.wav|71|"The car was just there."
+DUMMY2/p351/p351_383.wav|33|He was the architect.
+DUMMY2/p270/p270_174.wav|8|There is no signature on this document.
+DUMMY2/p300/p300_346.wav|102|English is the language of pop music.
+DUMMY2/p376/p376_272.wav|71|"It's so awful."
+DUMMY2/p251/p251_114.wav|9|It's also important that they are not seen as a soft option.
+DUMMY2/p268/p268_112.wav|87|We have thought about doing lots of things.
+DUMMY2/p286/p286_161.wav|63|Behind him was his brother.
+DUMMY2/p306/p306_313.wav|12|Part of Johnny was found some days after.
+DUMMY2/p259/p259_261.wav|7|Italy is a beautiful place.)
+DUMMY2/p333/p333_033.wav|64|So now this series has had its day.
+DUMMY2/p292/p292_104.wav|13|It was, for me, like a week in heaven.
+DUMMY2/p376/p376_161.wav|71|"There's a pause."
+DUMMY2/p280/p280_006.wav|52|When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow.
+DUMMY2/p336/p336_125.wav|98|They haven't been thought through.
+DUMMY2/p275/p275_180.wav|40|He deserved the win.
+DUMMY2/p257/p257_245.wav|105|I will not allow the destruction of the Scottish fishing industry.
+DUMMY2/p278/p278_096.wav|10|We created so many chances.
+DUMMY2/p272/p272_153.wav|69|But he stressed that the partnership is not a construction company.
+DUMMY2/p318/p318_228.wav|19|And then a funny thing happened.
+DUMMY2/p246/p246_078.wav|5|I first met him last summer.
+DUMMY2/p364/p364_015.wav|88|The Greeks used to imagine that it was a sign from the gods to foretell war or heavy rain.
+DUMMY2/p268/p268_179.wav|87|Emergency services were also on stand-by outside.
+DUMMY2/p312/p312_411.wav|62|It was chaotic and frightening.
+DUMMY2/p312/p312_035.wav|62|It was quite distressing for the crew.
+DUMMY2/p264/p264_030.wav|65|Do not give your details to anyone.)
+DUMMY2/p239/p239_118.wav|48|We feel very comfortable in this international environment.
+DUMMY2/p336/p336_176.wav|98|However, it does not tell the full story.
+DUMMY2/p323/p323_409.wav|34|Ferguson had a most productive afternoon.
+DUMMY2/p336/p336_186.wav|98|However, planners should be taking the lead.
+DUMMY2/p313/p313_167.wav|76|It will not be easy for him.
+DUMMY2/p271/p271_072.wav|27|He becomes the new Minister for Sport and Culture.
+DUMMY2/p293/p293_336.wav|23|Well, until recently he didn't think so.
+DUMMY2/p345/p345_244.wav|82|I get on him, he gets on me.
+DUMMY2/p330/p330_212.wav|1|I'd like to take the plunge.
+DUMMY2/p318/p318_409.wav|19|He deserves a top team.
+DUMMY2/p238/p238_351.wav|37|So, did she meet him ?
+DUMMY2/p374/p374_370.wav|11|I can't believe the buzz.
+DUMMY2/p253/p253_293.wav|70|One was a lawyer.
+DUMMY2/p247/p247_171.wav|14|The point is raised again that evening at the Assembly Rooms.)
+DUMMY2/p364/p364_081.wav|88|That would be a big mistake.
+DUMMY2/p374/p374_151.wav|11|They may differ on other issues.
+DUMMY2/p312/p312_353.wav|62|Of course it's a bunch of trouble.
+DUMMY2/p237/p237_149.wav|61|She died at her home.
+DUMMY2/p264/p264_219.wav|65|It was a piece of art.)
+DUMMY2/p230/p230_361.wav|35|The announcement was made after inquiries from a national newspaper.
+DUMMY2/p273/p273_133.wav|56|The weather forecast isn't good.
+DUMMY2/p362/p362_151.wav|15|I have nothing to regret.
+DUMMY2/p294/p294_397.wav|104|Rangers didn't turn up, by the way.
+DUMMY2/p229/p229_216.wav|67|It was worth a photograph.
+DUMMY2/p311/p311_122.wav|4|But once again it was not converted.
+DUMMY2/p248/p248_191.wav|99|It was an odd affair, in many respects.
+DUMMY2/p227/p227_010.wav|29|People look, but no one ever finds it.
+DUMMY2/p287/p287_054.wav|77|In time, the First Minister will grow in stature.
+DUMMY2/p263/p263_302.wav|39|I have lost all confidence.
+DUMMY2/p311/p311_323.wav|4|It will make a huge difference.
+DUMMY2/p263/p263_246.wav|39|That will be the criteria for the future.
+DUMMY2/p336/p336_133.wav|98|It has been declared.
+DUMMY2/p229/p229_284.wav|67|In fact, he was talking about the survival business.
+DUMMY2/p283/p283_312.wav|95|It further expressed his defiance.
+DUMMY2/p306/p306_156.wav|12|This is a foolish idea.
+DUMMY2/p263/p263_441.wav|39|You have got to be careful.
+DUMMY2/p316/p316_377.wav|85|So the Government will be damaged.
+DUMMY2/p374/p374_066.wav|11|We were very much a happy family.
+DUMMY2/p236/p236_005.wav|75|She can scoop these things into three red bags, and we will go meet her Wednesday at the train station.
+DUMMY2/p275/p275_311.wav|40|I will not allow the destruction of the Scottish fishing industry.
+DUMMY2/p247/p247_195.wav|14|It shows the strength of the roots.)
+DUMMY2/p271/p271_410.wav|27|He scored a touchdown.
+DUMMY2/p247/p247_114.wav|14|The arrangement will avoid any conflicts of interest.)
+DUMMY2/p281/p281_255.wav|36|The minister is the engineer.
+DUMMY2/p329/p329_071.wav|103|Europe has lost its way under the socialists.
+DUMMY2/p226/p226_079.wav|43|Neither it is.
+DUMMY2/p360/p360_066.wav|60|Only the bomber was killed.
+DUMMY2/p274/p274_405.wav|32|The members have voted against it.)
+DUMMY2/p259/p259_011.wav|7|When a man looks for something beyond his reach, his friends say he is looking for the pot of gold at the end of the rainbow. )
+DUMMY2/p275/p275_416.wav|40|He is to appeal.
+DUMMY2/p307/p307_423.wav|22|Slowly, however, a picture is emerging in Scotland.
+DUMMY2/p285/p285_157.wav|2|Well, he should know.
+DUMMY2/p288/p288_038.wav|47|I was scared.
+DUMMY2/p308/p308_315.wav|107|It's like the Russians.
+DUMMY2/p258/p258_056.wav|26|And if he hadn't become a musician?
+DUMMY2/p274/p274_321.wav|32|What are they for ?)
+DUMMY2/p276/p276_061.wav|106|They desperately want some stability.
+DUMMY2/p243/p243_320.wav|53|The team spirit that was here last year is again good.
+DUMMY2/p232/p232_023.wav|96|If the red of the second bow falls upon the green of the first, the result is to give a bow with an abnormally wide yellow band, since red and green light when mixed form yellow.
+DUMMY2/p253/p253_327.wav|70|That's not eviction because he is not a tenant.
+DUMMY2/p285/p285_053.wav|2|This obsession wasn't just contained within the world of the losers.
+DUMMY2/p345/p345_152.wav|82|I still think he will win.
+DUMMY2/p303/p303_319.wav|44|They had previously been on five-day notice.
+DUMMY2/p270/p270_296.wav|8|Authorities have to recognise the risk of paedophiles.
+DUMMY2/p237/p237_150.wav|61|Is that Titanic ?
+DUMMY2/p248/p248_253.wav|99|At the end of the day, one has to be careful.
+DUMMY2/p279/p279_283.wav|25|You've got to have both sides.
+DUMMY2/p311/p311_253.wav|4|She has insisted she did nothing wrong.
+DUMMY2/p362/p362_121.wav|15|It's always the way.
+DUMMY2/p297/p297_087.wav|42|That's how she wants to remember him.
+DUMMY2/p283/p283_458.wav|95|She came to the Highland Show.
+DUMMY2/p273/p273_247.wav|56|Who was she ?
+DUMMY2/p258/p258_293.wav|26|It's an issue that will have to be tackled.
+DUMMY2/p333/p333_058.wav|64|The overall effect is impressive, but distancing.
+DUMMY2/p251/p251_045.wav|9|I feel pretty good.
+DUMMY2/p318/p318_051.wav|19|Their conditions are described as serious but stable.
+DUMMY2/p333/p333_014.wav|64|To the Hebrews it was a token that there would be no more universal floods.
+DUMMY2/p271/p271_270.wav|27|You take a risk.
+DUMMY2/p345/p345_173.wav|82|It was like a kick in the belly.
+DUMMY2/p240/p240_220.wav|93|He said that healthy eating was high on the council agenda.
+DUMMY2/p333/p333_030.wav|64|All would be under threat.
+DUMMY2/p306/p306_292.wav|12|Everyone knew where they were.
+DUMMY2/p263/p263_092.wav|39|The first few days will determine whether she can survive.
+DUMMY2/p374/p374_157.wav|11|Scott and Emily were so happy.
+DUMMY2/p286/p286_162.wav|63|She had gone to the Catholic school.
+DUMMY2/p238/p238_207.wav|37|There was a fine line to tread.
+DUMMY2/p249/p249_235.wav|80|Dewar is certainly under attack from within his own party.
+DUMMY2/p351/p351_163.wav|33|The other is the existence of male colleagues.
+DUMMY2/p254/p254_064.wav|41|We were surprised to see the photograph.
+DUMMY2/p253/p253_322.wav|70|The figures are bad, but not that bad.
+DUMMY2/p251/p251_337.wav|9|It's not long enough.
+DUMMY2/p251/p251_182.wav|9|Four policemen were wounded.
+DUMMY2/p334/p334_203.wav|38|The children, were not thought to be so seriously hurt.
+DUMMY2/p273/p273_251.wav|56|Washington is consumed by the crisis.
+DUMMY2/p302/p302_185.wav|30|Reviving the Scottish Open is one option.
+DUMMY2/p264/p264_227.wav|65|I was in daily contact.)
+DUMMY2/p294/p294_418.wav|104|Or, rather, it isn't.
+DUMMY2/p288/p288_307.wav|47|I was concerned with the way they tried to justify his actions.
+DUMMY2/p323/p323_001.wav|34|Please call Stella.
+DUMMY2/p254/p254_402.wav|41|The car was just there.
+DUMMY2/p318/p318_039.wav|19|It helped to get me noticed.
+DUMMY2/p276/p276_002.wav|106|Ask her to bring these things with her from the store.
+DUMMY2/p283/p283_043.wav|95|There's been a wake up call for the sector this week.
+DUMMY2/p343/p343_115.wav|21|I had no intention of misleading anyone.
+DUMMY2/p228/p228_371.wav|57|It became a national network.
+DUMMY2/p343/p343_256.wav|21|It was totally out of the blue.
+DUMMY2/p271/p271_150.wav|27|So I got a blood test.
+DUMMY2/p228/p228_146.wav|57|I think he's the favourite, no question.
+DUMMY2/p292/p292_220.wav|13|The observer saw no evidence of fighting.
+DUMMY2/p232/p232_216.wav|96|He would discuss the peace process in Northern Ireland.
+DUMMY2/p244/p244_064.wav|78|We felt it was sufficient.
+DUMMY2/p341/p341_315.wav|66|We're all in a state of shock.
+DUMMY2/p270/p270_406.wav|8|It's too close to call.
+DUMMY2/p277/p277_023.wav|89|If the red of the second bow falls upon the green of the first, the result is to give a bow with an abnormally wide yellow band, since red and green light when mixed form yellow.
+DUMMY2/p313/p313_230.wav|76|She asked us a lot of questions.
+DUMMY2/p334/p334_247.wav|38|So, the question is, is it any good?
+DUMMY2/p333/p333_225.wav|64|How many cases have there been?
+DUMMY2/p250/p250_362.wav|24|Is there a waiting list ?
+DUMMY2/p285/p285_260.wav|2|There's not much money in cycling.
+DUMMY2/p292/p292_331.wav|13|The company's in good shape.
+DUMMY2/p317/p317_124.wav|97|There was no confusion over the second.
+DUMMY2/p303/p303_127.wav|44|After that date, the numbers should stabilise or fall.
+DUMMY2/p254/p254_035.wav|41|Then, suddenly, they weren't.
+DUMMY2/p251/p251_355.wav|9|I'm very lucky.
+DUMMY2/p228/p228_072.wav|57|Try to save us.
+DUMMY2/p347/p347_078.wav|46|We cannot ask for them back.
+DUMMY2/p261/p261_320.wav|100|It was a Budget for jobs for Scotland.
+DUMMY2/p341/p341_011.wav|66|When a man looks for something beyond his reach, his friends say he is looking for the pot of gold at the end of the rainbow.
+DUMMY2/p263/p263_252.wav|39|Is it in the right place ?
+DUMMY2/p294/p294_191.wav|104|It is becoming a bit of a habit.
+DUMMY2/p283/p283_269.wav|95|was everything done to save people ?
+DUMMY2/p254/p254_147.wav|41|It is difficult for Ali.
+DUMMY2/p273/p273_382.wav|56|It benefits the whole family.
+DUMMY2/p288/p288_369.wav|47|Who was the mystery MP?
+DUMMY2/p263/p263_176.wav|39|Worry can have that effect on some citizens.
+DUMMY2/p279/p279_037.wav|25|They're just different.
+DUMMY2/p241/p241_134.wav|86|Nobody will know the feeling of the branches until October.
+DUMMY2/p313/p313_356.wav|76|You've obviously got an answer to it.
+DUMMY2/p292/p292_276.wav|13|I'll tell you honestly.
+DUMMY2/p227/p227_070.wav|29|Then followed a bout of flu.
+DUMMY2/p232/p232_205.wav|96|It's a mixture of everything.
+DUMMY2/p250/p250_434.wav|24|The compromise is entirely on the arrival at that position.
+DUMMY2/p236/p236_175.wav|75|What are they for ?
+DUMMY2/p229/p229_059.wav|67|My mother is a widow.
+DUMMY2/p285/p285_024.wav|2|This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue.
+DUMMY2/p308/p308_335.wav|107|Military chiefs were playing it straight.
+DUMMY2/p363/p363_401.wav|6|We are about to have our own Parliament.
+DUMMY2/p227/p227_210.wav|29|This is a holy place.
+DUMMY2/p227/p227_278.wav|29|That could be in place by next year.
+DUMMY2/p232/p232_176.wav|96|First and foremost, the game is entirely different.
+DUMMY2/p314/p314_384.wav|51|I am not obsessed with sex.
+DUMMY2/p295/p295_299.wav|92|Could they perhaps be related?
+DUMMY2/p241/p241_208.wav|86|I don't want to use it.
+DUMMY2/p351/p351_132.wav|33|But, still, it wasn't working.
+DUMMY2/p280/p280_293.wav|52|They first met during a Step in London.
+DUMMY2/p329/p329_344.wav|103|Our house was very small.
+DUMMY2/p284/p284_315.wav|16|and that another interested body should have an option to buy.
+DUMMY2/p274/p274_194.wav|32|Treasury spokesman Malcolm Bruce is also considered a potential contender.)
+DUMMY2/p376/p376_111.wav|71|"Who would be a referee?"
+DUMMY2/p280/p280_016.wav|52|The Norsemen considered the rainbow as a bridge over which the gods passed from earth to their home in the sky.
+DUMMY2/p301/p301_368.wav|91|If they have City backing, what is the influence?
+DUMMY2/p251/p251_203.wav|9|The conference is the first test.
+DUMMY2/p276/p276_419.wav|106|Everything has its place and purpose.
+DUMMY2/p326/p326_240.wav|28|The Allies intend to maintain the average.
+DUMMY2/p313/p313_256.wav|76|The reason is partly because of tradition.
+DUMMY2/p340/p340_168.wav|74|They did a very good job.
+DUMMY2/p303/p303_111.wav|44|Only the scale of change differed.
+DUMMY2/p241/p241_323.wav|86|They also recovered a picture of Osama bin Laden.
+DUMMY2/p294/p294_361.wav|104|People come to see the Highlands.
+DUMMY2/p287/p287_060.wav|77|Do I have a favourite ?
+DUMMY2/p265/p265_321.wav|73|It's very good.
+DUMMY2/p312/p312_103.wav|62|There may be some resistance.
+DUMMY2/p334/p334_406.wav|38|This seems like a very good idea.
+DUMMY2/p347/p347_164.wav|46|We were very much a happy family.
+DUMMY2/p247/p247_297.wav|14|A revival is under way.)
+DUMMY2/p262/p262_028.wav|45|Their courage, and their honesty, should be respected.
+DUMMY2/p250/p250_384.wav|24|They will fight for everything.
+DUMMY2/p347/p347_390.wav|46|But there's no eye contact.
+DUMMY2/p300/p300_255.wav|102|The site has been fully recorded and surveyed.
+DUMMY2/p318/p318_085.wav|19|He has lost confidence and weight.
+DUMMY2/p258/p258_046.wav|26|He looks like an Afghan.
+DUMMY2/p228/p228_231.wav|57|He is severe.
+DUMMY2/p267/p267_140.wav|0|It was deployed in the Gulf War.
+DUMMY2/p345/p345_102.wav|82|There's something about being cut off.
+DUMMY2/p339/p339_377.wav|18|This is a completely new experience for me.
+DUMMY2/p279/p279_246.wav|25|It is clear that we must learn the lessons from this outbreak.
+DUMMY2/p237/p237_263.wav|61|They are different types.
+DUMMY2/p305/p305_066.wav|54|I've had to take time off work today.
+DUMMY2/p245/p245_049.wav|59|The boy is no longer with us.
+DUMMY2/p267/p267_342.wav|0|It is a strong case.
+DUMMY2/p351/p351_139.wav|33|There has been no delay on government orders.
+DUMMY2/p271/p271_452.wav|27|It is bizarre.
+DUMMY2/p261/p261_226.wav|100|It was a day for records.
+DUMMY2/p311/p311_294.wav|4|So there is a very real dilemma.
+DUMMY2/p227/p227_127.wav|29|Any success would have been an improvement.
+DUMMY2/p264/p264_087.wav|65|The circumstances have changed since last year.)
+DUMMY2/p360/p360_221.wav|60|That has not changed.
+DUMMY2/p260/p260_006.wav|81|When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow.
+DUMMY2/p292/p292_351.wav|13|Our destiny is in our own hands.
+DUMMY2/p343/p343_046.wav|21|He died the following year.
+DUMMY2/p280/p280_182.wav|52|She is believed to be in South Africa.
+DUMMY2/p304/p304_155.wav|72|Things are looking pretty positive at the moment.
+DUMMY2/p229/p229_038.wav|67|In both cases, I suffered a fiasco.
+DUMMY2/p277/p277_418.wav|89|It is legally binding.
+DUMMY2/p269/p269_377.wav|94|The final decision was between Scotland and the Republic of Ireland.
+DUMMY2/p236/p236_347.wav|75|We think a lot of Allan McGregor.
+DUMMY2/p268/p268_109.wav|87|Halifax has also been mentioned as a likely predator.
+DUMMY2/p261/p261_305.wav|100|The cause of the accident remained unclear.
+DUMMY2/p307/p307_261.wav|22|We're not travel agents.
+DUMMY2/p281/p281_227.wav|36|HARRY Potter has lost his magic.
+DUMMY2/p274/p274_461.wav|32|The boys are mentally focused.)
+DUMMY2/p232/p232_245.wav|96|Broke the birdie record.
+DUMMY2/p264/p264_256.wav|65|We have brought the staff back on board.)
+DUMMY2/p238/p238_122.wav|37|Is there a waiting list ?
+DUMMY2/p256/p256_049.wav|90|It is difficult for Ali.
+DUMMY2/p282/p282_269.wav|83|The decision was announced at its annual conference in Dunfermline.
+DUMMY2/p279/p279_154.wav|25|We also enjoyed a lot of support.
+DUMMY2/p300/p300_135.wav|102|However, details have yet to be worked out.
+DUMMY2/p364/p364_283.wav|88|It is a victory to that extent.
+DUMMY2/p308/p308_243.wav|107|I had a choice, and didn't have to do that.
+DUMMY2/p304/p304_207.wav|72|I love the moment of being first.
+DUMMY2/p229/p229_224.wav|67|I had decided to quit the show.
+DUMMY2/p268/p268_334.wav|87|Walker plans to return indoors.
+DUMMY2/p300/p300_082.wav|102|This is truly field of miracles.
+DUMMY2/p263/p263_229.wav|39|It was located on the remote control.
+DUMMY2/p244/p244_116.wav|78|In the end we have to take a stand.
+DUMMY2/p245/p245_241.wav|59|They are different types.
+DUMMY2/p362/p362_234.wav|15|They are not suitable.
+DUMMY2/p281/p281_424.wav|36|My aim is a top six finish.
+DUMMY2/p306/p306_322.wav|12|Technically, it was a very good performance by Scotland.
+DUMMY2/p341/p341_097.wav|66|We are seeing a Government in a hurry.
+DUMMY2/p229/p229_373.wav|67|For one veteran, the memories remain vivid.
+DUMMY2/p250/p250_445.wav|24|Everything in golf is a balance.
+DUMMY2/p292/p292_086.wav|13|I am constantly changing my mind.
+DUMMY2/p237/p237_243.wav|61|It's a dead end.
+DUMMY2/p248/p248_182.wav|99|I've been there.
+DUMMY2/p340/p340_341.wav|74|She is deeply distressed.
+DUMMY2/p246/p246_084.wav|5|They lived for their children.
+DUMMY2/p297/p297_190.wav|42|There's not much money in cycling.
+DUMMY2/p316/p316_005.wav|85|She can scoop these things into three red bags, and we will go meet her Wednesday at the train station.
+DUMMY2/p374/p374_174.wav|11|The statement was a lie.
+DUMMY2/p257/p257_099.wav|105|They were under a lot of pressure from the other clubs.
+DUMMY2/p299/p299_330.wav|58|It is the logical extension of audio description.
+DUMMY2/p302/p302_045.wav|30|Whatever the final decision, one thing is certain.
+DUMMY2/p351/p351_188.wav|33|There will be no change in government.
+DUMMY2/p376/p376_004.wav|71|"We also need a small plastic snake and a big toy frog for the kids.  "
+DUMMY2/p294/p294_139.wav|104|The objective was achieved.
+DUMMY2/p292/p292_158.wav|13|We should have gone solo.
+DUMMY2/p329/p329_263.wav|103|And a film maker was born.
+DUMMY2/p241/p241_120.wav|86|An announcement on his replacement is expected within three weeks.
+DUMMY2/p330/p330_128.wav|1|It's much more dynamic.
+DUMMY2/p226/p226_071.wav|43|I am pleased with the result, as it was a possible upset.
+DUMMY2/p345/p345_015.wav|82|The Greeks used to imagine that it was a sign from the gods to foretell war or heavy rain.
+DUMMY2/p227/p227_128.wav|29|On Friday, the headteacher and deputy headteacher appeared at the door.
+DUMMY2/p318/p318_024.wav|19|This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue.
+DUMMY2/p305/p305_221.wav|54|They have enough intrusion at the time.
+DUMMY2/p262/p262_091.wav|45|The oil companies would be asked to contribute.
+DUMMY2/p278/p278_062.wav|10|Only water is currently allowed.
+DUMMY2/p270/p270_365.wav|8|Nobody else was with me.
+DUMMY2/p314/p314_016.wav|51|The Norsemen considered the rainbow as a bridge over which the gods passed from earth to their home in the sky.
+DUMMY2/p245/p245_211.wav|59|The loss of a company to the industry is a blow.
+DUMMY2/p239/p239_459.wav|48|This is a great opportunity for us.
+DUMMY2/p278/p278_333.wav|10|They come to enjoy themselves.
+DUMMY2/p261/p261_444.wav|100|Gordon is also highly rated.
+DUMMY2/p236/p236_384.wav|75|They know it'll be fantastic.
+DUMMY2/p364/p364_002.wav|88|Ask her to bring these things with her from the store.
+DUMMY2/p266/p266_323.wav|20|We are in the end game.
+DUMMY2/p231/p231_285.wav|50|It would create a Scottish secretary with a lot of weight.
+DUMMY2/p318/p318_308.wav|19|It was a simple question.
+DUMMY2/p303/p303_332.wav|44|I have a theory.
+DUMMY2/p264/p264_275.wav|65|He was called in by the government last year to report on pension reform.)
+DUMMY2/p330/p330_379.wav|1|And a mightily impressive recording it is, too.
+DUMMY2/p351/p351_246.wav|33|He is under no illusions.
+DUMMY2/p239/p239_406.wav|48|This game is very evenly balanced.
+DUMMY2/p238/p238_176.wav|37|Hopefully they will just give me the degree.
+DUMMY2/p300/p300_225.wav|102|And that gives a kind of freedom.
+DUMMY2/p292/p292_215.wav|13|I was just getting over the time difference.
+DUMMY2/p274/p274_360.wav|32|It is understood the timescale for the refurbishment has slipped.)
+DUMMY2/p245/p245_344.wav|59|Chambers said he would accept the place.
+DUMMY2/p229/p229_144.wav|67|On Friday, the headteacher and deputy headteacher appeared at the door.
+DUMMY2/p274/p274_138.wav|32|I think he's the favourite, no question.)
+DUMMY2/p363/p363_265.wav|6|This is the root of their problems.
+DUMMY2/p264/p264_483.wav|65|Your bank may offer you a choice of options.)
+DUMMY2/p270/p270_080.wav|8|The tickets will be on sale today at the ticket office.
+DUMMY2/p361/p361_237.wav|79|It attracted no complaints.
+DUMMY2/p376/p376_204.wav|71|"HARRY Potter has lost his magic."
+DUMMY2/p277/p277_093.wav|89|It just shows the arrogance of Labour and the Liberal Democrats.
+DUMMY2/p250/p250_300.wav|24|I understand the security issue.
+DUMMY2/p323/p323_129.wav|34|Lord Sainsbury is not a newcomer.
+DUMMY2/p262/p262_192.wav|45|The modern approach will also be reflected in the terms of address.
+DUMMY2/p292/p292_062.wav|13|Last night, the row continued.
+DUMMY2/p301/p301_328.wav|91|He is young but not too young.
+DUMMY2/p301/p301_312.wav|91|Lord Johnston will give a decision later.
+DUMMY2/p238/p238_437.wav|37|We are aiming for early March.
+DUMMY2/p267/p267_345.wav|0|They were the acts of men.
+DUMMY2/p323/p323_292.wav|34|No decision has yet been made.
+DUMMY2/p329/p329_238.wav|103|I would urge the Government to think again.
+DUMMY2/p261/p261_280.wav|100|The Scotch whisky industry is absent from the agenda.
+DUMMY2/p250/p250_263.wav|24|He needed a kidney - it is as simple as that.
+DUMMY2/p335/p335_184.wav|49|We didn't think anything would happen.
+DUMMY2/p227/p227_046.wav|29|There was no safety net.
+DUMMY2/p265/p265_302.wav|73|My body is clearly capable.
+DUMMY2/p286/p286_290.wav|63|That view has not altered.
+DUMMY2/p374/p374_403.wav|11|He suffered a broken back and other injuries.
+DUMMY2/p241/p241_310.wav|86|It was a question of patience.
+DUMMY2/p250/p250_323.wav|24|And that culture is everywhere In Dublin.
+DUMMY2/p343/p343_057.wav|21|Thankfully, there were no reports of anything serious.
+DUMMY2/p297/p297_074.wav|42|Subtle it is not.
+DUMMY2/p236/p236_388.wav|75|It brought in new management.
+DUMMY2/p345/p345_260.wav|82|What is so unusual about this case?
+DUMMY2/p259/p259_375.wav|7|Whether this return was too soon.)
+DUMMY2/p298/p298_329.wav|68|I feel sorry for the Reds.
+DUMMY2/p267/p267_235.wav|0|They tried to give her advice.
+DUMMY2/p345/p345_315.wav|82|Holiday was certainly no stranger to bigotry.
+DUMMY2/p313/p313_283.wav|76|Funding needs to be long term.
+DUMMY2/p329/p329_029.wav|103|I fell in love with ballet.
+DUMMY2/p273/p273_345.wav|56|There was a definite prejudice.
+DUMMY2/p257/p257_337.wav|105|Tell us about it.
+DUMMY2/p247/p247_429.wav|14|Such an attack is bizarre.)
+DUMMY2/p284/p284_278.wav|16|There was a final revealing detail about the broadcast.
+DUMMY2/p316/p316_079.wav|85|The judge was very nice.
+DUMMY2/p241/p241_107.wav|86|It was his job to check.
+DUMMY2/p228/p228_317.wav|57|It was no secret that I wanted to sign him.
+DUMMY2/p265/p265_031.wav|73|Other members of the family were too upset to comment last night.
+DUMMY2/p271/p271_168.wav|27|Local managers are already involved in talks with potential investors.
+DUMMY2/p362/p362_273.wav|15|I have come here to fight the boxer, not the fans.
+DUMMY2/p225/p225_165.wav|101|The Internet is no substitute for customer service.
+DUMMY2/p266/p266_334.wav|20|Who will do it?
+DUMMY2/p271/p271_433.wav|27|Everything has collapsed.
+DUMMY2/p361/p361_151.wav|79|I am extremely sad.
+DUMMY2/p284/p284_003.wav|16|Six spoons of fresh snow peas, five thick slabs of blue cheese, and maybe a snack for her brother Bob.
+DUMMY2/p273/p273_083.wav|56|Last weekend was extremely frustrating.
+DUMMY2/p300/p300_233.wav|102|He will become the sovereign.
+DUMMY2/p227/p227_125.wav|29|You've got to be vigilant.
+DUMMY2/p239/p239_338.wav|48|We used to live with dignity in our country.
+DUMMY2/p293/p293_261.wav|23|Apart from that, they would not be making any comment.
+DUMMY2/p227/p227_134.wav|29|It is a vicious circle.
+DUMMY2/p257/p257_248.wav|105|He was my big brother, my father, my grandfather.
+DUMMY2/p362/p362_034.wav|15|We are a peaceful people.
+DUMMY2/p301/p301_293.wav|91|We just want to get stuck in now.
+DUMMY2/p329/p329_270.wav|103|There was a battle there.
+DUMMY2/p267/p267_103.wav|0|He has done that with a great deal to spare.
+DUMMY2/p317/p317_364.wav|97|I am very happy to be here.
+DUMMY2/p275/p275_326.wav|40|Is that an issue?
+DUMMY2/p233/p233_234.wav|84|My neighbours are horrified.
+DUMMY2/p311/p311_127.wav|4|After that, the Scottish Parliament will run the show.
+DUMMY2/p229/p229_084.wav|67|He can do everything.
+DUMMY2/p257/p257_265.wav|105|Everything will fall into place, it should be fine.
+DUMMY2/p234/p234_337.wav|3|Hopefully, this week will be good.
+DUMMY2/p277/p277_233.wav|89|A thousand years ago the church was a powerful force in Europe.
+DUMMY2/p268/p268_352.wav|87|And the World Cup has not even begun.
+DUMMY2/p260/p260_274.wav|81|Several other pupils and staff were seriously injured in the accident.
+DUMMY2/p233/p233_155.wav|84|He will emerge as a world leader.
+DUMMY2/p250/p250_250.wav|24|She will attend in July.
+DUMMY2/p303/p303_226.wav|44|This Government believes in parental discipline.
+DUMMY2/p340/p340_423.wav|74|I believe we have a good chance.
+DUMMY2/p232/p232_299.wav|96|He has retired.
+DUMMY2/p263/p263_299.wav|39|However, he will have his work cut out defending his title.
+DUMMY2/p273/p273_226.wav|56|It depends on Labour, not on us.
+DUMMY2/p280/p280_245.wav|52|What are you not good at ?
+DUMMY2/p231/p231_404.wav|50|It is hard to understand.
+DUMMY2/p249/p249_143.wav|80|Wallace was a prisoner of war.
+DUMMY2/p351/p351_291.wav|33|He's had a lot of injury problems.
+DUMMY2/p340/p340_092.wav|74|This is a terrible tragedy.
+DUMMY2/p258/p258_268.wav|26|That's the only thing I will say.
+DUMMY2/p248/p248_126.wav|99|It's terrible that he has died the same way.
+DUMMY2/p294/p294_297.wav|104|The acting left a lot to be desired.
+DUMMY2/p314/p314_193.wav|51|That is a trend which will be encouraged.
+DUMMY2/p265/p265_243.wav|73|The Government in Westminster is simply not prepared to save him.
+DUMMY2/p270/p270_183.wav|8|Playing in Europe is the benchmark.
+DUMMY2/p335/p335_415.wav|49|I am in a very difficult position.
+DUMMY2/p316/p316_400.wav|85|Well, there you go.
+DUMMY2/p250/p250_453.wav|24|But you can go beyond that condition.
+DUMMY2/p247/p247_355.wav|14|But the New Year was special.)
+DUMMY2/p318/p318_094.wav|19|It was forced to divert.
+DUMMY2/p254/p254_152.wav|41|It is not just about pay.
+DUMMY2/p287/p287_210.wav|77|We used to live with dignity in our country.
+DUMMY2/p282/p282_160.wav|83|Life becomes a song.
+DUMMY2/p292/p292_228.wav|13|Human beings are always the same.
+DUMMY2/p326/p326_252.wav|28|Confidence among the allies began to slip.
+DUMMY2/p364/p364_029.wav|88|Scotland needs to hear it, too.
+DUMMY2/p299/p299_281.wav|58|The whole team was rubbish.
+DUMMY2/p351/p351_051.wav|33|This isn't a gimmick.
+DUMMY2/p304/p304_109.wav|72|I can't believe it's all gone.
+DUMMY2/p318/p318_319.wav|19|Why is that?
+DUMMY2/p247/p247_216.wav|14|was everything done to save people ?)
+DUMMY2/p234/p234_297.wav|3|The company still had the confidence of its bankers, he said.
+DUMMY2/p250/p250_463.wav|24|Striking the deal has come as a big relief.
+DUMMY2/p256/p256_012.wav|90|Throughout the centuries people have explained the rainbow in various ways.
+DUMMY2/p343/p343_270.wav|21|That is a question for the next manager.
+DUMMY2/p267/p267_268.wav|0|It is a mark of respect from the inmates.
+DUMMY2/p258/p258_319.wav|26|The problems began a long time ago.
+DUMMY2/p254/p254_267.wav|41|The government has until midnight tomorrow to make a decision.
+DUMMY2/p347/p347_326.wav|46|After his birthday, Scott was very upset.
+DUMMY2/p238/p238_327.wav|37|Little is known about them.
+DUMMY2/p335/p335_387.wav|49|It's our worst nightmare.
+DUMMY2/p287/p287_418.wav|77|Potions said he would drive.
+DUMMY2/p241/p241_122.wav|86|We recognise the important role of golf in attracting visitors.
+DUMMY2/p228/p228_008.wav|57|These take the shape of a long round arch, with its path high above, and its two ends apparently beyond the horizon.
+DUMMY2/p263/p263_411.wav|39|I didn't know that I had a court appearance on Wednesday.
+DUMMY2/p260/p260_186.wav|81|Peace was won.
+DUMMY2/p274/p274_296.wav|32|We have an excellent record of passenger growth and customer service.)
+DUMMY2/p247/p247_067.wav|14|It came as a surprise.)
+DUMMY2/p281/p281_247.wav|36|Many farmers cannot even agree within their own families.
+DUMMY2/p245/p245_074.wav|59|Every woman deserves to live without this type of fear.
+DUMMY2/p330/p330_045.wav|1|Last night they were being comforted by relatives.
+DUMMY2/p306/p306_066.wav|12|He also does not get on with Christina.
+DUMMY2/p271/p271_324.wav|27|It will work.
+DUMMY2/p274/p274_024.wav|32|This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue.)
+DUMMY2/p304/p304_379.wav|72|Motorists will welcome this.
+DUMMY2/p278/p278_099.wav|10|What kind of man does that, Mr Dick ?
+DUMMY2/p232/p232_228.wav|96|It was good fun.
+DUMMY2/p362/p362_131.wav|15|Stewart will travel with some confidence.
+DUMMY2/p297/p297_188.wav|42|I let go the telephone and ran.
+DUMMY2/p306/p306_160.wav|12|She collapsed and died a day later.
+DUMMY2/p263/p263_066.wav|39|But retail banking would be run from Halifax.
+DUMMY2/p229/p229_334.wav|67|It is difficult to get into the team at the moment.
+DUMMY2/p274/p274_433.wav|32|There is another important factor.)
+DUMMY2/p279/p279_195.wav|25|Neither side would reveal the details of the offer.
+DUMMY2/p295/p295_093.wav|92|Nothing has changed from the season before.
+DUMMY2/p295/p295_134.wav|92|I wondered about changing back to rugby.
+DUMMY2/p267/p267_310.wav|0|It is a road of death.
+DUMMY2/p333/p333_362.wav|64|They have two children.
+DUMMY2/p283/p283_210.wav|95|They all made the European Ryder Cup team.
+DUMMY2/p236/p236_494.wav|75|It was still there, but right at the end.
+DUMMY2/p257/p257_135.wav|105|Customers for the panels include the National Trust for Scotland.
+DUMMY2/p345/p345_153.wav|82|But they cannot go on ignoring the truth.
+DUMMY2/p316/p316_112.wav|85|It has until Saturday.
+DUMMY2/p236/p236_445.wav|75|Taxes may need to rise.
+DUMMY2/p268/p268_290.wav|87|Is there a waiting list ?
+DUMMY2/p254/p254_351.wav|41|The Scottish Parliament should set an example for Westminster to follow.
+DUMMY2/p305/p305_282.wav|54|Our nation has been changed by this event.
+DUMMY2/p278/p278_386.wav|10|In due course the deal was done.
+DUMMY2/p280/p280_073.wav|52|I saw the story, but that amount wouldn't even pay my commission.
+DUMMY2/p247/p247_223.wav|14|His third goal was superb.)
+DUMMY2/p239/p239_177.wav|48|There was a fossil on screen.
+DUMMY2/p326/p326_305.wav|28|By that time, however, it was already too late.
+DUMMY2/p287/p287_243.wav|77|She took them for a term.
+DUMMY2/p262/p262_231.wav|45|Half of young people had had contact with the police.
+DUMMY2/p334/p334_144.wav|38|The world is split into two.
+DUMMY2/p281/p281_312.wav|36|The dealer is on notice.
+DUMMY2/p274/p274_190.wav|32|Aberdeen had little to offer.)
+DUMMY2/p232/p232_133.wav|96|If not, a deal could take many months.
+DUMMY2/p246/p246_146.wav|5|It is not just about pay.
+DUMMY2/p271/p271_177.wav|27|It is really good news.
+DUMMY2/p248/p248_361.wav|99|The final decision was between Scotland and the Republic of Ireland.
+DUMMY2/p228/p228_069.wav|57|He is a young man with a new deal.
+DUMMY2/p310/p310_343.wav|17|You are going to Glasgow Airport, and not coming back.
+DUMMY2/p310/p310_354.wav|17|I could have been offended.
+DUMMY2/p257/p257_293.wav|105|It's just not funny!
+DUMMY2/p341/p341_145.wav|66|The road was closed for several hours.
+DUMMY2/p305/p305_211.wav|54|So people will come out with these things.
+DUMMY2/p376/p376_261.wav|71|"Immediate action must be taken."
+DUMMY2/p244/p244_252.wav|78|Investors were also concerned about margin pressure.
+DUMMY2/p240/p240_333.wav|93|They also recovered a picture of Osama bin Laden.
+DUMMY2/p264/p264_347.wav|65|We had to approach it the way we feel we can do best.)
+DUMMY2/p274/p274_043.wav|32|He will need that machine.)
+DUMMY2/p234/p234_124.wav|3|According to the criteria, he is qualified for Scotland.
+DUMMY2/p268/p268_150.wav|87|I was given no instructions by no-one.
+DUMMY2/p263/p263_367.wav|39|He did a good job.
+DUMMY2/p333/p333_304.wav|64|It is a very special city.
+DUMMY2/p298/p298_070.wav|68|Repayment is not part of the game.
+DUMMY2/p335/p335_402.wav|49|The review has been conducted fairly.
+DUMMY2/p277/p277_123.wav|89|That was the lesson to be learned from the European Championships.
+DUMMY2/p340/p340_404.wav|74|Yet the improvement in behaviour was huge.
+DUMMY2/p257/p257_394.wav|105|We haven't had any adverse reaction to the project.
+DUMMY2/p261/p261_293.wav|100|He was also married with two children.
+DUMMY2/p323/p323_085.wav|34|Are you up for business?
+DUMMY2/p330/p330_271.wav|1|For this government, reform and resources go together.
+DUMMY2/p314/p314_267.wav|51|He was my big brother, my father, my grandfather.
+DUMMY2/p263/p263_140.wav|39|Why change it ?
+DUMMY2/p288/p288_309.wav|47|It's certainly different.
+DUMMY2/p226/p226_216.wav|43|His third goal was superb.
+DUMMY2/p341/p341_084.wav|66|They are going to carry it through.
+DUMMY2/p340/p340_119.wav|74|And it worked, so we kept it.
+DUMMY2/p297/p297_339.wav|42|Officers recovered a second body in the area.
+DUMMY2/p262/p262_255.wav|45|That could be in place by next year.
+DUMMY2/p261/p261_456.wav|100|Paris is not only young.
+DUMMY2/p306/p306_052.wav|12|It's a grey area.
+DUMMY2/p301/p301_303.wav|91|Either group is living in fantasy land.
+DUMMY2/p300/p300_392.wav|102|I don't have any bitterness about it, it's just a fact.
+DUMMY2/p335/p335_237.wav|49|Manager Bobby Williamson has no injury worries.
+DUMMY2/p312/p312_080.wav|62|He could hardly have been in greater demand.
+DUMMY2/p267/p267_376.wav|0|The seller was not revealed.
+DUMMY2/p305/p305_396.wav|54|The workers said they were treated like animals.
+DUMMY2/p273/p273_016.wav|56|The Norsemen considered the rainbow as a bridge over which the gods passed from earth to their home in the sky.
+DUMMY2/p261/p261_073.wav|100|The price cuts are really exciting.
+DUMMY2/p231/p231_328.wav|50|It will decide today whether he should be struck off the register.
+DUMMY2/p307/p307_349.wav|22|Connell was standing there, ordering her to get up.
+DUMMY2/p363/p363_217.wav|6|I was amazed at her knowledge.
+DUMMY2/p286/p286_083.wav|63|Petrol prices were widely blamed.
+DUMMY2/p274/p274_040.wav|32|Well, he is an artist.)
+DUMMY2/p374/p374_077.wav|11|It is not a standing army.
+DUMMY2/p257/p257_253.wav|105|It is a mark of respect from the inmates.
+DUMMY2/p268/p268_035.wav|87|It's as we were yesterday.
+DUMMY2/p230/p230_206.wav|35|The tickets will be on sale today at the ticket office.
+DUMMY2/p295/p295_133.wav|92|We are pursuing legal action against the government.
+DUMMY2/p239/p239_300.wav|48|The best thing for me was to join the Army.
+DUMMY2/p264/p264_038.wav|65|It was a total surprise.)
+DUMMY2/p257/p257_122.wav|105|He did his job.
+DUMMY2/p259/p259_326.wav|7|Again the parallel with football can be drawn.)
+DUMMY2/p316/p316_072.wav|85|It has certainly paid off for him.
+DUMMY2/p294/p294_251.wav|104|Mental health is a massive issue.
+DUMMY2/p299/p299_134.wav|58|I love you so very much.
+DUMMY2/p230/p230_253.wav|35|It might be sad, but it's a fact.
+DUMMY2/p297/p297_017.wav|42|Others have tried to explain the phenomenon physically.
+DUMMY2/p243/p243_191.wav|53|You are not long home from work.
+DUMMY2/p259/p259_291.wav|7|He took over our lives.)
+DUMMY2/p286/p286_341.wav|63|The actor has met with Mandela.
+DUMMY2/p376/p376_038.wav|71|"It is a matter of the utmost concern to the Allies."
+DUMMY2/p246/p246_016.wav|5|The Norsemen considered the rainbow as a bridge over which the gods passed from earth to their home in the sky.
+DUMMY2/p307/p307_314.wav|22|It sounds a bit of an own goal.
+DUMMY2/p279/p279_031.wav|25|There's a story, too.
+DUMMY2/p281/p281_442.wav|36|It is pretty bad news.
+DUMMY2/p273/p273_399.wav|56|Clark is back on top form.
+DUMMY2/p252/p252_065.wav|55|These figures cover the major British banking groups.
+DUMMY2/p303/p303_304.wav|44|Andrew McLellan is no exception.
+DUMMY2/p295/p295_310.wav|92|In order to get there, we have got to invest.
+DUMMY2/p336/p336_370.wav|98|We are all in the frontline.
+DUMMY2/p307/p307_246.wav|22|It wasn't a penalty, it was outside the area.
+DUMMY2/p347/p347_037.wav|46|And look at the leading conductors, he says.
+DUMMY2/p263/p263_129.wav|39|It was his conclusion that they were generally in good condition.
+DUMMY2/p295/p295_411.wav|92|After that, though, we are still waiting to see.
+DUMMY2/p236/p236_099.wav|75|Before the game we went for a pint.
+DUMMY2/p307/p307_089.wav|22|He is firm but inclusive and very fair.
+DUMMY2/p336/p336_233.wav|98|The lads are having a tour.
+DUMMY2/p277/p277_169.wav|89|It's hard enough for a father, anyway, and I was forever grateful.
+DUMMY2/p292/p292_072.wav|13|He was between people and God.
+DUMMY2/p246/p246_092.wav|5|But I was wrong.
+DUMMY2/p259/p259_138.wav|7|Scotland will finish the group in second place.)
+DUMMY2/p374/p374_400.wav|11|You do not change overnight.
+DUMMY2/p287/p287_344.wav|77|I think it's about time.
+DUMMY2/p238/p238_385.wav|37|What do we do ?
+DUMMY2/p285/p285_343.wav|2|I got a yellow card.
+DUMMY2/p307/p307_118.wav|22|Serb forces then opened fire in their direction.
+DUMMY2/p248/p248_297.wav|99|We are now looking at the degrees of injury.
+DUMMY2/p274/p274_330.wav|32|We're not an employment agency.)
+DUMMY2/p254/p254_038.wav|41|However, they continued in their pursuit of victory.
+DUMMY2/p244/p244_217.wav|78|I'm interested in interesting work.
+DUMMY2/p306/p306_284.wav|12|We said, What do you mean?
+DUMMY2/p305/p305_246.wav|54|The decision is an absolute disgrace.
+DUMMY2/p288/p288_314.wav|47|and that another interested body should have an option to buy.
+DUMMY2/p232/p232_381.wav|96|Well, the big day has arrived.
+DUMMY2/p276/p276_377.wav|106|Instead, he missed the lot.
+DUMMY2/p272/p272_349.wav|69|We will be homeless.
+DUMMY2/p251/p251_077.wav|9|That's the principal difference between an artist and a dog.
+DUMMY2/p261/p261_225.wav|100|He must get to know himself.
+DUMMY2/p308/p308_118.wav|107|Stalkers are capable of killing.
+DUMMY2/p286/p286_160.wav|63|The departure of Mr Johnston was reported by The Herald yesterday.
+DUMMY2/p288/p288_181.wav|47|They really did a great job.
+DUMMY2/p273/p273_405.wav|56|I've had a wonderful career.
+DUMMY2/p239/p239_212.wav|48|The protest will go ahead as planned.
+DUMMY2/p316/p316_217.wav|85|But is this enough to provoke a killing?
+DUMMY2/p308/p308_033.wav|107|I've taken to the hills.
+DUMMY2/p297/p297_008.wav|42|These take the shape of a long round arch, with its path high above, and its two ends apparently beyond the horizon.
+DUMMY2/p266/p266_300.wav|20|Disruption will be kept to a minimum.
+DUMMY2/p256/p256_230.wav|90|They are the innocent victims.
+DUMMY2/p263/p263_352.wav|39|It was tough to contain the excitement.
+DUMMY2/p341/p341_200.wav|66|One season, they might do well.
+DUMMY2/p258/p258_033.wav|26|They did not replace it with a conviction for culpable homicide.
+DUMMY2/p347/p347_314.wav|46|He will make an excellent chief inspector.
+DUMMY2/p259/p259_339.wav|7|His appeal is instantly understood.)
+DUMMY2/p264/p264_393.wav|65|No, because they look good boys.)
+DUMMY2/p329/p329_065.wav|103|It was the same old story.
+DUMMY2/p317/p317_191.wav|97|I've had a hard time, to be honest.
+DUMMY2/p374/p374_209.wav|11|They were that poor.
+DUMMY2/p236/p236_326.wav|75|This is a historic occasion.
+DUMMY2/p311/p311_032.wav|4|We keep a distance.
+DUMMY2/p300/p300_062.wav|102|This, he told the committee, was not forthcoming.
+DUMMY2/p340/p340_315.wav|74|I'm going to win the next two.
+DUMMY2/p263/p263_069.wav|39|It is the only way forward for the club.
+DUMMY2/p252/p252_171.wav|55|That apart, though, I feel good.
+DUMMY2/p295/p295_303.wav|92|They know their son was murdered.
+DUMMY2/p277/p277_045.wav|89|He's just in it for himself.
+DUMMY2/p229/p229_222.wav|67|We have the experience, the courses, and an abundance of confidence.
+DUMMY2/p336/p336_255.wav|98|I can understand why they have gone.
+DUMMY2/p265/p265_324.wav|73|They should take their mobile phones.
+DUMMY2/p364/p364_210.wav|88|I'm not interested in money.
+DUMMY2/p267/p267_282.wav|0|It will include the Black Watch, the Royal Highland regiment.
+DUMMY2/p226/p226_113.wav|43|The Prime Minister was very saddened to hear about this.
+DUMMY2/p241/p241_280.wav|86|Russian officials have not determined the cause of the accident.
+DUMMY2/p298/p298_095.wav|68|The Premier League has been a huge success.
+DUMMY2/p336/p336_104.wav|98|It was one of the firemen.
+DUMMY2/p312/p312_310.wav|62|I would say so.
+DUMMY2/p287/p287_019.wav|77|Since then physicists have found that it is not reflection, but refraction by the raindrops which causes the rainbows.
+DUMMY2/p329/p329_055.wav|103|There are just two tournaments remaining.
+DUMMY2/p250/p250_174.wav|24|The abuse of elderly people was appalling.
+DUMMY2/p270/p270_278.wav|8|He could see no other bidder.
+DUMMY2/p343/p343_300.wav|21|This has got to stop.
+DUMMY2/p287/p287_162.wav|77|At the top level, the salaries are far too high.
+DUMMY2/p269/p269_388.wav|94|A young Briton had a lucky escape.
+DUMMY2/p293/p293_308.wav|23|The likelihood is that it will be negative.
+DUMMY2/p323/p323_413.wav|34|That, though, was again according to manager McCall.
+DUMMY2/p300/p300_306.wav|102|Their message was simple.
+DUMMY2/p334/p334_027.wav|38|Their courage, and their honesty, should be respected.
+DUMMY2/p267/p267_034.wav|0|I became a widow overnight.
+DUMMY2/p254/p254_305.wav|41|They were fantastic.
+DUMMY2/p263/p263_436.wav|39|As it turned out it was a triumph.
+DUMMY2/p277/p277_387.wav|89|I was in the train station overnight.
+DUMMY2/p351/p351_268.wav|33|It's got to come from me.
+DUMMY2/p236/p236_215.wav|75|Tommy is not a problem.
+DUMMY2/p232/p232_110.wav|96|I don't have many friends.
+DUMMY2/p238/p238_174.wav|37|Emergency services were also on stand-by outside.
+DUMMY2/p276/p276_400.wav|106|It depends on Labour, not on us.
+DUMMY2/p276/p276_254.wav|106|The reviews were welcomed by business lobby groups.
+DUMMY2/p243/p243_189.wav|53|The story was not made public by this club.
+DUMMY2/p341/p341_287.wav|66|Make sure you see it.
+DUMMY2/p336/p336_314.wav|98|This idea has been around for four years.
+DUMMY2/p310/p310_047.wav|17|I hope you will leave it at that.
+DUMMY2/p228/p228_253.wav|57|That was a bonus, but it was not the main objective.
+DUMMY2/p276/p276_348.wav|106|They would be supported by visiting specialists.
+DUMMY2/p234/p234_028.wav|3|I am not interested in the money, it is the principle.
+DUMMY2/p351/p351_216.wav|33|Which is fair enough.
+DUMMY2/p330/p330_375.wav|1|I don't know exactly what happened.
+DUMMY2/p227/p227_196.wav|29|It will be reviewed in The Herald tomorrow.
+DUMMY2/p227/p227_231.wav|29|And the World Cup has not even begun.
+DUMMY2/p284/p284_129.wav|16|She said she would not welcome the flowers.
+DUMMY2/p307/p307_421.wav|22|His views are hardly surprising.
+DUMMY2/p243/p243_013.wav|53|Some have accepted it as a miracle without physical explanation.
+DUMMY2/p326/p326_263.wav|28|I ran to get out of the way.
+DUMMY2/p310/p310_067.wav|17|Once again, he refused.
+DUMMY2/p252/p252_309.wav|55|Their eyes, however, told a different story.
+DUMMY2/p252/p252_066.wav|55|Probably he wasn't thinking at all.
+DUMMY2/p275/p275_391.wav|40|It was a breathtaking moment.
+DUMMY2/p351/p351_347.wav|33|I am not retiring.
+DUMMY2/p261/p261_131.wav|100|This is a successful outcome.
+DUMMY2/p253/p253_318.wav|70|But no such amendment has been brought before the Scottish Parliament.
+DUMMY2/p312/p312_322.wav|62|We don't have the credible evidence.
+DUMMY2/p275/p275_036.wav|40|However, they continued in their pursuit of victory.
+DUMMY2/p266/p266_416.wav|20|Senior management in Scotland threw its weight behind the orchestra.
+DUMMY2/p364/p364_022.wav|88|The actual primary rainbow observed is said to be the effect of super-imposition of a number of bows.
+DUMMY2/p287/p287_155.wav|77|Do not imagine for a moment that they are not there.
+DUMMY2/p361/p361_123.wav|79|I will just have to be patient.
+DUMMY2/p234/p234_212.wav|3|It wasn't a penalty, it was outside the area.
+DUMMY2/p244/p244_369.wav|78|However, it was well worth the wait.
+DUMMY2/p301/p301_152.wav|91|He is wanted by German police for questioning.
+DUMMY2/p326/p326_085.wav|28|Chelsea was a great club.
+DUMMY2/p255/p255_235.wav|31|They are the innocent victims.
+DUMMY2/p264/p264_125.wav|65|We beat the Welsh team.)
+DUMMY2/p345/p345_055.wav|82|Others said he had gone too far.
+DUMMY2/p276/p276_271.wav|106|And they were being paid ?
+DUMMY2/p288/p288_005.wav|47|She can scoop these things into three red bags, and we will go meet her Wednesday at the train station.
+DUMMY2/p362/p362_372.wav|15|Certainly, there is much on the agenda.
+DUMMY2/p279/p279_198.wav|25|Our strategy is straightforward.
+DUMMY2/p267/p267_039.wav|0|She hopes to study in Britain one day.
+DUMMY2/p343/p343_059.wav|21|I don't believe in gesture politics.
+DUMMY2/p305/p305_169.wav|54|That is where the club has gone wrong.
+DUMMY2/p347/p347_098.wav|46|What's it got to do with art?
+DUMMY2/p310/p310_411.wav|17|We have high hopes that this will work.
+DUMMY2/p244/p244_214.wav|78|This conference was never confirmed.
+DUMMY2/p247/p247_438.wav|14|Strangely enough I felt very sharp.)
+DUMMY2/p363/p363_130.wav|6|Which brings us to the question of money.
+DUMMY2/p236/p236_391.wav|75|The following day I used the story.
+DUMMY2/p238/p238_221.wav|37|The study is expected to last until the middle of the year.
+DUMMY2/p255/p255_171.wav|31|That must be left to the Parole Board.
+DUMMY2/p230/p230_220.wav|35|His second was a beauty.
+DUMMY2/p266/p266_420.wav|20|Paris is not only young.
+DUMMY2/p288/p288_061.wav|47|They're appalled by that.
+DUMMY2/p345/p345_213.wav|82|I want to put myself on discussion also.
+DUMMY2/p250/p250_172.wav|24|The point is raised again that evening at the Assembly Rooms.
+DUMMY2/p230/p230_288.wav|35|Thankfully, no-one on the bus is too badly hurt.
+DUMMY2/p281/p281_106.wav|36|It was a funny game.
+DUMMY2/p275/p275_178.wav|40|However, the figures were disputed by the Scottish Prison Service.
+DUMMY2/p255/p255_057.wav|31|George Robertson described the plan as an outrageous and disgraceful decision.
+DUMMY2/p293/p293_225.wav|23|Bill Clinton always had an idea to sell.
+DUMMY2/p261/p261_244.wav|100|I haven't made the donation yet.
+DUMMY2/p347/p347_363.wav|46|His silence on the issue is interesting.
+DUMMY2/p301/p301_302.wav|91|Broke the birdie record.
+DUMMY2/p334/p334_076.wav|38|I was inspired by two things.
+DUMMY2/p360/p360_087.wav|60|It seems very odd.
+DUMMY2/p264/p264_417.wav|65|A report will be issued by March.)
+DUMMY2/p298/p298_383.wav|68|Mike Tyson went to prison.
+DUMMY2/p268/p268_383.wav|87|Three weeks later, he resigned.
+DUMMY2/p341/p341_154.wav|66|He came in an army uniform.
+DUMMY2/p279/p279_371.wav|25|He denied the charge.
+DUMMY2/p253/p253_132.wav|70|We had a great time when we came with Easy Rider.
+DUMMY2/p273/p273_257.wav|56|On the contrary they stand to gain.
+DUMMY2/p234/p234_072.wav|3|Seriously, we are not concerned at all.
+DUMMY2/p277/p277_251.wav|89|Souter will be back.
+DUMMY2/p340/p340_366.wav|74|The past is history, not destiny.
+DUMMY2/p300/p300_281.wav|102|This is a great shame.
+DUMMY2/p326/p326_351.wav|28|Capital gains tax is also being reduced.
+DUMMY2/p229/p229_036.wav|67|I'd like to continue that record.
+DUMMY2/p229/p229_312.wav|67|However, he is a coach, and he remains a coach at heart.
+DUMMY2/p316/p316_242.wav|85|Every case is completely different.
+DUMMY2/p286/p286_434.wav|63|The growth potential is enormous.
+DUMMY2/p274/p274_435.wav|32|Its failure is no surprise.)
+DUMMY2/p227/p227_059.wav|29|What do we do ?
+DUMMY2/p255/p255_173.wav|31|You are not going in blind.
+DUMMY2/p304/p304_364.wav|72|That's how she wants to remember him.
+DUMMY2/p314/p314_264.wav|51|He is young but not too young.
+DUMMY2/p227/p227_289.wav|29|As for Scotland, we can just enjoy the moment.
+DUMMY2/p308/p308_178.wav|107|For now, we must take one game at a time.
+DUMMY2/p292/p292_274.wav|13|It won't be their last.
+DUMMY2/p302/p302_151.wav|30|Insurance will be covered by the receiving galleries.
+DUMMY2/p236/p236_301.wav|75|I think, therefore I am ?
+DUMMY2/p316/p316_067.wav|85|What on earth is wrong with you?
+DUMMY2/p268/p268_153.wav|87|It's very dangerous for markets.
+DUMMY2/p264/p264_323.wav|65|Someone should tell them.)
+DUMMY2/p330/p330_174.wav|1|He didn't have time for any other hobbies.
+DUMMY2/p245/p245_168.wav|59|It is tough, but possible.
+DUMMY2/p288/p288_091.wav|47|That deal will be decided under the existing rules.
+DUMMY2/p264/p264_391.wav|65|The experts got it wrong.)
+DUMMY2/p239/p239_145.wav|48|We just have to adapt.
+DUMMY2/p299/p299_254.wav|58|One of these problems is the railways.
+DUMMY2/p318/p318_126.wav|19|What's the point?
+DUMMY2/p316/p316_365.wav|85|I am delighted to have her back home.
+DUMMY2/p255/p255_112.wav|31|Maybe this battle has been.
+DUMMY2/p308/p308_293.wav|107|I shall be voting Yes to support him.
+DUMMY2/p279/p279_102.wav|25|However, we have not come to any conclusions.
+DUMMY2/p316/p316_096.wav|85|I've had it for the exams.
+DUMMY2/p283/p283_357.wav|95|We want to play at the worlds.
+DUMMY2/p345/p345_369.wav|82|He will take it in his stride.
+DUMMY2/p254/p254_173.wav|41|First and foremost, the game is entirely different.
+DUMMY2/p311/p311_314.wav|4|Yes, it was uplifting.
+DUMMY2/p272/p272_203.wav|69|Twaddle is a case in point.
+DUMMY2/p251/p251_202.wav|9|There was no option.
+DUMMY2/p279/p279_226.wav|25|I'd never seen a play about me.
+DUMMY2/p272/p272_260.wav|69|He was also married with two children.
+DUMMY2/p304/p304_281.wav|72|At the election we will oppose the euro.
+DUMMY2/p308/p308_346.wav|107|Managers and clinicians must work together.
+DUMMY2/p329/p329_141.wav|103|That is a job for the Government.
+DUMMY2/p252/p252_248.wav|55|We have several options.
+DUMMY2/p323/p323_336.wav|34|It is a vicious circle.
+DUMMY2/p333/p333_243.wav|64|This is the subway.
+DUMMY2/p238/p238_427.wav|37|It tells the story of a woman who has probably been abused.
+DUMMY2/p249/p249_030.wav|80|There's a story, too.
+DUMMY2/p262/p262_307.wav|45|However, the groups denied the claims.
+DUMMY2/p271/p271_246.wav|27|Of further privacy, he had no need.
+DUMMY2/p360/p360_291.wav|60|We've been here before.
+DUMMY2/p300/p300_249.wav|102|He claimed his insurance company contested the damages, not the restaurant.
+DUMMY2/p282/p282_056.wav|83|Here's a clue.
+DUMMY2/p233/p233_077.wav|84|Last night, the move was bitterly denounced by France Telecom.
+DUMMY2/p361/p361_040.wav|79|Why you did it will never be known.
+DUMMY2/p241/p241_098.wav|86|I love the Dome.
+DUMMY2/p298/p298_010.wav|68|People look, but no one ever finds it.
+DUMMY2/p330/p330_275.wav|1|Mentally, you have to be tough.
+DUMMY2/p301/p301_122.wav|91|One, the Acute Services Trust, will run the general hospital services.
+DUMMY2/p275/p275_083.wav|40|They lived for their children.
+DUMMY2/p271/p271_163.wav|27|I'd love to be like Peter.
+DUMMY2/p276/p276_389.wav|106|He said the winner had been chosen by consensus.
+DUMMY2/p236/p236_298.wav|75|Does the name matter ?
+DUMMY2/p361/p361_081.wav|79|Kenny Miller might come through.
+DUMMY2/p258/p258_167.wav|26|I always felt they played for me.
+DUMMY2/p323/p323_042.wav|34|What is next?
+DUMMY2/p275/p275_066.wav|40|He becomes the new Minister for Sport and Culture.
+DUMMY2/p270/p270_395.wav|8|It sounds like a wish list.
+DUMMY2/p281/p281_335.wav|36|The airport was even different.
+DUMMY2/p334/p334_030.wav|38|Nothing is lost, everything is recycled.
+DUMMY2/p274/p274_037.wav|32|They said she was stable.)
+DUMMY2/p279/p279_040.wav|25|President Bush is at war.
+DUMMY2/p276/p276_453.wav|106|I also had a lot of injuries, which did not help me.
+DUMMY2/p333/p333_413.wav|64|Is this accurate?
+DUMMY2/p252/p252_083.wav|55|Celtic have a great base of travelling fans.
+DUMMY2/p272/p272_410.wav|69|Feel the air, the space.
+DUMMY2/p259/p259_423.wav|7|I've had a wonderful career.)
+DUMMY2/p316/p316_251.wav|85|What a difference a game can make.
+DUMMY2/p239/p239_398.wav|48|We were beaten by the better team.
+DUMMY2/p231/p231_393.wav|50|But we are very near.
+DUMMY2/p317/p317_339.wav|97|Tax is a matter for national governments.
+DUMMY2/p270/p270_371.wav|8|You need a licence to run a pub.
+DUMMY2/p259/p259_073.wav|7|It was a unanimous decision.)
+DUMMY2/p351/p351_388.wav|33|He, too, was not satisfied.
+DUMMY2/p240/p240_353.wav|93|However, this suggestion was turned down by the player.
+DUMMY2/p262/p262_113.wav|45|Until the weekend he was minister for social justice.
+DUMMY2/p330/p330_097.wav|1|Jim Wallace, justice minister, has refused to hold an inquiry.
+DUMMY2/p270/p270_388.wav|8|Last season was very hard for me.
+DUMMY2/p286/p286_237.wav|63|There was the option of following the Celtic to Portugal.
+DUMMY2/p228/p228_009.wav|57|There is , according to legend, a boiling pot of gold at one end.
+DUMMY2/p312/p312_328.wav|62|It has the Bank of Scotland behind it.
+DUMMY2/p347/p347_381.wav|46|This must be kept in total perspective.
+DUMMY2/p374/p374_025.wav|11|She had to learn a new discipline.
+DUMMY2/p263/p263_338.wav|39|The Premier League has been a huge success.
+DUMMY2/p244/p244_090.wav|78|It seems a good thing to try.
+DUMMY2/p253/p253_225.wav|70|I am very sorry that Alastair Campbell has taken this decision.
+DUMMY2/p246/p246_194.wav|5|I would think about the end of January, the beginning of February.
+DUMMY2/p257/p257_183.wav|105|One was a lawyer.
+DUMMY2/p314/p314_097.wav|51|Correction, knowing him, he might.
+DUMMY2/p272/p272_179.wav|69|It wasn't a penalty, it was outside the area.
+DUMMY2/p360/p360_225.wav|60|The club has never won it.
+DUMMY2/p304/p304_290.wav|72|He is keen to stay in public service.
+DUMMY2/p247/p247_335.wav|14|Scotland has shown the way.)
+DUMMY2/p281/p281_401.wav|36|Thankfully, Peter had already found another outlet for his talents.
+DUMMY2/p281/p281_296.wav|36|The partnership was set up during the summer.
+DUMMY2/p240/p240_077.wav|93|Is there a new way forward?
+DUMMY2/p293/p293_310.wav|23|But she's also beautiful behind the face.
+DUMMY2/p286/p286_005.wav|63|She can scoop these things into three red bags, and we will go meet her Wednesday at the train station.
+DUMMY2/p271/p271_376.wav|27|The BBC was a disgrace.
+DUMMY2/p250/p250_071.wav|24|He later became a respected High Court judge.
+DUMMY2/p285/p285_239.wav|2|He also launched a new strategy for the agency.
+DUMMY2/p251/p251_170.wav|9|They thought they had found a home.
+DUMMY2/p364/p364_257.wav|88|That can happen so easily.
+DUMMY2/p286/p286_319.wav|63|It's unlikely to be renewed.
+DUMMY2/p275/p275_217.wav|40|The workers do not want to read about their futures in newspapers.
+DUMMY2/p311/p311_203.wav|4|However, planners should be taking the lead.
+DUMMY2/p300/p300_042.wav|102|A recording contract is on the horizon.
+DUMMY2/p232/p232_152.wav|96|It was by the numbers.
+DUMMY2/p238/p238_422.wav|37|The company declined to comment.
+DUMMY2/p293/p293_063.wav|23|He had other things on his mind.
+DUMMY2/p274/p274_151.wav|32|It is ambitious, but it can be achieved.)
+DUMMY2/p275/p275_220.wav|40|Naturally enough, the letter in question was an E.
+DUMMY2/p254/p254_352.wav|41|But the real problem is the closure of the export market.
+DUMMY2/p266/p266_307.wav|20|But the military campaign is a military campaign against Osama bin Laden.
+DUMMY2/p313/p313_233.wav|76|They hold on for many years.
+DUMMY2/p360/p360_401.wav|60|You will need it.
+DUMMY2/p279/p279_185.wav|25|Sir Jeremy, from Glasgow, said they had been delighted.
+DUMMY2/p272/p272_241.wav|69|The concerns are the same.
+DUMMY2/p256/p256_091.wav|90|We do not get that impression now.
+DUMMY2/p225/p225_266.wav|101|No other vehicle was involved in the crash.
+DUMMY2/p310/p310_225.wav|17|However, they continued in their pursuit of victory.
+DUMMY2/p226/p226_074.wav|43|You need a trademark.
+DUMMY2/p234/p234_263.wav|3|However, Dundee deserved to win this game.
+DUMMY2/p340/p340_120.wav|74|The king is delighted by the honour.
+DUMMY2/p271/p271_127.wav|27|The proposals are to be debated on Monday by city councillors.
+DUMMY2/p311/p311_418.wav|4|I agree with them.
+DUMMY2/p336/p336_274.wav|98|The Cabinet is split over the issue.
+DUMMY2/p260/p260_001.wav|81|Please call Stella.
+DUMMY2/p240/p240_374.wav|93|Mr Anderson was not acting in the course of his employment.
+DUMMY2/p241/p241_226.wav|86|My neighbours are horrified.
+DUMMY2/p351/p351_024.wav|33|This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue.
+DUMMY2/p287/p287_236.wav|77|I am still waiting for a reply.
+DUMMY2/p253/p253_026.wav|70|Police were called to the scene, according to the weekend reports.
+DUMMY2/p246/p246_305.wav|5|Alex Smith has been a massive influence on my career as well.
+DUMMY2/p259/p259_096.wav|7|We would have concerns about that.)
+DUMMY2/p277/p277_249.wav|89|This is the first step.
+DUMMY2/p264/p264_110.wav|65|You can maintain regular contact.)
+DUMMY2/p230/p230_078.wav|35|This is a true story.
+DUMMY2/p250/p250_149.wav|24|Losing in that manner is very hard to take.
+DUMMY2/p326/p326_072.wav|28|Another suggested the company should carry only pedestrians.
+DUMMY2/p306/p306_149.wav|12|I feel my life to be at risk.
+DUMMY2/p275/p275_340.wav|40|This is a friendly match?
+DUMMY2/p307/p307_007.wav|22|The rainbow is a division of white light into many beautiful colors.
+DUMMY2/p351/p351_387.wav|33|Police are appealing for witnesses to the accident.
+DUMMY2/p276/p276_078.wav|106|In time, the First Minister will grow in stature.
+DUMMY2/p302/p302_177.wav|30|His name is Michael Owen.
+DUMMY2/p288/p288_273.wav|47|He is a close friend of Gordon Brown.
+DUMMY2/p292/p292_406.wav|13|A suspicion was not enough.
+DUMMY2/p308/p308_421.wav|107|The Foreign Office was conspicuous by its absence.
+DUMMY2/p236/p236_055.wav|75|We felt it was sufficient.
+DUMMY2/p360/p360_128.wav|60|But they are a good team.
+DUMMY2/p351/p351_366.wav|33|We are not asking for the moon.
+DUMMY2/p351/p351_263.wav|33|This is a dream come true for me.
+DUMMY2/p276/p276_040.wav|106|I can feel the sound inside.
+DUMMY2/p253/p253_316.wav|70|They will certainly be visible from every house in our area.
+DUMMY2/p316/p316_191.wav|85|I just love lessons.
+DUMMY2/p228/p228_343.wav|57|It's the last thing on my mind.
+DUMMY2/p277/p277_375.wav|89|Something is wrong.
+DUMMY2/p272/p272_237.wav|69|The project has already secured the support of Sir Sean Connery.
+DUMMY2/p347/p347_364.wav|46|I was a little surprised.
+DUMMY2/p262/p262_236.wav|45|The Home Office would not release any further details about the group.
+DUMMY2/p265/p265_305.wav|73|It will work.
+DUMMY2/p364/p364_167.wav|88|The post will be unpaid.
+DUMMY2/p288/p288_224.wav|47|It's a question of creating a future awareness.
+DUMMY2/p314/p314_281.wav|51|His English counterpart agreed.
+DUMMY2/p266/p266_091.wav|20|It's good news.
+DUMMY2/p245/p245_188.wav|59|It's all about money, money, money.
+DUMMY2/p260/p260_183.wav|81|Our team is just so young.
+DUMMY2/p275/p275_032.wav|40|He was jailed for four years.
+DUMMY2/p334/p334_382.wav|38|I was so nervous.
+DUMMY2/p300/p300_052.wav|102|It's a grey area.
+DUMMY2/p278/p278_404.wav|10|I had a fortunate war.
+DUMMY2/p247/p247_033.wav|14|It carried a double message.)
+DUMMY2/p316/p316_232.wav|85|I'm very surprised and obviously delighted.
+DUMMY2/p343/p343_365.wav|21|We had to take action to protect them.
+DUMMY2/p243/p243_288.wav|53|No-one had seen this sort of thing before.
+DUMMY2/p376/p376_267.wav|71|"Jim Wallace, justice minister, has refused to hold an inquiry."
+DUMMY2/p341/p341_214.wav|66|The budget was too low for that.
+DUMMY2/p229/p229_162.wav|67|It's a problem but it cannot become an excuse.
+DUMMY2/p294/p294_243.wav|104|But happily, the story is true.
+DUMMY2/p326/p326_342.wav|28|You never had it so good.
+DUMMY2/p250/p250_228.wav|24|Today we must not repeat that mistake.
+DUMMY2/p259/p259_433.wav|7|Three years ago he would have been.)
+DUMMY2/p268/p268_342.wav|87|Plans were made to expand.
+DUMMY2/p295/p295_368.wav|92|Life, as many people know it, in other words.
+DUMMY2/p231/p231_299.wav|50|I couldn't really work outside Edinburgh.
+DUMMY2/p263/p263_335.wav|39|He will go a long way.
+DUMMY2/p269/p269_093.wav|94|Today I couldn't run on it.
+DUMMY2/p362/p362_090.wav|15|It benefits the whole family.
+DUMMY2/p347/p347_026.wav|46|We still have a long, long way to go.
+DUMMY2/p239/p239_105.wav|48|This time, it might be for real.
+DUMMY2/p225/p225_110.wav|101|Thereafter, he set his mind on becoming a doctor.
+DUMMY2/p304/p304_239.wav|72|He is a joy to watch.
+DUMMY2/p299/p299_273.wav|58|Are you in this movie?
+DUMMY2/p231/p231_151.wav|50|It is not normal practice.
+DUMMY2/p276/p276_255.wav|106|Five years later, the deception continued.
+DUMMY2/p273/p273_430.wav|56|No-one wanted to run it tonight.
+DUMMY2/p241/p241_068.wav|86|There is an element of racism in Scotland.
+DUMMY2/p330/p330_003.wav|1|Six spoons of fresh snow peas, five thick slabs of blue cheese, and maybe a snack for her brother Bob.
+DUMMY2/p237/p237_343.wav|61|He also insisted that no concessions had been made to the French.
+DUMMY2/p254/p254_091.wav|41|It may well have been.
+DUMMY2/p300/p300_374.wav|102|My husband was born in Zimbabwe.
+DUMMY2/p287/p287_072.wav|77|After five weeks the vehicle will be sold at auction.
+DUMMY2/p279/p279_399.wav|25|I have been in good form for the last two years.
+DUMMY2/p252/p252_265.wav|55|The proposal was rejected.
+DUMMY2/p323/p323_169.wav|34|Connell was standing there, ordering her to get up.
+DUMMY2/p323/p323_156.wav|34|They should not have behaved in that way.
+DUMMY2/p256/p256_248.wav|90|In the meantime, the fans would settle for a derby win.
+DUMMY2/p280/p280_298.wav|52|It is based on population rather than need.
+DUMMY2/p260/p260_191.wav|81|They are ready.
+DUMMY2/p376/p376_126.wav|71|"Twaddle is a case in point."
+DUMMY2/p345/p345_172.wav|82|If only the acting profession was that simple.
+DUMMY2/p236/p236_147.wav|75|We have a clean bill of health.
+DUMMY2/p316/p316_322.wav|85|What did they think of her voice?
+DUMMY2/p364/p364_043.wav|88|The concept is simple.
+DUMMY2/p312/p312_289.wav|62|Who will take them after that?
+DUMMY2/p251/p251_118.wav|9|It is rubbish.
+DUMMY2/p278/p278_393.wav|10|The marshall at the turn was great.
+DUMMY2/p279/p279_314.wav|25|It is all credit to them today.
+DUMMY2/p256/p256_191.wav|90|If the director is with you.
+DUMMY2/p300/p300_192.wav|102|These elements are not in the book.
+DUMMY2/p229/p229_203.wav|67|The work between the musicians and the fire is very important.
+DUMMY2/p362/p362_042.wav|15|The chances were plentiful.
+DUMMY2/p272/p272_272.wav|69|It is not a process which can be completed overnight.
+DUMMY2/p250/p250_378.wav|24|She said they would appeal.
+DUMMY2/p240/p240_267.wav|93|Blood samples were taken.
+DUMMY2/p234/p234_208.wav|3|Does the name matter ?
+DUMMY2/p287/p287_097.wav|77|It's not a lack of confidence.
+DUMMY2/p265/p265_239.wav|73|In the meantime, the fans would settle for a derby win.
+DUMMY2/p360/p360_089.wav|60|We discovered that for ourselves.
+DUMMY2/p362/p362_361.wav|15|Doesn't he miss it?
+DUMMY2/p252/p252_130.wav|55|I saw a lot of good things against Livingston.
+DUMMY2/p363/p363_094.wav|6|What has happened?
+DUMMY2/p276/p276_008.wav|106|These take the shape of a long round arch, with its path high above, and its two ends apparently beyond the horizon.
+DUMMY2/p261/p261_197.wav|100|We have to recognise that he is an elusive character.
+DUMMY2/p343/p343_003.wav|21|Six spoons of fresh snow peas, five thick slabs of blue cheese, and maybe a snack for her brother Bob.
+DUMMY2/p271/p271_175.wav|27|You had to go and see him.
+DUMMY2/p271/p271_423.wav|27|Paris is not only young.
+DUMMY2/p264/p264_486.wav|65|The accident seemed so simple.)
+DUMMY2/p329/p329_244.wav|103|Everything else is a bonus.
+DUMMY2/p347/p347_015.wav|46|The Greeks used to imagine that it was a sign from the gods to foretell war or heavy rain.
+DUMMY2/p334/p334_101.wav|38|I would never even consider it.
+DUMMY2/p313/p313_318.wav|76|That's the position that the MoD has adopted.
+DUMMY2/p326/p326_090.wav|28|There has been a sense of frustration.
+DUMMY2/p234/p234_249.wav|3|You can buy them over the counter, anywhere.
+DUMMY2/p228/p228_281.wav|57|Mr Campbell received a phone call.
+DUMMY2/p249/p249_037.wav|80|It is not for any other purpose.
+DUMMY2/p252/p252_367.wav|55|You will lose benefit because you have broken the rules.
+DUMMY2/p318/p318_282.wav|19|I'm confident we can do that.
+DUMMY2/p295/p295_329.wav|92|These findings are vitally important.
+DUMMY2/p310/p310_150.wav|17|The Devil is the creator of weapons.
+DUMMY2/p336/p336_094.wav|98|It's hard to see it.
+DUMMY2/p268/p268_399.wav|87|It seems to have worked.
+DUMMY2/p295/p295_029.wav|92|It has been supremely successful.
+DUMMY2/p287/p287_032.wav|77|But a solution has been found.
+DUMMY2/p308/p308_004.wav|107|We also need a small plastic snake and a big toy frog for the kids.
+DUMMY2/p330/p330_290.wav|1|If convicted, they face the death penalty.
+DUMMY2/p299/p299_304.wav|58|What went wrong?
+DUMMY2/p267/p267_031.wav|0|This is a central issue.
+DUMMY2/p254/p254_210.wav|41|His third goal was superb.
+DUMMY2/p262/p262_129.wav|45|It's a question of fashion.
+DUMMY2/p326/p326_078.wav|28|We're still in talks and, hopefully, they will continue.
+DUMMY2/p240/p240_038.wav|93|It has failed.
+DUMMY2/p238/p238_054.wav|37|How do you take them away ?
+DUMMY2/p329/p329_086.wav|103|I feel very strongly about that.
+DUMMY2/p361/p361_408.wav|79|It is believed he had been stabbed.
+DUMMY2/p275/p275_058.wav|40|George Robertson described the plan as an outrageous and disgraceful decision.
+DUMMY2/p333/p333_281.wav|64|Arguably, they have already done it.
+DUMMY2/p241/p241_289.wav|86|It changed my life.
+DUMMY2/p257/p257_100.wav|105|It was mayhem.
+DUMMY2/p308/p308_373.wav|107|You have to audition for jobs.
+DUMMY2/p269/p269_241.wav|94|On the ground, the West Bank was again the focus of violence.
+DUMMY2/p273/p273_116.wav|56|This is a frightening development.
+DUMMY2/p270/p270_333.wav|8|It is far too early.
+DUMMY2/p229/p229_311.wav|67|You are the glory.
+DUMMY2/p334/p334_279.wav|38|Its national defence policy is defensive in nature.
+DUMMY2/p284/p284_104.wav|16|That's all right then.
+DUMMY2/p254/p254_101.wav|41|However, it did not end that way.
+DUMMY2/p341/p341_056.wav|66|It's not, of course, a concert hall.
+DUMMY2/p288/p288_094.wav|47|Children should be given the same amount of rights as adults.
+DUMMY2/p335/p335_398.wav|49|He became the focus of surrounding interest.
+DUMMY2/p250/p250_246.wav|24|His background is firmly in venture capital.
+DUMMY2/p317/p317_245.wav|97|I now know that from memory.
+DUMMY2/p334/p334_051.wav|38|Later we discovered it was a hoax.
+DUMMY2/p288/p288_124.wav|47|Well, you can have a tree.
+DUMMY2/p284/p284_376.wav|16|It is a simple equation.
+DUMMY2/p244/p244_287.wav|78|In the meantime, the fans would settle for a derby win.
+DUMMY2/p255/p255_145.wav|31|She died at her home.
+DUMMY2/p351/p351_175.wav|33|In many ways, that is as important.
+DUMMY2/p314/p314_138.wav|51|They are currently managed by Ian Wilson.
+DUMMY2/p286/p286_006.wav|63|When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow.
+DUMMY2/p329/p329_392.wav|103|Despite the result, it was still a great moment.
+DUMMY2/p258/p258_303.wav|26|A police inquiry began about two weeks before the General Election.
+DUMMY2/p305/p305_151.wav|54|They just made me feel dizzy.
+DUMMY2/p227/p227_167.wav|29|Are you going to win ?
+DUMMY2/p234/p234_121.wav|3|The announcement of a preferred bidder is expected at the same time.
+DUMMY2/p277/p277_397.wav|89|It will take place in July.
+DUMMY2/p297/p297_142.wav|42|Nato was not a love affair.
+DUMMY2/p376/p376_169.wav|71|"You had to go and see him."
+DUMMY2/p262/p262_123.wav|45|It plans to return to this field.
+DUMMY2/p286/p286_384.wav|63|The team hadn't been picked.
+DUMMY2/p312/p312_377.wav|62|The referee didn't do his job.
+DUMMY2/p261/p261_108.wav|100|So what is the campaign about ?
+DUMMY2/p293/p293_354.wav|23|Failure is a curious concept.
+DUMMY2/p234/p234_051.wav|3|But, after a dip in sales, growth was recorded.
+DUMMY2/p232/p232_219.wav|96|He said that healthy eating was high on the council agenda.
+DUMMY2/p301/p301_044.wav|91|Tourism in Scotland is facing a financial disaster.
+DUMMY2/p269/p269_171.wav|94|We knew we had the goal we wanted.
+DUMMY2/p237/p237_084.wav|61|Otherwise, it will cost a lot of money.
+DUMMY2/p278/p278_061.wav|10|Charles Kennedy had an effective outing.
+DUMMY2/p259/p259_177.wav|7|The people are the hero.)
+DUMMY2/p374/p374_337.wav|11|That is the fact of the matter.
+DUMMY2/p277/p277_175.wav|89|As we worked.
+DUMMY2/p244/p244_169.wav|78|Anyone can do the sums.
+DUMMY2/p265/p265_080.wav|73|The city council is a major property owner in the area.
+DUMMY2/p265/p265_189.wav|73|On the outside of an airport, it is very difficult.
+DUMMY2/p228/p228_275.wav|57|They were too hard.
+DUMMY2/p226/p226_105.wav|43|May not have been at fault?
+DUMMY2/p231/p231_454.wav|50|Today, he is in the same position as four years ago.
+DUMMY2/p275/p275_425.wav|40|Last year, it was won by Jack McConnell, the first minister.
+DUMMY2/p305/p305_140.wav|54|Thus far we have received no complaints.
+DUMMY2/p310/p310_305.wav|17|She admitted the theft of letters and deception.
+DUMMY2/p280/p280_117.wav|52|What do they want us to do ?
+DUMMY2/p345/p345_179.wav|82|All will be revealed in due course.
+DUMMY2/p335/p335_371.wav|49|This means a great deal to the families.
+DUMMY2/p263/p263_462.wav|39|I saw it didn't work.
+DUMMY2/p347/p347_220.wav|46|It could not be too high.
+DUMMY2/p267/p267_236.wav|0|Pensions are a long-term investment.
+DUMMY2/p252/p252_061.wav|55|The fifth was found later.
+DUMMY2/p299/p299_160.wav|58|Meanwhile, the problems of Ball continue to multiply.
+DUMMY2/p236/p236_353.wav|75|What do we do ?
+DUMMY2/p293/p293_296.wav|23|I'm sure that clubs will all be delighted.
+DUMMY2/p323/p323_304.wav|34|How good is Lennox Lewis?
+DUMMY2/p335/p335_108.wav|49|They have got their position, we have got our position.
+DUMMY2/p310/p310_263.wav|17|It really is taken seriously.
+DUMMY2/p311/p311_163.wav|4|In that case, the children were not missing.
+DUMMY2/p281/p281_428.wav|36|This news came after the stock market closed on Monday.
+DUMMY2/p329/p329_373.wav|103|They probably expected something special from me.
+DUMMY2/p299/p299_346.wav|58|JOHN Anderson, the former Scottish national coach, is still unearthing talent.
+DUMMY2/p233/p233_051.wav|84|But, after a dip in sales, growth was recorded.
+DUMMY2/p280/p280_096.wav|52|Earlier, both main parties agreed a crucial stage had been reached.
+DUMMY2/p329/p329_092.wav|103|His treatment has been quite atrocious.
+DUMMY2/p260/p260_340.wav|81|In addition, certain areas are closed at certain times.
+DUMMY2/p347/p347_407.wav|46|Which means it matters.
+DUMMY2/p250/p250_050.wav|24|Rebuilding public transport was never going to happen overnight.
+DUMMY2/p301/p301_039.wav|91|There's always a solution, somewhere you can meet in the middle.
+DUMMY2/p263/p263_386.wav|39|We are delighted at the response from potential employers.
+DUMMY2/p283/p283_444.wav|95|Everything in golf is a balance.
+DUMMY2/p259/p259_279.wav|7|Either way, the investor retains the premium.)
+DUMMY2/p231/p231_050.wav|50|It is a symbolic concert.
+DUMMY2/p311/p311_278.wav|4|The casualties were not named.
+DUMMY2/p254/p254_146.wav|41|He is severe.
+DUMMY2/p251/p251_215.wav|9|Her home is perhaps a couple of miles from the town centre.
+DUMMY2/p313/p313_391.wav|76|There are a number of possible outcomes.
+DUMMY2/p273/p273_336.wav|56|Scottish Newcastle will report its interim figures tomorrow.
+DUMMY2/p298/p298_396.wav|68|The woman is basically off her head.
+DUMMY2/p360/p360_243.wav|60|We're looking for unity in the council.
+DUMMY2/p234/p234_258.wav|3|I am delighted for them.
+DUMMY2/p269/p269_298.wav|94|Police were called to the ground and interviewed a number of people.
+DUMMY2/p232/p232_163.wav|96|It is not too late to get on board.
+DUMMY2/p336/p336_382.wav|98|I spoke to him yesterday.
+DUMMY2/p260/p260_265.wav|81|The system can work.
+DUMMY2/p250/p250_283.wav|24|I felt about this big.
+DUMMY2/p294/p294_311.wav|104|They have nowhere else to go.
+DUMMY2/p243/p243_339.wav|53|So is that it, then ?
+DUMMY2/p244/p244_407.wav|78|It's great that it happened in Britain.
+DUMMY2/p265/p265_195.wav|73|It was worth a photograph.
+DUMMY2/p234/p234_313.wav|3|Every one is a winner.
+DUMMY2/p283/p283_036.wav|95|It is not for any other purpose.
+DUMMY2/p255/p255_371.wav|31|By that time, however, it was already too late.
+DUMMY2/p270/p270_301.wav|8|The rescue package is public money.
+DUMMY2/p308/p308_069.wav|107|I hope we can put it behind us.
+DUMMY2/p268/p268_256.wav|87|It's never great to finish second.
+DUMMY2/p341/p341_064.wav|66|This is the crossroads.
+DUMMY2/p274/p274_036.wav|32|The boy is no longer with us.)
+DUMMY2/p247/p247_317.wav|14|He was obviously very genuine.)
+DUMMY2/p260/p260_047.wav|81|Every aspect of our play was first class.
+DUMMY2/p311/p311_031.wav|4|Miller was every bit as happy.
+DUMMY2/p305/p305_114.wav|54|We have the experience, the courses, and an abundance of confidence.
+DUMMY2/p283/p283_183.wav|95|The suspension of the head teacher has been lifted.
+DUMMY2/p362/p362_124.wav|15|He seems to be used to the attention.
+DUMMY2/p334/p334_241.wav|38|It had won an investors in people award.
+DUMMY2/p271/p271_118.wav|27|It is so sad.
+DUMMY2/p245/p245_060.wav|59|Until recently, she worked as a recruitment consultant in London.
+DUMMY2/p256/p256_065.wav|90|It's a matter of balance.
+DUMMY2/p259/p259_459.wav|7|The project is entitled The Composer in Scotland.)
+DUMMY2/p236/p236_151.wav|75|It was by the numbers.
+DUMMY2/p227/p227_337.wav|29|Is there a waiting list ?
+DUMMY2/p284/p284_313.wav|16|We want to play at the worlds.
+DUMMY2/p232/p232_090.wav|96|Downing Street will make the second appointment in the Scotland Office today.
+DUMMY2/p259/p259_103.wav|7|It's good to have a voice.)
+DUMMY2/p257/p257_335.wav|105|It is long gone.
+DUMMY2/p255/p255_321.wav|31|There was some merit in that.
+DUMMY2/p228/p228_256.wav|57|One MP said he feared the job losses were only the beginning.
+DUMMY2/p295/p295_066.wav|92|I am a soldier, a soldier, a soldier.
+DUMMY2/p226/p226_178.wav|43|Mr Docherty said the whole family was shocked.
+DUMMY2/p363/p363_142.wav|6|I was deeply worried.
+DUMMY2/p232/p232_006.wav|96|When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow.
+DUMMY2/p306/p306_201.wav|12|The talking is going on, but the Iraqi people will survive.
+DUMMY2/p270/p270_443.wav|8|They are interior designers and architects.
+DUMMY2/p345/p345_304.wav|82|This club have been fair to me.
+DUMMY2/p303/p303_178.wav|44|You let a lot of people down.
+DUMMY2/p253/p253_097.wav|70|I love the Dome.
+DUMMY2/p245/p245_238.wav|59|It is a policy which has the full support of the minister.
+DUMMY2/p311/p311_288.wav|4|It has become very confused.
+DUMMY2/p311/p311_371.wav|4|This was a chilling echo.
+DUMMY2/p265/p265_340.wav|73|On fuel, the Chancellor has a number of options.
+DUMMY2/p292/p292_140.wav|13|I've got to get on with my career.
+DUMMY2/p318/p318_080.wav|19|Did they give any good advice?
+DUMMY2/p329/p329_169.wav|103|We couldn't go very fast.
+DUMMY2/p231/p231_247.wav|50|Persuaded to change his mind.
+DUMMY2/p259/p259_411.wav|7|The prosecution say the girl was the only witness to the attack.)
+DUMMY2/p304/p304_392.wav|72|That's the way things are heading.
+DUMMY2/p280/p280_185.wav|52|I made my mind up before we came on tour.
+DUMMY2/p297/p297_288.wav|42|We want to replicate that success.
+DUMMY2/p314/p314_333.wav|51|This is a national crisis.
+DUMMY2/p294/p294_333.wav|104|Iraq has no interest in war.
+DUMMY2/p286/p286_305.wav|63|I intended to look for another club on loan.
+DUMMY2/p336/p336_363.wav|98|I couldn't quite believe it, and still can't.
+DUMMY2/p268/p268_345.wav|87|How do you take them away ?
+DUMMY2/p256/p256_118.wav|90|It would not do any harm to reinforce the message.
+DUMMY2/p329/p329_094.wav|103|Nothing like this has ever happened here before.
+DUMMY2/p282/p282_326.wav|83|Three years ago he would have been.
+DUMMY2/p304/p304_326.wav|72|That doesn't just happen, you have to build it.
+DUMMY2/p313/p313_178.wav|76|Any error is severely punished.
+DUMMY2/p347/p347_123.wav|46|It is an interesting title, Believing in Britain.
+DUMMY2/p270/p270_360.wav|8|We are satisfied with this outcome.
+DUMMY2/p318/p318_285.wav|19|I would never even consider it.
+DUMMY2/p330/p330_402.wav|1|We think a lot of Allan McGregor.
+DUMMY2/p245/p245_011.wav|59|When a man looks for something beyond his reach, his friends say he is looking for the pot of gold at the end of the rainbow.
+DUMMY2/p250/p250_095.wav|24|It is high time to act.
+DUMMY2/p285/p285_067.wav|2|I had my suspicions.
+DUMMY2/p277/p277_195.wav|89|But she might be.
+DUMMY2/p280/p280_036.wav|52|Each brand was owned by a different family.
+DUMMY2/p316/p316_058.wav|85|However, he said it would be likely to bring a chill.
+DUMMY2/p351/p351_349.wav|33|She kept him on a string.
+DUMMY2/p253/p253_171.wav|70|You had to go and see him.
+DUMMY2/p276/p276_308.wav|106|Says the Duke of York.
+DUMMY2/p295/p295_108.wav|92|Casualties are a problem for the Kremlin.
+DUMMY2/p277/p277_300.wav|89|However, he is a coach, and he remains a coach at heart.
+DUMMY2/p329/p329_118.wav|103|That is different from being impartial.
+DUMMY2/p286/p286_212.wav|63|Because he was born in England.
+DUMMY2/p360/p360_046.wav|60|And maybe they have.
+DUMMY2/p269/p269_325.wav|94|This wasn't the way it was supposed to be.
+DUMMY2/p374/p374_262.wav|11|I have not come in to take over.
+DUMMY2/p287/p287_314.wav|77|McNaughton was not so sure.
+DUMMY2/p280/p280_209.wav|52|They are a victim of their own success.
+DUMMY2/p302/p302_062.wav|30|He said it was the worst possible result.
+DUMMY2/p340/p340_407.wav|74|We shall not do that.
+DUMMY2/p269/p269_332.wav|94|Ms Anderson yesterday put a brave face on the departure.
+DUMMY2/p264/p264_459.wav|65|The party had high hopes of taking the seat from Labour.)
+DUMMY2/p304/p304_028.wav|72|Glasgow is going to be open for business.
+DUMMY2/p273/p273_151.wav|56|I'm not going to answer that right now.
+DUMMY2/p253/p253_086.wav|70|Obviously, we were pretty close in a couple of games.
+DUMMY2/p274/p274_094.wav|32|He is not a dancer.)
+DUMMY2/p283/p283_146.wav|95|It's not a U-turn at all.
+DUMMY2/p236/p236_148.wav|75|Charles Gordon, leader of Glasgow City Council declined to comment.
+DUMMY2/p340/p340_257.wav|74|I can't believe it happened.
+DUMMY2/p272/p272_026.wav|69|Is this accurate?
+DUMMY2/p243/p243_356.wav|53|The deal is expected to be completed by September.
+DUMMY2/p270/p270_280.wav|8|None of this work is guaranteed.
+DUMMY2/p283/p283_134.wav|95|Child abuse is a dreadful thing.
+DUMMY2/p274/p274_459.wav|32|Now that business is banned.)
+DUMMY2/p287/p287_017.wav|77|Others have tried to explain the phenomenon physically.
+DUMMY2/p264/p264_098.wav|65|how do you get it back?)
+DUMMY2/p267/p267_154.wav|0|As, indeed, they would be.
+DUMMY2/p335/p335_271.wav|49|Some may end up in hospital.
+DUMMY2/p295/p295_300.wav|92|It should be a condition of employment.
+DUMMY2/p227/p227_248.wav|29|You will have seen the adverts.
+DUMMY2/p308/p308_214.wav|107|It may mean more money, but we don't need the money.
+DUMMY2/p304/p304_054.wav|72|And then came the seventies.
+DUMMY2/p299/p299_343.wav|58|The criminal justice system does not do that.
+DUMMY2/p264/p264_298.wav|65|Many events are down on numbers.)
+DUMMY2/p239/p239_178.wav|48|Is it in the right place ?
+DUMMY2/p347/p347_316.wav|46|I cannot confirm the name of any driver.
+DUMMY2/p295/p295_162.wav|92|David Trimble has sold out.
+DUMMY2/p261/p261_074.wav|100|He is now resident in England.
+DUMMY2/p246/p246_314.wav|5|She is on a life support machine.
+DUMMY2/p277/p277_142.wav|89|We want to keep the pound.
+DUMMY2/p253/p253_254.wav|70|One MP said he feared the job losses were only the beginning.
+DUMMY2/p316/p316_227.wav|85|However, everyone should do it once in their life.
+DUMMY2/p285/p285_033.wav|2|He was jailed for five years.
+DUMMY2/p251/p251_189.wav|9|People will ask about us.
+DUMMY2/p288/p288_204.wav|47|This gives a financial incentive to switch.
+DUMMY2/p270/p270_172.wav|8|Next year it plans to open an office in Tokyo.
+DUMMY2/p254/p254_360.wav|41|We have to be sure that the taxation system can work.
+DUMMY2/p280/p280_340.wav|52|Do I have a favourite ?
+DUMMY2/p270/p270_177.wav|8|His team management was protective.
+DUMMY2/p275/p275_286.wav|40|Who did the recruiting?
+DUMMY2/p282/p282_359.wav|83|The death rates are still as high.
+DUMMY2/p249/p249_270.wav|80|It depends on the internal discussions in the Ministry of Defence.
+DUMMY2/p275/p275_113.wav|40|Tony Blair's spokesman insisted the decision came from Dublin.
+DUMMY2/p292/p292_151.wav|13|The result is utterly compelling.
+DUMMY2/p259/p259_447.wav|7|I never had a childhood.)
+DUMMY2/p287/p287_057.wav|77|Why do you want to come to Edinburgh ?
+DUMMY2/p286/p286_385.wav|63|No other job in world football can compare to this one.
+DUMMY2/p326/p326_063.wav|28|He will become the sovereign.
+DUMMY2/p258/p258_315.wav|26|They were fantastic.
+DUMMY2/p345/p345_109.wav|82|What are they like?
+DUMMY2/p276/p276_455.wav|106|We are aiming for early March.
+DUMMY2/p265/p265_351.wav|73|He was the architect.
+DUMMY2/p236/p236_477.wav|75|Analysts said the offer was fair.
+DUMMY2/p247/p247_081.wav|14|She died in hospital two hours later.)
+DUMMY2/p233/p233_048.wav|84|It is all starting to come together.
+DUMMY2/p285/p285_376.wav|2|Something is wrong.
+DUMMY2/p252/p252_144.wav|55|I'd always wanted to act.
+DUMMY2/p376/p376_189.wav|71|"I would love it."
+DUMMY2/p284/p284_161.wav|16|Councillors are expected to take a decision within the next few weeks.
+DUMMY2/p364/p364_099.wav|88|He liked to talk.
+DUMMY2/p230/p230_148.wav|35|This year, this month, will be special for Torrance.
+DUMMY2/p241/p241_356.wav|86|It benefits the whole family.
+DUMMY2/p226/p226_097.wav|43|We could not get any possession.
+DUMMY2/p244/p244_144.wav|78|I have been in contact with him.
+DUMMY2/p316/p316_341.wav|85|The picture in Glasgow was improving, he added.
+DUMMY2/p317/p317_316.wav|97|I was in the zone in the morning.
+DUMMY2/p233/p233_096.wav|84|I had a bit in hand.
+DUMMY2/p261/p261_410.wav|100|Motion described it as a unique event.
+DUMMY2/p283/p283_322.wav|95|Certainly, the Taliban regime is finished.
+DUMMY2/p262/p262_122.wav|45|It was the same at Twickenham.
+DUMMY2/p236/p236_284.wav|75|I realised I was lucky to have it.
+DUMMY2/p304/p304_188.wav|72|Did you see that?
+DUMMY2/p236/p236_312.wav|75|It was really very frightening.
+DUMMY2/p257/p257_132.wav|105|The trial is funded solely by Edinburgh City Council.
+DUMMY2/p244/p244_028.wav|78|I am not interested in the money, it is the principle.
+DUMMY2/p272/p272_066.wav|69|We need the chief medical officer to clarify the matter.
+DUMMY2/p240/p240_145.wav|93|It opens the door to the Champions League.
+DUMMY2/p374/p374_009.wav|11|There is , according to legend, a boiling pot of gold at one end.
+DUMMY2/p247/p247_340.wav|14|The whole thing is utterly transparent.)
+DUMMY2/p240/p240_286.wav|93|If not, he should go home.
+DUMMY2/p364/p364_100.wav|88|Lots of others were doing the same.
+DUMMY2/p229/p229_164.wav|67|I knew he was good.
+DUMMY2/p286/p286_437.wav|63|That was a great performance by the team.
+DUMMY2/p228/p228_260.wav|57|I have never been a close friend of Jim McLean.
+DUMMY2/p251/p251_113.wav|9|We are determined to continue on this mission and we will prevail.
+DUMMY2/p308/p308_201.wav|107|It was a lot of hard work, but it wasn't difficult.
+DUMMY2/p374/p374_150.wav|11|News of the funding was broadly welcomed yesterday.
+DUMMY2/p234/p234_177.wav|3|It is ambitious, but it can be achieved.
+DUMMY2/p239/p239_473.wav|48|The response from everyone was wonderful.
+DUMMY2/p298/p298_176.wav|68|A wide range of restrictions are in place.
+DUMMY2/p227/p227_267.wav|29|What was the matter for concern ?
+DUMMY2/p270/p270_348.wav|8|He declined to comment on possible disposals.
+DUMMY2/p267/p267_129.wav|0|He was seen as the enemy.
+DUMMY2/p236/p236_486.wav|75|However, he emphasised the bank was satisfied with progress.
+DUMMY2/p286/p286_454.wav|63|Dunfermline deserved a goal for their hard work.
+DUMMY2/p361/p361_186.wav|79|It was a bit of a shock.
+DUMMY2/p230/p230_393.wav|35|Motion described it as a unique event.
+DUMMY2/p264/p264_388.wav|65|The view is impressive.)
+DUMMY2/p318/p318_345.wav|19|Staff have been informed.
+DUMMY2/p239/p239_163.wav|48|I understand the medical concerns.
+DUMMY2/p297/p297_027.wav|42|And the art of performance is taking risks.
+DUMMY2/p236/p236_350.wav|75|A great deal has been achieved.
+DUMMY2/p271/p271_417.wav|27|The shareholders will vote to wind up the company on Friday morning.
+DUMMY2/p294/p294_379.wav|104|He edited the press release.
+DUMMY2/p268/p268_181.wav|87|Pressure of work is no excuse.
+DUMMY2/p286/p286_402.wav|63|Offence to the herd was not easily overlooked.
+DUMMY2/p254/p254_164.wav|41|They are not advertised.
+DUMMY2/p236/p236_156.wav|75|It was a funny feeling.
+DUMMY2/p273/p273_224.wav|56|But he failed to win the committee's support.
+DUMMY2/p243/p243_240.wav|53|Was it the wife ?
+DUMMY2/p247/p247_148.wav|14|What happened in that game ?)
+DUMMY2/p323/p323_022.wav|34|The actual primary rainbow observed is said to be the effect of super-imposition of a number of bows.
+DUMMY2/p292/p292_024.wav|13|This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue.
+DUMMY2/p228/p228_226.wav|57|The loss of a company to the industry is a blow.
+DUMMY2/p277/p277_450.wav|89|It was a total disaster.
+DUMMY2/p245/p245_151.wav|59|They might be broken, but they are not defeated.
+DUMMY2/p287/p287_300.wav|77|Either team will be hard.
+DUMMY2/p266/p266_210.wav|20|He seemed to lose his focus.
+DUMMY2/p245/p245_262.wav|59|Brown is an interesting man, but he is not desperate.
+DUMMY2/p263/p263_448.wav|39|It is not over by any means.
+DUMMY2/p347/p347_187.wav|46|I think we're very different.
+DUMMY2/p341/p341_078.wav|66|It does not stop at the border.
+DUMMY2/p257/p257_383.wav|105|The orchestra was already increasing the scope of its ambitions.
+DUMMY2/p227/p227_375.wav|29|It is a stroke of genius.
+DUMMY2/p247/p247_402.wav|14|I was happy to be recognised by Mike Tyson.)
+DUMMY2/p280/p280_141.wav|52|I am not under any new pressure.
+DUMMY2/p267/p267_292.wav|0|The partnership was set up during the summer.
+DUMMY2/p269/p269_169.wav|94|Military action is the only option we have on the table today.
+DUMMY2/p298/p298_362.wav|68|As if he were a High Court judge.
+DUMMY2/p274/p274_253.wav|32|Do you think we are a top nation ?)
+DUMMY2/p288/p288_304.wav|47|Violence and threatening behaviour has no place in a school.
+DUMMY2/p274/p274_204.wav|32|The result is utterly compelling.)
+DUMMY2/p351/p351_184.wav|33|The parties have no contact.
+DUMMY2/p317/p317_172.wav|97|Each day is a new beginning.
+DUMMY2/p279/p279_389.wav|25|It will take place in July.
+DUMMY2/p300/p300_351.wav|102|This time, however, there is a new venue.
+DUMMY2/p282/p282_143.wav|83|He felt that everything that was said about asylum seekers was negative.
+DUMMY2/p310/p310_153.wav|17|This is a job for the Government.
+DUMMY2/p229/p229_259.wav|67|This is a big club.
+DUMMY2/p299/p299_353.wav|58|I am ready for that.
+DUMMY2/p253/p253_005.wav|70|She can scoop these things into three red bags, and we will go meet her Wednesday at the train station.
+DUMMY2/p252/p252_386.wav|55|This year I understood.
+DUMMY2/p276/p276_075.wav|106|A spokeswoman for the Law Society of Scotland said.
+DUMMY2/p310/p310_235.wav|17|This film will be totally awesome.
+DUMMY2/p341/p341_124.wav|66|I hadn't seen them in eight years.
+DUMMY2/p305/p305_406.wav|54|Thus the story will continue to thrive.
+DUMMY2/p231/p231_225.wav|50|Crucially, though, United were still alive.
+DUMMY2/p247/p247_124.wav|14|We have the mental strength.)
+DUMMY2/p280/p280_163.wav|52|When Germany played there recently, the match took place in the new stadium.
+DUMMY2/p276/p276_083.wav|106|So what is the campaign about ?
+DUMMY2/p298/p298_369.wav|68|He also has a Scottish grandfather.
+DUMMY2/p252/p252_231.wav|55|Despite his success, things began to fall apart.
+DUMMY2/p374/p374_056.wav|11|However, in Orkney, there was a mixed response.
+DUMMY2/p376/p376_154.wav|71|"Mr Blair had done well."
+DUMMY2/p362/p362_383.wav|15|I told her, and she was extremely grateful.
+DUMMY2/p238/p238_044.wav|37|It is about regular committed giving which is the real attraction.
+DUMMY2/p234/p234_062.wav|3|That is all in the past.
+DUMMY2/p262/p262_116.wav|45|Who would have?
+DUMMY2/p286/p286_318.wav|63|Holland won by five wickets.
+DUMMY2/p364/p364_231.wav|88|I could not believe the results.
+DUMMY2/p333/p333_084.wav|64|But will they fall in love?
+DUMMY2/p234/p234_319.wav|3|It all started with a visiting rugby club.
+DUMMY2/p351/p351_129.wav|33|These will take a little time to develop.
+DUMMY2/p292/p292_333.wav|13|It is out there.
+DUMMY2/p302/p302_241.wav|30|There was no safety net.
+DUMMY2/p343/p343_165.wav|21|It is one of those things.
+DUMMY2/p298/p298_144.wav|68|That end is enjoying life, as far as David is concerned.
+DUMMY2/p345/p345_029.wav|82|What is the new religion?
+DUMMY2/p334/p334_097.wav|38|It means they actually control the programme.
+DUMMY2/p265/p265_002.wav|73|Ask her to bring these things with her from the store.
+DUMMY2/p362/p362_263.wav|15|We could have done without this.
+DUMMY2/p335/p335_214.wav|49|That is not an easy thing.
+DUMMY2/p243/p243_214.wav|53|People elsewhere in Scotland will feel cut off by this.
+DUMMY2/p258/p258_369.wav|26|I feel pretty good.
+DUMMY2/p311/p311_397.wav|4|He said no survivors had been found.
+DUMMY2/p293/p293_003.wav|23|Six spoons of fresh snow peas, five thick slabs of blue cheese, and maybe a snack for her brother Bob.
+DUMMY2/p287/p287_260.wav|77|We run within the law.
+DUMMY2/p300/p300_241.wav|102|The property is owned by Glasgow City Council.
+DUMMY2/p287/p287_095.wav|77|It would be the end of farming.
+DUMMY2/p298/p298_201.wav|68|It was a very difficult decision for us.
+DUMMY2/p340/p340_282.wav|74|We might never see him again.
+DUMMY2/p255/p255_156.wav|31|The amount of energy in a tornado is enormous.
+DUMMY2/p295/p295_070.wav|92|He's right up to a point.
+DUMMY2/p295/p295_301.wav|92|It was not being marketed properly.
+DUMMY2/p286/p286_115.wav|63|We should recognise that others have done a good job.
+DUMMY2/p244/p244_208.wav|78|It was the story of the second half.
+DUMMY2/p268/p268_132.wav|87|Western countries condemned the conduct of the poll.
+DUMMY2/p360/p360_350.wav|60|I suppose it is quite exciting really.
+DUMMY2/p263/p263_201.wav|39|It is a terrible loss.
+DUMMY2/p277/p277_320.wav|89|Later in the day he was forced to explain his position.
+DUMMY2/p297/p297_412.wav|42|However, it was well worth the wait.
+DUMMY2/p297/p297_333.wav|42|He intends to appeal the sentences.
+DUMMY2/p255/p255_172.wav|31|He is keen to stay in public service.
+DUMMY2/p254/p254_074.wav|41|There was a battle there.
+DUMMY2/p374/p374_158.wav|11|Sub Not Used, McCulloch.
+DUMMY2/p261/p261_454.wav|100|I rejected the idea of a separate residence.
+DUMMY2/p306/p306_212.wav|12|He was too good for me - too consistent.
+DUMMY2/p301/p301_342.wav|91|He's a joy to follow.
+DUMMY2/p280/p280_325.wav|52|His name was first linked last year to Business for Scotland.
+DUMMY2/p326/p326_276.wav|28|He made no big mistakes.
+DUMMY2/p266/p266_297.wav|20|He added that public transport improvements must also be maintained.
+DUMMY2/p335/p335_365.wav|49|But let's not get carried away.
+DUMMY2/p279/p279_311.wav|25|I did not name it.
+DUMMY2/p336/p336_111.wav|98|The first is in Whitehall, the second in Brussels.
+DUMMY2/p269/p269_301.wav|94|It's an issue that will have to be tackled.
+DUMMY2/p323/p323_280.wav|34|Have a look at our accounts.
+DUMMY2/p277/p277_080.wav|89|He was at home with his pals.
+DUMMY2/p233/p233_391.wav|84|Thankfully, no-one on the bus is too badly hurt.
+DUMMY2/p267/p267_418.wav|0|Further new equity was raised in a placing in January.
+DUMMY2/p244/p244_078.wav|78|That will be the office.
+DUMMY2/p245/p245_209.wav|59|You have to do your research.
+DUMMY2/p329/p329_273.wav|103|It's good news and long overdue.
+DUMMY2/p297/p297_174.wav|42|But what lies ahead?
+DUMMY2/p363/p363_320.wav|6|My view has now completely changed.
+DUMMY2/p240/p240_379.wav|93|It's now down in black and white.
+DUMMY2/p343/p343_044.wav|21|I had troubles with the producers.
+DUMMY2/p260/p260_320.wav|81|Such actions are rarely popular.
+DUMMY2/p333/p333_420.wav|64|It used to bother me sometimes, but it doesn't any more.
+DUMMY2/p334/p334_066.wav|38|Every aspect of our play was first class.
+DUMMY2/p302/p302_014.wav|30|To the Hebrews it was a token that there would be no more universal floods.
+DUMMY2/p347/p347_047.wav|46|You can't give in to the vandals.
+DUMMY2/p231/p231_103.wav|50|Why do it otherwise ?
+DUMMY2/p274/p274_154.wav|32|The abuse of elderly people was appalling.)
+DUMMY2/p360/p360_358.wav|60|That has to be allowed.
+DUMMY2/p293/p293_281.wav|23|I was living with my mum.
+DUMMY2/p265/p265_104.wav|73|It's a shame.
+DUMMY2/p243/p243_321.wav|53|This term they are second bottom with three games left to play.
+DUMMY2/p250/p250_311.wav|24|Stephen will get his first cap.
+DUMMY2/p239/p239_002.wav|48|Ask her to bring these things with her from the store.
+DUMMY2/p246/p246_248.wav|5|There's the mix.
+DUMMY2/p361/p361_395.wav|79|That will be the criteria for the future.
+DUMMY2/p288/p288_407.wav|47|The real enemy is in your own back yard.
+DUMMY2/p299/p299_107.wav|58|I am a wealthy person.
+DUMMY2/p257/p257_361.wav|105|He has the edge.
+DUMMY2/p314/p314_044.wav|51|In fact, he didn't deliver a speech at the awards.
+DUMMY2/p311/p311_256.wav|4|The performance was really, really immense.
+DUMMY2/p279/p279_359.wav|25|It was a double tragedy for the family.
+DUMMY2/p279/p279_282.wav|25|I intended to look for another club on loan.
+DUMMY2/p294/p294_289.wav|104|So it was sad.
+DUMMY2/p351/p351_047.wav|33|We know we can defend it.
+DUMMY2/p311/p311_084.wav|4|They are there to help us.
+DUMMY2/p308/p308_063.wav|107|The quality of life is difficult for them.
+DUMMY2/p262/p262_335.wav|45|He was then replaced by Ross.
+DUMMY2/p266/p266_389.wav|20|On the contrary, it was actually very funny.
+DUMMY2/p294/p294_308.wav|104|The appeal is impartial.
+DUMMY2/p310/p310_271.wav|17|It was also put on the Internet.
+DUMMY2/p271/p271_136.wav|27|Is that it?
+DUMMY2/p255/p255_381.wav|31|I looked again at its vision for a Scottish Parliament.
+DUMMY2/p241/p241_228.wav|86|Who would be right?
+DUMMY2/p265/p265_078.wav|73|They lived for their children.
+DUMMY2/p233/p233_111.wav|84|According to the criteria, he is qualified for Scotland.
+DUMMY2/p268/p268_245.wav|87|There was no basis for their arrest.
+DUMMY2/p274/p274_189.wav|32|But there's an upturn in the sector.)
+DUMMY2/p278/p278_203.wav|10|We've had an enjoyable adventure.
+DUMMY2/p266/p266_233.wav|20|Of further privacy, he had no need.
+DUMMY2/p326/p326_058.wav|28|It is the wealthiest in Europe.
+DUMMY2/p260/p260_299.wav|81|I was the sheep.
+DUMMY2/p251/p251_293.wav|9|One knows the feeling.
+DUMMY2/p340/p340_253.wav|74|I am not a liar.
+DUMMY2/p238/p238_141.wav|37|Even the winning club was within seconds of disaster.
+DUMMY2/p276/p276_427.wav|106|Calvin was always recognised as a player with potential.
+DUMMY2/p303/p303_352.wav|44|My preference is for the single vaccines.
+DUMMY2/p293/p293_046.wav|23|Lothian and Borders Police are also involved.
+DUMMY2/p304/p304_402.wav|72|His body was never found.
+DUMMY2/p298/p298_226.wav|68|This Government believes in parental discipline.
+DUMMY2/p283/p283_077.wav|95|He becomes the new Minister for Sport and Culture.
+DUMMY2/p303/p303_136.wav|44|It was to be published next month.
+DUMMY2/p339/p339_188.wav|18|He loved it, and so did they.
+DUMMY2/p306/p306_237.wav|12|This is a huge boost for my confidence.
+DUMMY2/p241/p241_229.wav|86|It is set in Paris.
+DUMMY2/p308/p308_325.wav|107|Strathclyde Police yesterday declined to comment on Ferris.
+DUMMY2/p256/p256_224.wav|90|If it doesn't, it doesn't.
+DUMMY2/p329/p329_304.wav|103|She had kept the news from him.
+DUMMY2/p287/p287_214.wav|77|It's all change at Kilmarnock.
+DUMMY2/p230/p230_095.wav|35|We intend to change the model.
+DUMMY2/p243/p243_175.wav|53|It didn't come as any great surprise.
+DUMMY2/p295/p295_337.wav|92|We are well insured.
+DUMMY2/p278/p278_149.wav|10|Crucially, though, United were still alive.
+DUMMY2/p302/p302_154.wav|30|I know you went back this morning.
+DUMMY2/p271/p271_288.wav|27|You've got to have both sides.
+DUMMY2/p303/p303_213.wav|44|They should also have the right to vote.
+DUMMY2/p326/p326_185.wav|28|They don't know each other, but they have made this commitment.
+DUMMY2/p248/p248_218.wav|99|On a technical level, they were not afraid to play good football.
+DUMMY2/p271/p271_023.wav|27|If the red of the second bow falls upon the green of the first, the result is to give a bow with an abnormally wide yellow band, since red and green light when mixed form yellow.
+DUMMY2/p261/p261_257.wav|100|Our idea is to share and lower the cost.
+DUMMY2/p287/p287_138.wav|77|It was deployed in the Gulf War.
+DUMMY2/p305/p305_241.wav|54|I have been here for only three months.
+DUMMY2/p257/p257_353.wav|105|There is no signature.
+DUMMY2/p272/p272_087.wav|69|He is in the queue.
+DUMMY2/p258/p258_279.wav|26|The record companies have gone through the floor.
+DUMMY2/p238/p238_022.wav|37|The actual primary rainbow observed is said to be the effect of super-imposition of a number of bows.

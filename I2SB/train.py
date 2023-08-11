@@ -22,12 +22,7 @@ from torch.multiprocessing import Process
 
 from logger import Logger
 from distributed_util import init_processes
-from corruption import build_corruption
-from dataset import imagenet
-from i2sb import Runner, download_ckpt
-
-import colored_traceback.always
-from ipdb import set_trace as debug
+from i2sb import Runner
 
 from custom_dataset import LJS_Latent, LJSSlidingWindow
 import yaml
@@ -73,9 +68,9 @@ def create_training_options():
     parser.add_argument("--add-x1-noise",   action="store_true",             help="add noise to conditional network")
 
     # --------------- optimizer and loss ---------------
-    parser.add_argument("--batch-size",     type=int,   default=256)
-    parser.add_argument("--microbatch",     type=int,   default=2,           help="accumulate gradient over microbatch until full batch-size")
-    parser.add_argument("--num-itr",        type=int,   default=1000000,     help="training iteration")
+    parser.add_argument("--batch-size",     type=int,   default=32)
+    parser.add_argument("--microbatch",     type=int,   default=4,           help="accumulate gradient over microbatch until full batch-size")
+    parser.add_argument("--num-itr",        type=int,   default=10000,       help="training iteration")
     parser.add_argument("--lr",             type=float, default=5e-5,        help="learning rate")
     parser.add_argument("--lr-gamma",       type=float, default=0.99,        help="learning rate decay ratio")
     parser.add_argument("--lr-step",        type=int,   default=1000,        help="learning rate decay step size")
@@ -93,13 +88,12 @@ def create_training_options():
 
     # ========= auto setup =========
     opt.device='cuda' if opt.gpu is None else f'cuda:{opt.gpu}'
-    if opt.name is None:
-        opt.name = opt.corrupt
     opt.distributed = opt.n_gpu_per_node > 1
     opt.use_fp16 = False # disable fp16 for training
 
     config = yaml.load(open(opt.model_conf_path, "r"), Loader=yaml.FullLoader)
     opt.conf_file = config
+    opt.name = opt.conf_file["training"]["output_dir"]
 
     # log ngc meta data
     if "NGC_JOB_ID" in os.environ.keys():
@@ -133,21 +127,8 @@ def main(opt):
     if opt.seed is not None:
         set_seed(opt.seed + opt.global_rank)
 
-    # build imagenet dataset TODO add own datasets
-    #train_dataset = imagenet.build_lmdb_dataset(opt, log, train=True)
-    #val_dataset   = imagenet.build_lmdb_dataset(opt, log, train=False)
     train_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="train", normalize=False)
     val_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="val", normalize=False)
-    # note: images should be normalized to [-1,1] for corruption methods to work properly
-
-    # Mathias: not needed
-    #if opt.corrupt == "mixture":
-    #    import corruption.mixture as mix
-    #    train_dataset = mix.MixtureCorruptDatasetTrain(opt, train_dataset)
-    #    val_dataset = mix.MixtureCorruptDatasetVal(opt, val_dataset)
-
-    # Mathias: not needed
-    #corrupt_method = build_corruption(opt, log)
     corrupt_method = None
 
     run = Runner(opt, log)
@@ -156,12 +137,6 @@ def main(opt):
 
 if __name__ == '__main__':
     opt = create_training_options()
-
-    # Mathias: not needed, we directly load the "corrupted" data
-    #assert opt.corrupt is not None
-
-    # one-time download: ADM checkpoint
-    #download_ckpt("data/")
 
     if opt.distributed:
         size = opt.n_gpu_per_node

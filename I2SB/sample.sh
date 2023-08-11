@@ -1,1 +1,1 @@
-python sample.py --ckpt V0_deep --n-gpu-per-node 1 --dataset-dir ../vits/LJS_Processed --batch-size 16 --model_conf_path configs/V0_img2img_deeper.yaml --nfe 100 --cfg 50
+python sample.py --ckpt V1 --n-gpu-per-node 1 --dataset-dir ../vits/LJSProcessedFull --model_conf_path configs/V1.yaml --nfe 20 --cfg 20.0

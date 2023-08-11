@@ -4,7 +4,11 @@ vits/monotonic_align/vits
 *.pth
 *.pt
 DUMMY1
+DUMMY2
 LJS_Processed
+LJSProcessedFull
+VCTKProcessedFull
+*.tar.gz
 tester.ipynb
 ..vscode
 *.egg-info
@@ -13,5 +17,5 @@ samples
 wandb
 assets
 LJS*
-chunks*
 launch.json
+settings.json

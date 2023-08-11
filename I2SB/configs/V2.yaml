@@ -1,5 +1,6 @@
+# V2 and after has the CLAP embeddings fixed
 training:
-  output_dir: V1
+  output_dir: V2
   data_root: ../vits/LJSProcessedFull
   vits_root: ../vits
   wandb_project: natural_voices

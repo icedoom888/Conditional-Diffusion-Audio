@@ -30,7 +30,7 @@ from i2sb import ckpt_util
 
 import colored_traceback.always
 from ipdb import set_trace as debug
-from custom_dataset import LJS_Latent
+from custom_dataset import LJS_Latent, LJSSlidingWindow
 from torchaudio import save as save_audio
 
 import sys
@@ -152,7 +152,7 @@ def main(opt):
     #corrupt_method = build_corruption(opt, log, corrupt_type=corrupt_type)
 
     # build imagenet val dataset
-    val_dataset = LJS_Latent(root=opt.dataset_dir, mode="val")
+    val_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="val", normalize=False)
     n_samples = len(val_dataset)
 
     # build dataset per gpu and loader
@@ -230,7 +230,7 @@ if __name__ == '__main__':
     parser.add_argument("--node-rank",      type=int,  default=0,           help="the index of node")
     parser.add_argument("--num-proc-node",  type=int,  default=1,           help="The number of nodes in multi node env")
     parser.add_argument("--model_conf_path",type=str,  default=None,        help="path to model conf file")
-    parser.add_argument("--sample_batches", type=int,  default=5,           help="number of batches to sample")
+    parser.add_argument("--sample_batches", type=int,  default=2,           help="number of batches to sample")
     parser.add_argument("--cond-x1",        action="store_true",             help="conditional the network on degraded images")
     parser.add_argument("--add-x1-noise",   action="store_true",             help="add noise to conditional network")
     parser.add_argument("--interval",       type=int,   default=1000,        help="number of interval")
@@ -244,7 +244,7 @@ if __name__ == '__main__':
     parser.add_argument("--partition",      type=str,  default=None,        help="e.g., '0_4' means the first 25% of the dataset")
 
     # sample
-    parser.add_argument("--batch-size",     type=int,  default=32)
+    parser.add_argument("--batch-size",     type=int,  default=8)
     parser.add_argument("--ckpt",           type=str,  default=None,        help="the checkpoint name from which we wish to sample")
     parser.add_argument("--nfe",            type=int,  default=None,        help="sampling steps")
     parser.add_argument("--cfg",            type=float,default=1.0,         help="CFG scale")

@@ -188,7 +188,7 @@ class Runner(object):
         self.writer = util.build_log_writer(opt)
         log = self.log
 
-        net = DDP(self.net, device_ids=[opt.device], find_unused_parameters=True)
+        net = DDP(self.net, device_ids=[opt.device], find_unused_parameters=False)
         ema = self.ema
         optimizer, sched = build_optimizer_sched(opt, net, log)
 
@@ -263,7 +263,7 @@ class Runner(object):
                         "optimizer": optimizer.state_dict(),
                         "sched": sched.state_dict() if sched is not None else sched,
                     }, opt.ckpt_path / "latest.pt")
-                    if it % 10000 == 0:
+                    if it % 5000 == 0:
                         torch.save({
                             "net": self.net.state_dict(),
                             "ema": ema.state_dict(),
@@ -275,7 +275,7 @@ class Runner(object):
                 if opt.distributed:
                     torch.distributed.barrier()
 
-            if it == 500 or it % 3000 == 0: # 0, 0.5k, 3k, 6k 9k
+            if it % 500 == 0: # 0, 0.5k, 3k, 6k 9k
                 net.eval()
                 self.evaluation(opt, it, val_loader, corrupt_method)
                 net.train()

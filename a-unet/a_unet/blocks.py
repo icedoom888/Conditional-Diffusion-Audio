@@ -608,7 +608,7 @@ def TimeConditioningPlugin(
         ):
             msg = "TimeConditioningPlugin requires time in forward"
             assert exists(time), msg
-            assert exists(features) == exists(add_additional_features), "Forward pass requires features if add_additional_features=True"
+            assert exists(features) == add_additional_features, "Forward pass requires features if add_additional_features=True"
             # Process time to time_features
             time_features = F.gelu(embedder(time))
             time_features = mlp(time_features)
