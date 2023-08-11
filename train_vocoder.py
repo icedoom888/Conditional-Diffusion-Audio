@@ -234,6 +234,12 @@ def main(conf):
                 z_text_mask = eval_batch["z_text_mask"]
                 embeds = eval_batch["clap_embed"]
 
+                if train_args.dataset_name == 'LJSSlidingWindow':
+                    z_audio = torch.squeeze(z_audio, 1)
+                    z_text = torch.squeeze(z_text, 1)
+                    z_audio_mask = torch.squeeze(z_audio_mask, 1)
+                    z_text_mask = torch.squeeze(z_text_mask, 1)
+
                 # print_sizes(eval_batch)
                 
                 # Turn noise into new audio sample with diffusion
