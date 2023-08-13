@@ -1,6 +1,6 @@
 # V2 and after has the CLAP embeddings fixed
 training:
-  output_dir: V2
+  output_dir: V2_add_x1_noise #used for V2 and V2_add_x1_noise
   data_root: ../vits/LJSProcessedFull
   vits_root: ../vits
   wandb_project: natural_voices

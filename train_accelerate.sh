@@ -1,1 +1,1 @@
-accelerate launch --config_file configs/accelerate_local.yaml train.py --config configs/V0_img2img_deeper.yaml
+accelerate launch --config_file configs/accelerate_local.yaml train.py --config configs/V2_img2img.yaml

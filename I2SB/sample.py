@@ -39,6 +39,8 @@ sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
 sys.path.append(os.path.join(this_file_path, "..", ".."))
 from vits.utils_diffusion import load_vits_model, get_Z_to_audio
 import yaml
+import time
+
 
 RESULT_DIR = Path("results")
 
@@ -199,27 +201,44 @@ def main(opt):
         for i in range(batch):
             sample = img_target_pred[i]
             gt = x0[i]
+            start = x1[i]
             mask = y_mask[i]
             
             sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
             gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
             mask = mask[:, offset[i]:offset[i]+z_length[i]]
+            start = start[:, :, offset[i]:offset[i]+z_length[i]]
+
+            mse_start_pred = torch.nn.functional.mse_loss(start.cpu(), sample.cpu()).item()
+            mse_pred_gt = torch.nn.functional.mse_loss(sample.cpu(), gt.cpu()).item()
+
+
+            log.info(f"MSE_START_PRED={mse_start_pred}\tMSE_PRED_GT={mse_pred_gt}")
 
             # pass through vocoder
             model_audio =  z_to_audio(z=sample.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
             gt_audio = z_to_audio(z=gt.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
+            start_audio = z_to_audio(z=start.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
 
             # save
-            sample_path = os.path.join(RESULT_DIR, opt.ckpt, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{loader_itr}_{i}.wav")
-            gt_path = os.path.join(RESULT_DIR, opt.ckpt, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{loader_itr}_{i}.wav")
+            sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}.wav")
+            gt_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{i}.wav")
+            start_audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"start_audio_{i}.wav")
+
             os.makedirs(os.path.dirname(sample_path), exist_ok=True)
             os.makedirs(os.path.dirname(gt_path), exist_ok=True)
+            os.makedirs(os.path.dirname(start_audio_path), exist_ok=True)
+
             save_audio(sample_path, model_audio, 22050)
             save_audio(gt_path, gt_audio, 22050)
+            save_audio(start_audio_path, start_audio, 22050)
 
         dist.barrier()
     del runner
     dist.barrier()
+    # sleep to avoid cuda not found errors when sampling many times
+    time.sleep(5)
+
 
 
 if __name__ == '__main__':
@@ -230,7 +249,7 @@ if __name__ == '__main__':
     parser.add_argument("--node-rank",      type=int,  default=0,           help="the index of node")
     parser.add_argument("--num-proc-node",  type=int,  default=1,           help="The number of nodes in multi node env")
     parser.add_argument("--model_conf_path",type=str,  default=None,        help="path to model conf file")
-    parser.add_argument("--sample_batches", type=int,  default=2,           help="number of batches to sample")
+    parser.add_argument("--sample_batches", type=int,  default=1,           help="number of batches to sample")
     parser.add_argument("--cond-x1",        action="store_true",             help="conditional the network on degraded images")
     parser.add_argument("--add-x1-noise",   action="store_true",             help="add noise to conditional network")
     parser.add_argument("--interval",       type=int,   default=1000,        help="number of interval")

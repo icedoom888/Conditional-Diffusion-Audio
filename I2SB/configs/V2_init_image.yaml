@@ -1,6 +1,6 @@
 # V2 and after has the CLAP embeddings fixed
 training:
-  output_dir: V2
+  output_dir: V2_init_image
   data_root: ../vits/LJSProcessedFull
   vits_root: ../vits
   wandb_project: natural_voices
@@ -36,7 +36,7 @@ model:
   attention_heads: 4
   attention_features: 64
   use_additional_time_conditioning: false
-  use_initial_image: false
+  use_initial_image: true
   use_data_mask: true
   use_embedding_cfg: true
   embedding_max_length: 64

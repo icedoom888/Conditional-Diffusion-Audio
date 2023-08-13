@@ -19,6 +19,7 @@ from torchaudio import save as save_audio
 
 logger = get_logger(__name__)
 
+
 def main(conf):
     train_args = conf.training
     model_args = conf.model
@@ -36,8 +37,10 @@ def main(conf):
         log_with="wandb"
     )
 
-    train_dataset = custom_dataset.LJS_Latent(root=train_args.data_root, mode="train")
-    val_dataset = custom_dataset.LJS_Latent(root=train_args.data_root, mode="val")
+    #train_dataset = custom_dataset.LJS_Latent(root=train_args.data_root, mode="train")
+    #val_dataset = custom_dataset.LJS_Latent(root=train_args.data_root, mode="val")
+    train_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="train", normalize=False)
+    val_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="val", normalize=False)
 
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.train_batch_size, shuffle=False)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True)

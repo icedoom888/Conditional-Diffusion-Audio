@@ -36,7 +36,7 @@ this_file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
 sys.path.append(os.path.join(this_file_path, "..", ".."))
 from vits.utils_diffusion import load_vits_model, get_Z_to_audio
-
+from custom_dataset import Z_TEXT_MEAN, Z_TEXT_STD, Z_AUDIO_MEAN, Z_AUDIO_STD, scale_0_1
 
 def build_optimizer_sched(opt, net, log):
 
@@ -178,7 +178,7 @@ class Runner(object):
         cond = x1.detach() if opt.cond_x1 else None # TODO load the conditioning here
 
         if opt.add_x1_noise: # only for decolor
-            x1 = x1 + torch.randn_like(x1)
+            x1 = x1 + torch.normal(mean=Z_TEXT_MEAN, std=Z_TEXT_STD, size=x1.shape, device=x1.device)
 
         assert x0.shape == x1.shape
 
@@ -307,19 +307,20 @@ class Runner(object):
                 step = torch.full((xt.shape[0],), step, device=opt.device, dtype=torch.long)
                 
                 xt_total = None
+
                 # concat with mask for guidance in varying length inputs
                 if self.conf.model.use_data_mask:
                     assert x1_mask is not None, "x1_mask is None, but use_data_mask is True"
                     xt_total = torch.cat([xt, x1_mask], dim=1)
+
                 # concat x1 and cond for image/x1 conditioning
                 if self.conf.model.use_initial_image:
-                    
                     xt_total = torch.cat([xt_total if xt_total is not None else xt, x1], dim=1)
 
                 out = self.net(
                     xt if xt_total is None else xt_total, # latent sample at timestep t
                     time = step, # timestep 
-                    features = x1.mean(-3) if self.conf.model.use_additional_time_conditioning else None, # embeds an image to additional embeddings that are added to the time embeddings TODO mload configuration of the embedder from the config file
+                    features = x1.mean(-3) if self.conf.model.use_additional_time_conditioning else None, # embeds an image to additional embeddings that are added to the time embeddings
                     embedding = embeds, # embedding for CFG
                     embedding_scale = cfg
                 )
@@ -349,19 +350,20 @@ class Runner(object):
             opt, x1, x1_mask=x1_mask, embeds=embeds, cond=cond, nfe=200, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
         )
 
+        batch, len_t, *xdim = xs.shape
+
         log.info("Collecting tensors ...")
         img_target   = all_cat_cpu(opt, log, x0)
         img_source = all_cat_cpu(opt, log, x1)
         xs          = all_cat_cpu(opt, log, xs)
         pred_x0s    = all_cat_cpu(opt, log, pred_x0s)
 
-        batch, len_t, *xdim = xs.shape
         assert img_target.shape == img_source.shape == (batch, *xdim)
         assert xs.shape == pred_x0s.shape
         log.info(f"Generated recon trajectories: size={xs.shape}")
 
         def log_image(tag, img, nrow=10):
-            self.writer.add_image(it, tag, tu.make_grid((img+1)/2, nrow=nrow)) # [1,1] -> [0,1] # TODO our images are not in -1 to 1
+            self.writer.add_image(it, tag, tu.make_grid(img, nrow=nrow))
 
         img_target_pred = xs[:, 0, ...]
 
@@ -369,6 +371,7 @@ class Runner(object):
         for i in range(batch):
             sample = img_target_pred[i]
             gt = x0[i]
+            start = x1[i]
             mask = y_mask[i]
             
             sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
@@ -378,23 +381,31 @@ class Runner(object):
             # pass through vocoder
             model_audio =  self.z_to_audio(z=sample.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
             gt_audio = self.z_to_audio(z=gt.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
+            start_audio = self.z_to_audio(z=start.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
 
             # save
             sample_path = os.path.join(opt.ckpt_path, "samples", str(it), f"model_audio_{i}.wav")
             gt_path = os.path.join(opt.ckpt_path, "samples", str(it), f"gt_audio_{i}.wav")
+            start_audio_path = os.path.join(opt.ckpt_path, "samples", str(it), f"start_audio_{i}.wav")
+
             os.makedirs(os.path.dirname(sample_path), exist_ok=True)
             os.makedirs(os.path.dirname(gt_path), exist_ok=True)
+            os.makedirs(os.path.dirname(start_audio_path), exist_ok=True)
+
             save_audio(sample_path, model_audio, 22050)
             save_audio(gt_path, gt_audio, 22050)
-            self.writer.add_sound(step=it, caption="model_audio", key="model_audio", sound_path=sample_path)
-            self.writer.add_sound(step=it, caption="gt_audio", key="gt_audio", sound_path=gt_path)
+            save_audio(start_audio_path, start_audio, 22050)
+
+            self.writer.add_sound(step=it, caption=f"model_audio_{i}", key="model_audio", sound_path=sample_path)
+            self.writer.add_sound(step=it, caption=f"gt_audio_{i}", key="gt_audio", sound_path=gt_path)
+            self.writer.add_sound(step=it, caption=f"start_audio_{i}", key="start_audio", sound_path=start_audio_path)
 
         log.info("Logging images ...")
-        log_image("image/clean",   img_target) # target image
-        log_image("image/corrupt", img_source) # source image
-        log_image("image/recon",   img_target_pred)
-        log_image("debug/pred_clean_traj", pred_x0s.reshape(-1, *xdim), nrow=len_t)
-        log_image("debug/recon_traj",      xs.reshape(-1, *xdim),      nrow=len_t)
+        log_image("image/clean",   scale_0_1(img_target)) # target image
+        log_image("image/corrupt", scale_0_1(img_source)) # source image
+        log_image("image/recon",   scale_0_1(img_target_pred))
+        log_image("debug/pred_clean_traj", scale_0_1(pred_x0s.reshape(-1, *xdim)), nrow=len_t)
+        log_image("debug/recon_traj",      scale_0_1(xs.reshape(-1, *xdim)),      nrow=len_t)
 
         #log.info("Logging accuracies ...")
         #log_accuracy("accuracy/clean",   img_clean)
