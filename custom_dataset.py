@@ -1,9 +1,10 @@
 from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
 import torch
 import os
 import numpy as np
 from torchvision.transforms import Normalize
-
+from prefetch_generator import BackgroundGenerator
 
 # stats for normalization
 # small LJS dataset
@@ -24,6 +25,28 @@ VCTK_STD_AUDIO = 0.6020
 VCTK_MEAN_TEXT = -0.0042
 VCTK_STD_TEXT = 0.7264
 
+
+class DataLoaderX(DataLoader):
+    def __iter__(self):
+        return BackgroundGenerator(super().__iter__())
+
+
+def setup_loader(dataset, batch_size, num_workers=4):
+    loader = DataLoaderX(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        pin_memory=True,
+        num_workers=num_workers,
+        drop_last=True,
+    )
+
+    return loader
+
+
+def iterate_loader(loader):
+    while True:
+        yield from loader
 
 def find_1d_bounding_box(x):
     starts = torch.argmax(x, dim=-1, keepdim=False)

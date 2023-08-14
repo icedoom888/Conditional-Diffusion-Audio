@@ -35,15 +35,28 @@ def main(conf):
         gradient_accumulation_steps=train_args.gradient_accumulation_steps,
         mixed_precision=train_args.mixed_precision,
         log_with="wandb"
-    )
+    )                
 
-    #train_dataset = custom_dataset.LJS_Latent(root=train_args.data_root, mode="train")
-    #val_dataset = custom_dataset.LJS_Latent(root=train_args.data_root, mode="val")
-    train_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="train", normalize=False)
-    val_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="val", normalize=False)
+    # setup dataset specific parameters
+    if train_args.dataset == "LJS":
+        train_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="train", normalize=False)
+        val_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="val", normalize=False)
+        data_mean = custom_dataset.LJS_MEAN_TEXT
+        data_std = custom_dataset.LJS_STD_TEXT
+        conf_path = "vits/configs/ljs_base.json"
+        ckpt_path = "vits/pretrained_ljs.pth"
+    elif train_args.dataset == "VCTK":
+        train_dataset = custom_dataset.VCTKSlidingWindow(root=train_args.data_root, mode="train", normalize=False)
+        val_dataset = custom_dataset.VCTKSlidingWindow(root=train_args.data_root, mode="val", normalize=False)
+        data_mean = custom_dataset.VCTK_MEAN_TEXT
+        data_std = custom_dataset.VCTK_STD_TEXT
+        conf_path = "vits/configs/vctk_base.json"
+        ckpt_path = "vits/pretrained_vctk.pth"
+    else:
+        raise NotImplementedError("Dataset not implemented!")
 
-    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.train_batch_size, shuffle=False)
-    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True)
+    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.train_batch_size, shuffle=False, num_workers=4)
+    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True, num_workers=4)
 
     # setup diffusion loss
     if train_args.loss_fn_diffusion == "l1":
@@ -75,6 +88,10 @@ def main(conf):
         embedding_features=model_args.embedding_features, # text embedding dimensions, is used for CFG
     )
 
+    # setup diffusion parameters
+    model.diffusion.randn_mean = data_mean
+    model.diffusion.randn_std = data_std
+
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=train_args.learning_rate,
@@ -87,15 +104,11 @@ def main(conf):
         train_args.lr_scheduler,
         optimizer=optimizer,
         num_warmup_steps=train_args.lr_warmup_steps,
-        num_training_steps=(len(train_dataloader) * train_args.num_epochs) //
-        train_args.gradient_accumulation_steps,
+        num_training_steps=train_args.num_train_steps // train_args.gradient_accumulation_steps,
     )
 
     model, optimizer, train_dataloader, val_dataloader, lr_scheduler = accelerator.prepare(model, optimizer, train_dataloader, val_dataloader, lr_scheduler)
     global_step = 0
-    
-    # set seeds
-
 
     # load weights
     if os.path.exists(os.path.join(output_dir, f"model_latest.pt")):
@@ -108,10 +121,10 @@ def main(conf):
         global_step = state_dicts["global_step"]
     
     ema_model = EMAModel(
-        getattr(model, "module", model),
+        getattr(model, "module", model).parameters(),
         inv_gamma=train_args.ema_inv_gamma,
         power=train_args.ema_power,
-        max_value=train_args.ema_max_decay,
+        decay=train_args.ema_max_decay,
     )
 
     if global_step > 0:
@@ -125,7 +138,7 @@ def main(conf):
             init_kwargs={"wandb": {"entity": "matvogel"}}
             )
         # initialize vits functions
-        vits_model, hps = load_vits_model(hps_path="vits/configs/ljs_base.json", checkpoint_path="vits/pretrained_ljs.pth")
+        vits_model, hps = load_vits_model(hps_path=conf_path, checkpoint_path=ckpt_path)
         z_to_audio = get_Z_to_audio(vits_model)
     
     for epoch in range(train_args.start_epoch, train_args.num_epochs):
@@ -141,7 +154,7 @@ def main(conf):
             z_text = batch["z_text"]
             z_text_mask = batch["z_text_mask"]
             embeds = batch["clap_embed"]
-
+            
             # process the pair to get the latents Z and the embeddings
             init_image = z_audio_mask
             if model_args.use_initial_image:
@@ -162,7 +175,7 @@ def main(conf):
                 optimizer.step()
                 lr_scheduler.step()
                 if train_args.use_ema:
-                    ema_model.step(model)
+                    ema_model.step(model.parameters())
                 optimizer.zero_grad()
 
             progress_bar.update(1)
@@ -180,8 +193,8 @@ def main(conf):
                 wandb_log.pop("step")
                 accelerator.log(wandb_log, step=global_step)
 
+            # TODO do logging based on global steps
         progress_bar.close()
-
         accelerator.wait_for_everyone()
 
         # Generate sample images for visual inspection
@@ -215,9 +228,14 @@ def main(conf):
                 # masking information
                 offset = eval_batch["offset"]
                 z_length = eval_batch["z_audio_length"]
+                # sid for multi speaker ds
+                if "sid" in batch.keys():
+                    sids = batch["sid"]
+                else:
+                    sids = None
 
                 # Turn noise into new audio sample with diffusion
-                initial_noise = torch.randn_like(z_audio)
+                initial_noise = torch.normal(mean=data_mean, std=data_std, size=z_audio.shape).cuda()
                 # append mask
                 init_image = z_audio_mask
                 # append initial image
@@ -260,15 +278,19 @@ def main(conf):
                     sample = model_samples[i]
                     gt = z_audio[i]
                     mask = y_mask[i]
-
+                    if sids is not None:
+                        sid = torch.LongTensor([int(sids[i])]).cuda()
+                    else:
+                        sid = None
+                    
                     # cut padding
                     sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
                     gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
                     mask = mask[:, offset[i]:offset[i]+z_length[i]]
 
                     # pass through vocoder
-                    model_audio =  z_to_audio(z=sample, y_mask=mask).cpu().squeeze(0)
-                    gt_audio = z_to_audio(z=gt, y_mask=mask).cpu().squeeze(0)
+                    model_audio =  z_to_audio(z=sample, y_mask=mask, sid=sid).cpu().squeeze(0)
+                    gt_audio = z_to_audio(z=gt, y_mask=mask, sid=sid).cpu().squeeze(0)
 
                     # save
                     sample_path = os.path.join(output_dir, "samples", f"model_audio_{epoch}_{i}.wav")

@@ -1,5 +1,6 @@
 training:
   output_dir: V0_img2img_deeper
+  dataset: LJS
   data_root: vits/LJS_Processed
   wandb_project: artificial-voices
   wandb_log_every: 100

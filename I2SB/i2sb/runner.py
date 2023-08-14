@@ -151,13 +151,7 @@ class Runner(object):
         return pred_x0
 
     def sample_batch(self, opt, loader, data=None):
-
-        # safely get next batch
-        try:
-            data = next(loader) if data is None else data
-        except StopIteration:
-            loader = iter(loader)
-            data = next(loader) if data is None else data
+        data = next(loader) if data is None else data
         
         clean_img = data["z_audio"]
         x0_mask = data["z_audio_mask"]

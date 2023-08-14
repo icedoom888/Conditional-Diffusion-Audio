@@ -61,18 +61,19 @@ def extend_dim(x: Tensor, dim: int):
 
 class Diffusion(nn.Module):
     """Interface used by different diffusion methods"""
-
     pass
 
 
 class VDiffusion(Diffusion):
     def __init__(
-        self, net: nn.Module, sigma_distribution: Distribution = UniformDistribution(), loss_fn: Any = F.mse_loss
+        self, net: nn.Module, sigma_distribution: Distribution = UniformDistribution(), loss_fn: Any = F.mse_loss, randn_mean = 0.0, randn_std = 1.0
     ):
         super().__init__()
         self.net = net
         self.sigma_distribution = sigma_distribution
         self.loss_fn = loss_fn
+        self.randn_mean = randn_mean
+        self.randn_std = randn_std
 
     def get_alpha_beta(self, sigmas: Tensor) -> Tuple[Tensor, Tensor]:
         angle = sigmas * pi / 2
@@ -85,7 +86,7 @@ class VDiffusion(Diffusion):
         sigmas = self.sigma_distribution(num_samples=batch_size, device=device)
         sigmas_batch = extend_dim(sigmas, dim=x.ndim)
         # Get noise
-        noise = torch.randn_like(x)
+        noise = torch.normal(mean=self.randn_mean, std=self.randn_std, size=x.shape, device=device)
         # Combine input and noise weighted by half-circle
         # The above code is not doing anything. It is just a list of words without any context or
         # purpose.
