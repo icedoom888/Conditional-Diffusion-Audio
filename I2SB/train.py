@@ -24,7 +24,7 @@ from logger import Logger
 from distributed_util import init_processes
 from i2sb import Runner
 
-from custom_dataset import LJS_Latent, LJSSlidingWindow
+from custom_dataset import LJS_Latent, LJSSlidingWindow, VCTKSlidingWindow
 import yaml
 
 RESULT_DIR = Path("results")
@@ -127,8 +127,15 @@ def main(opt):
     if opt.seed is not None:
         set_seed(opt.seed + opt.global_rank)
 
-    train_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="train", normalize=False)
-    val_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="val", normalize=False)
+    if opt.conf_file["training"]["dataset"] == "LJS":
+        train_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="train", normalize=False)
+        val_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="val", normalize=False)
+    elif opt.conf_file["training"]["dataset"] == "VCTK":
+        train_dataset = VCTKSlidingWindow(root=opt.dataset_dir, mode="train", normalize=False)
+        val_dataset = VCTKSlidingWindow(root=opt.dataset_dir, mode="val", normalize=False)
+    else:
+        raise NotImplementedError("Dataset not implemented!")
+     
     corrupt_method = None
 
     run = Runner(opt, log)

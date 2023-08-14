@@ -36,7 +36,7 @@ this_file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
 sys.path.append(os.path.join(this_file_path, "..", ".."))
 from vits.utils_diffusion import load_vits_model, get_Z_to_audio
-from custom_dataset import Z_TEXT_MEAN, Z_TEXT_STD, Z_AUDIO_MEAN, Z_AUDIO_STD, scale_0_1
+from custom_dataset import *
 
 def build_optimizer_sched(opt, net, log):
 
@@ -168,6 +168,14 @@ class Runner(object):
         # masking information
         offset = data["offset"]
         z_length = data["z_audio_length"]
+        if opt.conf_file["training"]["dataset"] == "VCTK":
+            sid = data["sid"]
+            Z_MEAN = VCTK_MEAN_TEXT
+            Z_STD = VCTK_STD_TEXT
+        else:
+            sid = None
+            Z_MEAN = LJS_MEAN_TEXT
+            Z_STD = LJS_STD_TEXT
 
         x0 = clean_img.detach().to(opt.device)
         x1 = corrupt_img.detach().to(opt.device)
@@ -177,12 +185,12 @@ class Runner(object):
 
         cond = x1.detach() if opt.cond_x1 else None # TODO load the conditioning here
 
-        if opt.add_x1_noise: # only for decolor
-            x1 = x1 + torch.normal(mean=Z_TEXT_MEAN, std=Z_TEXT_STD, size=x1.shape, device=x1.device)
+        if opt.add_x1_noise:
+            x1 = x1 + torch.normal(mean=Z_MEAN, std=Z_STD, size=x1.shape, device=x1.device)
 
         assert x0.shape == x1.shape
 
-        return x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length
+        return x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length
 
     def train(self, opt, train_dataset, val_dataset, corrupt_method):
         self.writer = util.build_log_writer(opt)
@@ -199,9 +207,16 @@ class Runner(object):
 
         # load vits
         if opt.global_rank == 0:
+            if opt.conf_file["training"]["dataset"] == "LJS":
+                conf_path = "ljs_base.json"
+                ckpt_path = "pretrained_ljs.pth"
+            else:
+                conf_path = "vctk_base.json"
+                ckpt_path = "pretrained_vctk.pth"
+
             self.vits_model, hps = load_vits_model(
-                hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", "ljs_base.json"),
-                checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], "pretrained_ljs.pth")
+                hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", conf_path),
+                checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], ckpt_path)
                 )
             self.z_to_audio = get_Z_to_audio(self.vits_model)
 
@@ -212,7 +227,7 @@ class Runner(object):
             for _ in range(n_inner_loop):
                 # ===== sample boundary pair =====
                 # TODO this is actually okay, the x0 is the end, x1 will be the start, mask is None, is not used and cond will be x1
-                x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, train_loader)
+                x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, train_loader)
 
                 # ===== compute loss =====
                 step = torch.randint(0, opt.interval, (x0.shape[0],))
@@ -342,7 +357,8 @@ class Runner(object):
         log = self.log
         log.info(f"========== Evaluation started: iter={it} ==========")
 
-        x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, val_loader)
+        x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, val_loader)
+        sid = sid.squeeze() if sid is not None else None
 
         x1 = x1.to(opt.device) # TODO load the actual target image
 
@@ -373,15 +389,16 @@ class Runner(object):
             gt = x0[i]
             start = x1[i]
             mask = y_mask[i]
-            
+            sid_i = torch.LongTensor([int(sid[i])]).cuda() if sid is not None else None
+
             sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
             gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
             mask = mask[:, offset[i]:offset[i]+z_length[i]]
 
             # pass through vocoder
-            model_audio =  self.z_to_audio(z=sample.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
-            gt_audio = self.z_to_audio(z=gt.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
-            start_audio = self.z_to_audio(z=start.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
+            model_audio =  self.z_to_audio(z=sample.cuda(), y_mask=mask.cuda(), sid=sid_i).cpu().squeeze(0)
+            gt_audio = self.z_to_audio(z=gt.cuda(), y_mask=mask.cuda(), sid=sid_i).cpu().squeeze(0)
+            start_audio = self.z_to_audio(z=start.cuda(), y_mask=mask.cuda(), sid=sid_i).cpu().squeeze(0)
 
             # save
             sample_path = os.path.join(opt.ckpt_path, "samples", str(it), f"model_audio_{i}.wav")

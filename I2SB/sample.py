@@ -181,8 +181,10 @@ def main(opt):
         if loader_itr > opt.sample_batches:
             break
 
-        x0, x1, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = runner.sample_batch(opt, val_loader, data=data)
+        x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = runner.sample_batch(opt, val_loader, data=data)
+        sid = sid.squeeze()
 
+        
         xs, pred_x0s = runner.ddpm_sampling(
             opt, x1,
             x1_mask=x1_mask,
@@ -203,6 +205,7 @@ def main(opt):
             gt = x0[i]
             start = x1[i]
             mask = y_mask[i]
+            sid = torch.LongTensor([int(sid[i])]).cuda()
             
             sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
             gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
@@ -216,9 +219,9 @@ def main(opt):
             log.info(f"MSE_START_PRED={mse_start_pred}\tMSE_PRED_GT={mse_pred_gt}")
 
             # pass through vocoder
-            model_audio =  z_to_audio(z=sample.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
-            gt_audio = z_to_audio(z=gt.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
-            start_audio = z_to_audio(z=start.cuda(), y_mask=mask.cuda()).cpu().squeeze(0)
+            model_audio =  z_to_audio(z=sample.cuda(), y_mask=mask.cuda(), sid=sid).cpu().squeeze(0)
+            gt_audio = z_to_audio(z=gt.cuda(), y_mask=mask.cuda(), sid=sid).cpu().squeeze(0)
+            start_audio = z_to_audio(z=start.cuda(), y_mask=mask.cuda(), sid=sid).cpu().squeeze(0)
 
             # save
             sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}.wav")
