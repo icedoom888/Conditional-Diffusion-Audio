@@ -1,1 +1,0 @@
-python train.py --n-gpu-per-node 1 --dataset-dir ../vits/LJSProcessedFull --batch-size 32 --microbatch 4 --beta-max 1.0 --model_conf_path configs/V2_no_ote.yaml --log-writer wandb

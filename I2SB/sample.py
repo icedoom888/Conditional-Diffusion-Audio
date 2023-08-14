@@ -182,8 +182,7 @@ def main(opt):
             break
 
         x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = runner.sample_batch(opt, val_loader, data=data)
-        sid = sid.squeeze()
-
+        sid = sid.squeeze() if sid is not None else None
         
         xs, pred_x0s = runner.ddpm_sampling(
             opt, x1,
@@ -200,23 +199,26 @@ def main(opt):
         batch, len_t, *xdim = xs.shape
 
         # logging audio
+        mse_start_pred = torch.tensor([])
+        mse_pred_gt = torch.tensor([])
+
         for i in range(batch):
             sample = img_target_pred[i]
             gt = x0[i]
             start = x1[i]
             mask = y_mask[i]
-            sid = torch.LongTensor([int(sid[i])]).cuda()
+            sid = torch.LongTensor([int(sid[i])]).cuda() if sid is not None else None
             
             sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
             gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
             mask = mask[:, offset[i]:offset[i]+z_length[i]]
             start = start[:, :, offset[i]:offset[i]+z_length[i]]
 
-            mse_start_pred = torch.nn.functional.mse_loss(start.cpu(), sample.cpu()).item()
-            mse_pred_gt = torch.nn.functional.mse_loss(sample.cpu(), gt.cpu()).item()
+            msesp = torch.nn.functional.mse_loss(start.cpu(), sample.cpu()).unsqueeze(0)
+            msepgt = torch.nn.functional.mse_loss(sample.cpu(), gt.cpu()).unsqueeze(0)
 
-
-            log.info(f"MSE_START_PRED={mse_start_pred}\tMSE_PRED_GT={mse_pred_gt}")
+            mse_start_pred = torch.cat((mse_start_pred, msesp), dim=0) if mse_start_pred.numel() > 0 else msesp
+            mse_pred_gt = torch.cat((mse_pred_gt, msepgt), dim=0) if mse_pred_gt.numel() > 0 else msepgt
 
             # pass through vocoder
             model_audio =  z_to_audio(z=sample.cuda(), y_mask=mask.cuda(), sid=sid).cpu().squeeze(0)
@@ -236,12 +238,16 @@ def main(opt):
             save_audio(gt_path, gt_audio, 22050)
             save_audio(start_audio_path, start_audio, 22050)
 
+        stats_path = '/'.join(sample_path.split('/')[:-1]) + "/stats.txt"
+        log.info(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
+        with open (stats_path, 'w') as f:
+            f.write(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
+
         dist.barrier()
     del runner
     dist.barrier()
     # sleep to avoid cuda not found errors when sampling many times
     time.sleep(5)
-
 
 
 if __name__ == '__main__':
