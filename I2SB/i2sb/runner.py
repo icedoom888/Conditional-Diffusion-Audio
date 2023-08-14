@@ -263,7 +263,7 @@ class Runner(object):
             ))
             if it % 10 == 0:
                 self.writer.add_scalar(it, 'loss', loss.detach())
-
+            
             if it % 1000 == 0:
                 if opt.global_rank == 0:
                     torch.save({

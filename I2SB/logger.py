@@ -48,7 +48,7 @@ class Logger(object):
                 level=logging.INFO,
                 format="(%(relative)s) %(message)s",
                 datefmt="[%X]",
-                force=True,
+                #force=True,
                 handlers=[
                     RichHandler(show_path=False),
                     RichHandler(console=file_console, show_path=False)

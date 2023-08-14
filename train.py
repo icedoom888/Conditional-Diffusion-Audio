@@ -6,7 +6,8 @@ import torch.nn.functional as F
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from diffusers.optimization import get_scheduler
-from diffusers.training_utils import EMAModel, set_seed
+from diffusers.training_utils import set_seed
+from torch_ema import ExponentialMovingAverage
 from tqdm.auto import tqdm
 import custom_dataset
 from torchvision.utils import save_image
@@ -16,13 +17,19 @@ from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model,
 from einops import rearrange
 import wandb
 from torchaudio import save as save_audio
+import torch.multiprocessing as mp
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+from I2SB.logger import Logger
 
 logger = get_logger(__name__)
 
 
-def main(conf):
+def train(gpu, conf):
     train_args = conf.training
     model_args = conf.model
+
+    log = Logger(rank=gpu, log_dir="logging")
 
     # create working directory
     output_dir = train_args.output_dir
@@ -31,11 +38,15 @@ def main(conf):
     # seed alls
     set_seed(42)
 
-    accelerator = Accelerator(
-        gradient_accumulation_steps=train_args.gradient_accumulation_steps,
-        mixed_precision=train_args.mixed_precision,
-        log_with="wandb"
-    )                
+    if conf.DDP:
+        conf.rank = gpu
+        dist.init_process_group(
+            backend='nccl',
+            init_method=conf.dist_url,
+            world_size=conf.world_size,
+            rank=conf.rank
+        )
+        torch.cuda.set_device(gpu)         
 
     # setup dataset specific parameters
     if train_args.dataset == "LJS":
@@ -55,7 +66,12 @@ def main(conf):
     else:
         raise NotImplementedError("Dataset not implemented!")
 
-    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.train_batch_size, shuffle=False, num_workers=4)
+    if conf.DDP:
+        sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=args.world_size,   rank=args.rank)
+    else:
+        sampler = None
+    
+    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.micro_batch_size, shuffle=False, num_workers=4, sampler=sampler)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True, num_workers=4)
 
     # setup diffusion loss
@@ -92,6 +108,16 @@ def main(conf):
     model.diffusion.randn_mean = data_mean
     model.diffusion.randn_std = data_std
 
+    # move to right device
+    model = model.to(gpu)
+    if conf.DDP:
+        model = DDP(model, device_ids=[gpu])
+
+    if train_args.mixed_precision == "fp16":
+        scaler = torch.cuda.amp.GradScaler()
+    else:
+        scaler = None
+    
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=train_args.learning_rate,
@@ -104,63 +130,63 @@ def main(conf):
         train_args.lr_scheduler,
         optimizer=optimizer,
         num_warmup_steps=train_args.lr_warmup_steps,
-        num_training_steps=train_args.num_train_steps // train_args.gradient_accumulation_steps,
+        num_training_steps=train_args.num_train_steps // (train_args.train_batch_size // train_args.micro_batch_size),
     )
 
-    model, optimizer, train_dataloader, val_dataloader, lr_scheduler = accelerator.prepare(model, optimizer, train_dataloader, val_dataloader, lr_scheduler)
-    global_step = 0
+    ema = ExponentialMovingAverage(model.net.parameters(), decay=train_args.ema_max_decay)
+    ema.to(gpu)
+
+    start_step = 0
 
     # load weights
     if os.path.exists(os.path.join(output_dir, f"model_latest.pt")):
-        map_location = {"cuda:%d" % 0: "cuda:%d" % accelerator.process_index}
+        log.info("Loading weights...")
+        map_location = {"cuda:%d" % 0: "cuda:%d" % gpu}
         state_dicts = torch.load(os.path.join(output_dir, f"model_latest.pt"), map_location=map_location)
         model.load_state_dict(state_dicts["model"])
+        if "ema" in state_dicts.keys():
+            ema.load_state_dict(state_dicts["ema"])
         optimizer.load_state_dict(state_dicts["optimizer"])
         lr_scheduler.load_state_dict(state_dicts["lr_scheduler"])
-        train_args.start_epoch = state_dicts["epoch"] + 1
-        global_step = state_dicts["global_step"]
-    
-    ema_model = EMAModel(
-        getattr(model, "module", model).parameters(),
-        inv_gamma=train_args.ema_inv_gamma,
-        power=train_args.ema_power,
-        decay=train_args.ema_max_decay,
-    )
+        start_step = state_dicts["global_step"]
+        log.info("Weights successfully loaded...")
 
-    if global_step > 0:
-        ema_model.optimization_step = global_step
-
-    if accelerator.is_main_process:
+    if gpu == 0:
         # initialize wandb
-        accelerator.init_trackers(
-            project_name=train_args.wandb_project, 
-            config=OmegaConf.to_container(conf, resolve=True),
-            init_kwargs={"wandb": {"entity": "matvogel"}}
-            )
+        wandb.init(project=train_args.wandb_project, entity="matvogel", config=OmegaConf.to_container(conf, resolve=True))
         # initialize vits functions
         vits_model, hps = load_vits_model(hps_path=conf_path, checkpoint_path=ckpt_path)
         z_to_audio = get_Z_to_audio(vits_model)
+        # export master ip to MASTER_ADDR
     
-    for epoch in range(train_args.start_epoch, train_args.num_epochs):
-        progress_bar = tqdm(total=len(train_dataloader), initial=epoch, disable=not accelerator.is_local_main_process)
-        progress_bar.set_description(f"Epoch {epoch}")
+    n_inner_loop = train_args.train_batch_size // (conf.world_size * train_args.micro_batch_size)
+    print(n_inner_loop)
+    train_iter = custom_dataset.iterate_loader(train_dataloader)
+    val_iter = custom_dataset.iterate_loader(val_dataloader)
 
-        model.train()
-        
-        for step, batch in enumerate(train_dataloader):
+    model.train()
+
+    for global_step in range(start_step, int(train_args.num_train_steps)):
+        #progress_bar = tqdm(total=len(train_dataloader), initial=epoch, disable=not gpu == 0)
+        #progress_bar.set_description(f"Epoch {epoch}")
+        optimizer.zero_grad()
+
+        # do gradient accumulations
+        for _ in range(n_inner_loop):
+            batch = next(train_iter)
+    
             # extract the batch
-            z_audio = batch["z_audio"]
-            z_audio_mask = batch["z_audio_mask"]
-            z_text = batch["z_text"]
-            z_text_mask = batch["z_text_mask"]
-            embeds = batch["clap_embed"]
+            z_audio = batch["z_audio"].to(gpu)
+            z_audio_mask = batch["z_audio_mask"].to(gpu)
+            z_text = batch["z_text"].to(gpu)
+            z_text_mask = batch["z_text_mask"].to(gpu)
+            embeds = batch["clap_embed"].to(gpu)
             
             # process the pair to get the latents Z and the embeddings
             init_image = z_audio_mask
             if model_args.use_initial_image:
                 init_image = torch.cat([init_image, z_text], dim=1)
-            
-            with accelerator.accumulate(model):
+            with torch.cuda.amp.autocast(enabled=not scaler is None):
                 loss = model(
                     z_audio,
                     features = z_text.mean(-3) if model_args.use_additional_time_conditioning else None,
@@ -168,56 +194,68 @@ def main(conf):
                     embedding=embeds,
                     embedding_mask_proba=train_args.CFG_mask_proba
                 )
-                accelerator.backward(loss)
 
-                if accelerator.sync_gradients:
-                    accelerator.clip_grad_norm_(model.parameters(), 1.0)
-                optimizer.step()
-                lr_scheduler.step()
-                if train_args.use_ema:
-                    ema_model.step(model.parameters())
-                optimizer.zero_grad()
+            if scaler is not None:
+                scaler.scale(loss).backward()
+            else:
+                loss.backward()
 
-            progress_bar.update(1)
-            global_step += 1
+            #torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
 
-            logs = {
-                "loss": loss.detach().item(),
-                "lr": lr_scheduler.get_last_lr()[0],
-                "step": global_step,
-            }
-            progress_bar.set_postfix(**logs)
+        if scaler is not None:
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            optimizer.step()
 
-            if (global_step) % train_args.wandb_log_every == 0 or global_step == 1:
-                wandb_log = logs.copy()
-                wandb_log.pop("step")
-                accelerator.log(wandb_log, step=global_step)
+        lr_scheduler.step()
+        if train_args.use_ema:
+            ema.update()
 
-            # TODO do logging based on global steps
-        progress_bar.close()
-        accelerator.wait_for_everyone()
+        logs = {
+            "loss": loss.detach().item(),
+            "lr": lr_scheduler.get_last_lr()[0],
+            "step": global_step,
+        }
 
+        if (global_step + 1) % train_args.log_every == 0:
+            log.info("train_it {}/{} | lr:{} | loss:{}".format(
+                1+global_step,
+                int(train_args.num_train_steps),
+                "{:.2e}".format(optimizer.param_groups[0]['lr']),
+                "{:+.4f}".format(loss.item()),
+            ))
+
+            wandb_log = logs.copy()
+            wandb_log.pop("step")
+            wandb.log(wandb_log, step=global_step+1)
+
+        if conf.DDP:
+            dist.barrier()
+        
         # Generate sample images for visual inspection
-        if accelerator.is_main_process:
-            if ((epoch + 1) % train_args.save_model_epochs == 0
-                    or (epoch + 1) % train_args.save_images_epochs == 0
-                    or epoch == train_args.num_epochs - 1):
-                unet = accelerator.unwrap_model(model)
-                if train_args.use_ema:
-                    ema_model.copy_to(unet.parameters())
-
-            if (epoch + 1) % train_args.save_model_epochs == 0 or epoch == train_args.num_epochs - 1:
+        if gpu==0:
+            log_step = global_step + 1
+            if log_step % train_args.save_every == 0:
+                log.info("Saving model...")
                 save_data = {
                     "model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
+                    "ema": ema.state_dict(),
                     "lr_scheduler": lr_scheduler.state_dict(),
-                    "epoch": epoch,
                     "global_step": global_step,
                 }
                 torch.save(save_data, os.path.join(output_dir, f"model_latest.pt"))
+                if log_step % 1000 == 0:
+                    torch.save(save_data, os.path.join(output_dir, f"model_{log_step}.pt"))
 
-            if (epoch + 1) % train_args.save_images_epochs == 0:
-                eval_batch = next(iter(val_dataloader))
+            if log_step % train_args.eval_every == 0:
+                log.info("Sampling...")
+                model.eval()
+                eval_batch = next(val_iter)
+                # put everything on device
+                for k, v in eval_batch.items():
+                    eval_batch[k] = v.to(gpu)
 
                 z_audio = eval_batch["z_audio"]
                 z_audio_mask = eval_batch["z_audio_mask"]
@@ -235,7 +273,7 @@ def main(conf):
                     sids = None
 
                 # Turn noise into new audio sample with diffusion
-                initial_noise = torch.normal(mean=data_mean, std=data_std, size=z_audio.shape).cuda()
+                initial_noise = torch.normal(mean=data_mean, std=data_std, size=z_audio.shape).to(gpu)
                 # append mask
                 init_image = z_audio_mask
                 # append initial image
@@ -260,8 +298,8 @@ def main(conf):
                 batch_images = custom_dataset.scale_0_1(batch_images)
                 batch_gt = custom_dataset.scale_0_1(batch_gt)
                 # save locally
-                save_image(batch_images, os.path.join(output_dir, "samples", f"model_samples_{epoch}.png"))
-                save_image(batch_gt, os.path.join(output_dir, "samples", f"gt_samples_{epoch}.png"))
+                save_image(batch_images, os.path.join(output_dir, "samples", f"model_samples_{log_step}.png"))
+                save_image(batch_gt, os.path.join(output_dir, "samples", f"gt_samples_{log_step}.png"))
                 # scale to 0-255
                 batch_images = batch_images * 255
                 batch_gt = batch_gt * 255
@@ -293,40 +331,55 @@ def main(conf):
                     gt_audio = z_to_audio(z=gt, y_mask=mask, sid=sid).cpu().squeeze(0)
 
                     # save
-                    sample_path = os.path.join(output_dir, "samples", f"model_audio_{epoch}_{i}.wav")
-                    gt_path = os.path.join(output_dir, "samples", f"gt_audio_{epoch}_{i}.wav")
+                    sample_path = os.path.join(output_dir, "samples", f"model_audio_{log_step}_{i}.wav")
+                    gt_path = os.path.join(output_dir, "samples", f"gt_audio_{log_step}_{i}.wav")
                     save_audio(sample_path, model_audio, 22050)
                     save_audio(gt_path, gt_audio, 22050)
 
                     # log to wandb
-                    accelerator.log({"audio_examples":
+                    wandb.log({"audio_examples":
                                      [
                                         wandb.Audio(sample_path, caption=f"Sample {i}", sample_rate=22050),
                                         wandb.Audio(gt_path, caption=f"Ground Truth {i}", sample_rate=22050)
-                                     ]}, step=global_step)
+                                     ]}, step=log_step)
 
                 # log to wandb
-                accelerator.log({"eval_loss": eval_loss.detach().item()}, step=global_step)
-                accelerator.log({"eval_images": [images_model, images_gt]}, step=global_step)
+                wandb.log({"eval_loss": eval_loss.detach().item()}, step=log_step)
+                wandb.log({"eval_images": [images_model, images_gt]}, step=log_step)
 
-        accelerator.wait_for_everyone()
-
-    accelerator.end_training()
+                # set back to training
+                model.train()
+                log.info("Sampling finished...")
+    wandb.finish()
 
 
 if __name__ == "__main__":
     # parse arguments for rank
     parser = argparse.ArgumentParser()
-    parser.add_argument("--local_rank", type=int, default=-1)
     parser.add_argument("--config", type=str, default="configs/train_conf.yaml")
+    parser.add_argument("--DDP", action="store_true", default=False)
     args = parser.parse_args()
 
     conf = OmegaConf.load(args.config)
+    conf.DDP = args.DDP
 
-    # setup rank
-    env_local_rank = int(os.environ.get("LOCAL_RANK", -1))
-    if env_local_rank != -1 and env_local_rank != args.local_rank:
-        args.local_rank = env_local_rank
-    conf.local_rank = args.local_rank
+    DIST_FILE = "ddp_sync_"
 
-    main(conf)
+    ngpus = torch.cuda.device_count()
+    print("Number of GPUs: {}".format(ngpus))
+
+    # setup for DDP
+    if conf.DDP:
+        wandb.require("service")
+        conf.wandb_group += "_DDP"
+        conf.gpus = ngpus
+        conf.world_size = conf.gpus
+        job_id = os.environ["SLURM_JOBID"]
+        conf.dist_url = "file://{}.{}".format(os.path.realpath(DIST_FILE), job_id)
+    else:
+        conf.world_size = ngpus
+
+    if conf.DDP and ngpus > 1:
+        mp.spawn(train, nprocs=conf.gpus, args=(conf,))
+    else:
+        train(0, conf)
