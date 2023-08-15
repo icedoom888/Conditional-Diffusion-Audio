@@ -128,7 +128,6 @@ def get_text_to_Z(net_g):
         with torch.no_grad():
             x_tst = stn_tst.cuda().unsqueeze(0)
             x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
-            # sid = torch.LongTensor([1]).cuda() speaker ID
             net_out = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, length_scale=length_scale, noise_scale_w=noise_scale_w, max_len=max_len, y_lengths=y_lengths)
             z = net_out[3][0]
             y_mask = net_out[2]

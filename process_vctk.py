@@ -11,7 +11,7 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
-MODE = "test"
+MODE = "train"
 
 def process_filelist(filelist):
     # initiate models
@@ -41,8 +41,9 @@ def process_filelist(filelist):
         
         # extract the embeddings
         with torch.no_grad():
-            z_audio = audio_to_z(torch.tensor(audio[None, :]).cuda(), sid=sid)["z"]
-            z_text, y_mask = text_to_z(text, sid=sid, hps=hps, max_len=z_audio.shape[-1], y_lengths=torch.tensor([z_audio.shape[-1]]).cuda())
+            z_audio_data = audio_to_z(torch.tensor(audio[None, :]).cuda(), sid=sid)
+            z_audio, z_audio_mask = z_audio_data["z"], z_audio_data["y_mask"]
+            z_text, y_mask = text_to_z(text, sid=sid, hps=hps)
             audio_48k = librosa.resample(audio, orig_sr=sr, target_sr=48000, res_type="kaiser_fast")
             audio_embed = audio_embedder(torch.tensor(audio_48k))
 
@@ -51,6 +52,7 @@ def process_filelist(filelist):
             audio=audio,
             sid=sid.cpu().numpy(),
             z_audio=z_audio.cpu().numpy(),
+            z_audio_mask=z_audio_mask.cpu().numpy(),
             y_mask=y_mask.cpu().numpy(),
             z_text=z_text.cpu().numpy(),
             clap_embed=audio_embed.cpu().numpy()
@@ -74,6 +76,6 @@ if __name__ == "__main__":
     
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-    with Pool(4) as p:
+    with Pool(6) as p:
         p.map(process_filelist, chunks)
 
