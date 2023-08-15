@@ -27,7 +27,7 @@ from i2sb import Runner
 from custom_dataset import LJS_Latent, LJSSlidingWindow, VCTKSlidingWindow
 import yaml
 
-RESULT_DIR = Path("results")
+RESULT_DIR = Path("/cluster/scratch/matvogel/I2SB/results")
 
 def set_seed(seed):
     # https://github.com/pytorch/pytorch/issues/7068
@@ -148,7 +148,9 @@ if __name__ == '__main__':
 
     if opt.distributed:
         size = opt.n_gpu_per_node
+        global_size = opt.num_proc_node * opt.n_gpu_per_node
 
+        '''
         processes = []
         for rank in range(size):
             opt = copy.deepcopy(opt)
@@ -164,6 +166,10 @@ if __name__ == '__main__':
 
         for p in processes:
             p.join()
+        '''
+
+        torch.multiprocessing.spawn(init_processes, args=(global_size, main, opt), nprocs=size, join=True, daemon=False, start_method='spawn')
+
     else:
         torch.cuda.set_device(0)
         opt.global_rank = 0

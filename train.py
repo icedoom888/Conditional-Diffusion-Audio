@@ -67,12 +67,12 @@ def train(gpu, conf):
         raise NotImplementedError("Dataset not implemented!")
 
     if conf.DDP:
-        sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=args.world_size,   rank=args.rank)
+        sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=conf.world_size, rank=conf.rank)
     else:
         sampler = None
     
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.micro_batch_size, shuffle=False, num_workers=4, sampler=sampler)
-    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True, num_workers=4)
+    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=False, num_workers=4, sampler=sampler)
 
     # setup diffusion loss
     if train_args.loss_fn_diffusion == "l1":
@@ -110,6 +110,10 @@ def train(gpu, conf):
 
     # move to right device
     model = model.to(gpu)
+
+    ema = ExponentialMovingAverage(model.net.parameters(), decay=train_args.ema_max_decay)
+    ema.to(gpu)
+
     if conf.DDP:
         model = DDP(model, device_ids=[gpu])
 
@@ -133,9 +137,6 @@ def train(gpu, conf):
         num_training_steps=train_args.num_train_steps // (train_args.train_batch_size // train_args.micro_batch_size),
     )
 
-    ema = ExponentialMovingAverage(model.net.parameters(), decay=train_args.ema_max_decay)
-    ema.to(gpu)
-
     start_step = 0
 
     # load weights
@@ -153,14 +154,13 @@ def train(gpu, conf):
 
     if gpu == 0:
         # initialize wandb
-        wandb.init(project=train_args.wandb_project, entity="matvogel", config=OmegaConf.to_container(conf, resolve=True))
+        wandb.init(project=train_args.wandb_project, entity="ethz-mtc", config=OmegaConf.to_container(conf, resolve=True))
         # initialize vits functions
         vits_model, hps = load_vits_model(hps_path=conf_path, checkpoint_path=ckpt_path)
         z_to_audio = get_Z_to_audio(vits_model)
         # export master ip to MASTER_ADDR
     
     n_inner_loop = train_args.train_batch_size // (conf.world_size * train_args.micro_batch_size)
-    print(n_inner_loop)
     train_iter = custom_dataset.iterate_loader(train_dataloader)
     val_iter = custom_dataset.iterate_loader(val_dataloader)
 
@@ -170,7 +170,7 @@ def train(gpu, conf):
         #progress_bar = tqdm(total=len(train_dataloader), initial=epoch, disable=not gpu == 0)
         #progress_bar.set_description(f"Epoch {epoch}")
         optimizer.zero_grad()
-
+        
         # do gradient accumulations
         for _ in range(n_inner_loop):
             batch = next(train_iter)
@@ -226,12 +226,10 @@ def train(gpu, conf):
                 "{:+.4f}".format(loss.item()),
             ))
 
-            wandb_log = logs.copy()
-            wandb_log.pop("step")
-            wandb.log(wandb_log, step=global_step+1)
-
-        if conf.DDP:
-            dist.barrier()
+            if gpu==0:
+                wandb_log = logs.copy()
+                wandb_log.pop("step")
+                wandb.log(wandb_log, step=global_step+1)
         
         # Generate sample images for visual inspection
         if gpu==0:
@@ -251,7 +249,6 @@ def train(gpu, conf):
 
             if log_step % train_args.eval_every == 0:
                 log.info("Sampling...")
-                model.eval()
                 eval_batch = next(val_iter)
                 # put everything on device
                 for k, v in eval_batch.items():
@@ -280,7 +277,12 @@ def train(gpu, conf):
                 if model_args.use_initial_image:
                     init_image = torch.cat([init_image, z_text], dim=1)
                 
-                model_samples = model.sample(
+                if conf.DDP:
+                    sample_model = model.model
+                else:
+                    sample_model = model
+                
+                model_samples = sample_model.sample(
                     initial_noise, # NOISE | MASK | OPTIONAL(INIT IMAGE)
                     init_image=init_image,
                     features = z_text.mean(-3) if model_args.use_additional_time_conditioning else None,
@@ -298,8 +300,8 @@ def train(gpu, conf):
                 batch_images = custom_dataset.scale_0_1(batch_images)
                 batch_gt = custom_dataset.scale_0_1(batch_gt)
                 # save locally
-                save_image(batch_images, os.path.join(output_dir, "samples", f"model_samples_{log_step}.png"))
-                save_image(batch_gt, os.path.join(output_dir, "samples", f"gt_samples_{log_step}.png"))
+                #save_image(batch_images, os.path.join(output_dir, "samples", f"model_samples_{log_step}.png"))
+                #save_image(batch_gt, os.path.join(output_dir, "samples", f"gt_samples_{log_step}.png"))
                 # scale to 0-255
                 batch_images = batch_images * 255
                 batch_gt = batch_gt * 255
@@ -311,6 +313,9 @@ def train(gpu, conf):
                 batch_gt = rearrange(batch_gt, "c h w -> h w c").cpu().numpy()
                 images_model = wandb.Image(batch_images, caption="Model Samples")
                 images_gt = wandb.Image(batch_gt, caption="Ground Truth")
+
+                msg = f"Saving {model_samples.shape[0]} samples..."
+                log.info(msg)
 
                 for i in range(model_samples.shape[0]):
                     sample = model_samples[i]
@@ -346,10 +351,11 @@ def train(gpu, conf):
                 # log to wandb
                 wandb.log({"eval_loss": eval_loss.detach().item()}, step=log_step)
                 wandb.log({"eval_images": [images_model, images_gt]}, step=log_step)
-
-                # set back to training
-                model.train()
                 log.info("Sampling finished...")
+        
+        if conf.DDP:
+            dist.barrier()
+        
     wandb.finish()
 
 
@@ -370,8 +376,6 @@ if __name__ == "__main__":
 
     # setup for DDP
     if conf.DDP:
-        wandb.require("service")
-        conf.wandb_group += "_DDP"
         conf.gpus = ngpus
         conf.world_size = conf.gpus
         job_id = os.environ["SLURM_JOBID"]

@@ -21,3 +21,5 @@ launch.json
 settings.json
 logging
 running_slides
+*.out
+*.err

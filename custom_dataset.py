@@ -143,8 +143,15 @@ class VCTKSlidingWindow(Dataset):
         self.data = os.listdir(os.path.join(self.root, self.mode))
         assert len(self.data) > 0, "No data found"
 
-    def zero_pad(self, data):
+    def zero_pad(self, data, mode=None):
         canvas = torch.zeros((1, data.shape[-2], self.max_len_seq))
+
+        # correct the zero padding by the respective data means
+        if mode=="text":
+            canvas += VCTK_MEAN_TEXT
+        elif mode=="audio":
+            canvas += VCTK_MEAN_AUDIO
+        
         mask = canvas.clone()
         canvas[..., :data.shape[-1]] = data
         mask[..., :data.shape[-1]] = 1
@@ -184,8 +191,8 @@ class VCTKSlidingWindow(Dataset):
             y_mask_mask = torch.ones_like(y_mask)
         else:
             # pad it
-            z_audio, z_audio_mask = self.zero_pad(z_audio)
-            z_text, z_text_mask = self.zero_pad(z_text)
+            z_audio, z_audio_mask = self.zero_pad(z_audio, mode="audio")
+            z_text, z_text_mask = self.zero_pad(z_text, mode="text")
             y_mask, y_mask_mask = self.zero_pad(y_mask)
             audio = torch.cat([audio, torch.zeros((1, max(0, self.max_len_seq*self.z_to_audio - audio.shape[-1])))], dim=-1)
         

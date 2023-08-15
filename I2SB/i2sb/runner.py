@@ -16,13 +16,9 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 
 from torch_ema import ExponentialMovingAverage
 import torchvision.utils as tu
-import torchmetrics
 
 import distributed_util as dist_util
-from evaluation import build_resnet50
-
 from . import util
-from .network import Image256Net
 from .diffusion import Diffusion
 
 from ipdb import set_trace as debug
