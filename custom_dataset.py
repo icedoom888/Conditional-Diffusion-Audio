@@ -173,7 +173,7 @@ class VCTKSlidingWindow(Dataset):
             audio = audio.mean(-2, keepdim=True)
         
         # get shortest length
-        seq_len = z_audio.shape[-1]
+        seq_len = min(z_audio.shape[-1], z_text.shape[-1])
 
         if seq_len > self.max_len_seq:
             # take random slize

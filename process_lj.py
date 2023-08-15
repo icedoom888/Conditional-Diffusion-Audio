@@ -26,8 +26,9 @@ def process_filelist(filelist):
 
         # extract the embeddings
         with torch.no_grad():
-            z_audio = audio_to_z(torch.tensor(audio[None, :]).cuda())["z"]
-            z_text, y_mask = text_to_z(text, hps=hps, max_len=z_audio.shape[-1], y_lengths=torch.tensor([z_audio.shape[-1]]).cuda())
+            z_audio_data = audio_to_z(torch.tensor(audio[None, :]).cuda())
+            z_audio, z_audio_mask = z_audio_data["z"], z_audio_data["y_mask"]
+            z_text, y_mask = text_to_z(text, hps=hps, y_lengths=torch.tensor([z_audio.shape[-1]]).cuda())
             audio_48k = librosa.resample(audio, orig_sr=sr, target_sr=48000, res_type="kaiser_fast")
             audio_embed = audio_embedder(torch.tensor(audio_48k))
 
@@ -40,6 +41,7 @@ def process_filelist(filelist):
             file_path,
             audio=audio,
             z_audio=z_audio.cpu().numpy(),
+            z_audio_mask=z_audio_mask.cpu().numpy(),
             y_mask=y_mask.cpu().numpy(),
             z_text=z_text.cpu().numpy(),
             clap_embed=audio_embed.cpu().numpy()
