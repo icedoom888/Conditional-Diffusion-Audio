@@ -190,9 +190,14 @@ class VCTKSlidingWindow(Dataset):
             z_text_mask = torch.ones_like(z_text)
             y_mask_mask = torch.ones_like(y_mask)
         else:
+            # cut to be sure
+            z_audio = z_audio[..., :self.max_len_seq]
+            y_mask = y_mask[..., :self.max_len_seq]
+            z_text = z_text[..., :self.max_len_seq]
+            
             # pad it
-            z_audio, z_audio_mask = self.zero_pad(z_audio, mode="audio")
-            z_text, z_text_mask = self.zero_pad(z_text, mode="text")
+            z_audio, z_audio_mask = self.zero_pad(z_audio)
+            z_text, z_text_mask = self.zero_pad(z_text)
             y_mask, y_mask_mask = self.zero_pad(y_mask)
             audio = torch.cat([audio, torch.zeros((1, max(0, self.max_len_seq*self.z_to_audio - audio.shape[-1])))], dim=-1)
         
