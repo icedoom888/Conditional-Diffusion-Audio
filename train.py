@@ -244,7 +244,7 @@ def train(gpu, conf):
                     "global_step": global_step,
                 }
                 torch.save(save_data, os.path.join(output_dir, f"model_latest.pt"))
-                if log_step % 1000 == 0:
+                if log_step % 10000 == 0:
                     torch.save(save_data, os.path.join(output_dir, f"model_{log_step}.pt"))
 
             if log_step % train_args.eval_every == 0:
