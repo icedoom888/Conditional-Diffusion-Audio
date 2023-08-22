@@ -3,7 +3,7 @@ import torch
 import os
 import numpy as np
 from torchvision.transforms import Normalize
-
+from utils import print_sizes
 
 # stats for normalization
 Z_AUDIO_MEAN_SMALL = -0.0270
@@ -68,9 +68,9 @@ class DummyDataset(Dataset):
         return 100
 
 
-class LJSSlidingWindow(Dataset):
+class SlidingWindow(Dataset):
     """
-    Dataset for LJ-Speech with sliding window
+    Dataset  with sliding window
 
     Args:
         root (str): path to the root of the dataset
@@ -135,10 +135,11 @@ class LJSSlidingWindow(Dataset):
         elif audio.shape[-2] == 2:
             audio = audio.mean(-2, keepdim=True)
         
-        # get shortest length
-        seq_len = z_audio.shape[-1]
 
-        if seq_len > self.max_len_seq:
+        if z_audio.shape[-1] > self.max_len_seq and z_text.shape[-1] > self.max_len_seq:
+
+            seq_len = min(z_audio.shape[-1], z_text.shape[-1])
+
             # take random slize
             random_offset = torch.randint(0, seq_len - self.max_len_seq, (1,)).item()
 
@@ -152,13 +153,47 @@ class LJSSlidingWindow(Dataset):
             z_audio_mask = torch.ones_like(z_audio)
             z_text_mask = torch.ones_like(z_text)
             y_mask_mask = torch.ones_like(y_mask)
+        
+        elif z_audio.shape[-1] > self.max_len_seq and z_text.shape[-1] < self.max_len_seq:
+
+            seq_len = z_audio.shape[-1]
+
+            # take random slize
+            random_offset = torch.randint(0, seq_len - self.max_len_seq, (1,)).item()
+
+            # take slices
+            z_audio = z_audio[..., random_offset:random_offset+self.max_len_seq]
+            z_text, z_text_mask = self.zero_pad(z_text)
+            y_mask, y_mask_mask = self.zero_pad(y_mask)
+            audio = audio[..., random_offset*self.z_to_audio:(random_offset+self.max_len_seq)*self.z_to_audio]
+
+            # make dummy masks
+            z_audio_mask = torch.ones_like(z_audio)
+
+        elif z_audio.shape[-1] < self.max_len_seq and z_text.shape[-1] > self.max_len_seq:
+
+            seq_len = z_text.shape[-1]
+
+            # take random slize
+            random_offset = torch.randint(0, seq_len - self.max_len_seq, (1,)).item()
+
+            # take slices
+            z_audio, z_audio_mask = self.zero_pad(z_audio)
+            y_mask = y_mask[..., random_offset:random_offset+self.max_len_seq]
+            z_text = z_text[..., random_offset:random_offset+self.max_len_seq]
+            audio = torch.cat([audio, torch.zeros((1, max(0, self.max_len_seq*self.z_to_audio - audio.shape[-1])))], dim=-1)
+
+            # make dummy masks
+            z_text_mask = torch.ones_like(z_text)
+            y_mask_mask = torch.ones_like(y_mask)
+
         else:
             # pad it
             z_audio, z_audio_mask = self.zero_pad(z_audio)
             z_text, z_text_mask = self.zero_pad(z_text)
             y_mask, y_mask_mask = self.zero_pad(y_mask)
             audio = torch.cat([audio, torch.zeros((1, max(0, self.max_len_seq*self.z_to_audio - audio.shape[-1])))], dim=-1)
-        
+
         # make sure audio is perfect length
         audio = audio[..., :self.max_len_seq*self.z_to_audio]
         
@@ -187,7 +222,7 @@ class LJSSlidingWindow(Dataset):
         return data
  
         
-class LJS_Latent(Dataset):
+class Latent(Dataset):
     def __init__(self, root, mode="train", max_len_seq=384, normalization=False):
         super().__init__()
         self.root = root
@@ -253,7 +288,7 @@ class LJS_Latent(Dataset):
         return data
 
 
-class LJS_Latent_Audio(Dataset):
+class Latent_Audio(Dataset):
     def __init__(self, root, mode="train", max_len_seq=384, normalization=False):
         super().__init__()
         self.root = root
@@ -337,7 +372,7 @@ class LJS_Latent_Audio(Dataset):
 
 if __name__ == "__main__":
 
-    dataset = LJSSlidingWindow(root='/home/alberto/conditional-diffusion-audio/data/LJSProcessedFull', mode="train")
+    dataset = SlidingWindow(root='/home/alberto/conditional-diffusion-audio/data/LJSProcessedFull', mode="train")
 
     train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
 

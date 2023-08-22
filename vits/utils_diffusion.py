@@ -5,7 +5,7 @@ sys.path.append(dirname)
 from mel_processing import spectrogram_torch
 from models import SynthesizerTrn
 from text.symbols import symbols
-import utils as vits_utils
+import vits.utils as vits_utils
 import torch
 from text import text_to_sequence
 import commons

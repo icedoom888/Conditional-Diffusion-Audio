@@ -1,8 +1,8 @@
 training:
-  output_dir: results/vocoder_v1_multiloss_long_dataset_decay
-  data_root: data/LJSProcessedFull
-  dataset_name: LJSSlidingWindow
-  sr: 22050
+  output_dir: results/vocoder_v1_multiloss_flickr_decay
+  data_root: data/processed_flickr
+  dataset_name: SlidingWindow
+  sr: 16000
   wandb_project: natural_voices
   wandb_log_every: 100
   train_batch_size: 32

@@ -40,15 +40,15 @@ def main(conf):
         log_with="wandb"
     )
 
-    if train_args.dataset_name == 'LJSSlidingWindow':
+    if train_args.dataset_name == 'SlidingWindow':
         print(f'Building dataset: {train_args.dataset_name}')
-        train_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="train")
-        val_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="val")
+        train_dataset = custom_dataset.SlidingWindow(root=train_args.data_root, mode="train", sr=train_args.sr)
+        val_dataset = custom_dataset.SlidingWindow(root=train_args.data_root, mode="val", sr=train_args.sr)
     
-    elif train_args.dataset_name == 'LJS_Latent_Audio':
+    elif train_args.dataset_name == 'Latent_Audio':
         print(f'Building dataset: {train_args.dataset_name}')
-        train_dataset = custom_dataset.LJS_Latent_Audio(root=train_args.data_root, mode="train")
-        val_dataset = custom_dataset.LJS_Latent_Audio(root=train_args.data_root, mode="val")
+        train_dataset = custom_dataset.Latent_Audio(root=train_args.data_root, mode="train")
+        val_dataset = custom_dataset.Latent_Audio(root=train_args.data_root, mode="val")
     
     else:
         raise ValueError
@@ -63,7 +63,7 @@ def main(conf):
     model = ConditionalDiffusionVocoder(
         mel_n_fft=1024, # Mel-spectrogram n_fft
         mel_channels=192, # Mel-spectrogram channels
-        mel_sample_rate=22050, # sample rate
+        mel_sample_rate=train_args.sr, # sample rate
         net_t=UNetV0,
         dim=1, # 2D U-Net working on images
         in_channels=3, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
@@ -149,7 +149,7 @@ def main(conf):
             z_text_mask = batch["z_text_mask"]
             embeds = batch["clap_embed"]
 
-            if train_args.dataset_name == 'LJSSlidingWindow':
+            if train_args.dataset_name == 'SlidingWindow':
                 z_audio = torch.squeeze(z_audio, 1)
                 z_text = torch.squeeze(z_text, 1)
                 z_audio_mask = torch.squeeze(z_audio_mask, 1)
@@ -234,7 +234,7 @@ def main(conf):
                 z_text_mask = eval_batch["z_text_mask"]
                 embeds = eval_batch["clap_embed"]
 
-                if train_args.dataset_name == 'LJSSlidingWindow':
+                if train_args.dataset_name == 'SlidingWindow':
                     z_audio = torch.squeeze(z_audio, 1)
                     z_text = torch.squeeze(z_text, 1)
                     z_audio_mask = torch.squeeze(z_audio_mask, 1)
@@ -260,18 +260,18 @@ def main(conf):
                     sample_path = os.path.join(output_dir, "samples", f"model_audio_{epoch}_{i}.wav")
                     gt_path = os.path.join(output_dir, "samples", f"gt_audio_{epoch}_{i}.wav")
 
-                    save_audio(sample_path, sample.cpu(), 22050)
-                    save_audio(gt_path, audio[i].cpu(), 22050)
+                    save_audio(sample_path, sample.cpu(), train_args.sr)
+                    save_audio(gt_path, audio[i].cpu(), train_args.sr)
 
                     # log to wandb
                     accelerator.log({"audio_examples":
                                      [
-                                        wandb.Audio(sample_path, caption=f"Sample {i}", sample_rate=22050),
-                                        wandb.Audio(gt_path, caption=f"Ground Truth {i}", sample_rate=22050)
+                                        wandb.Audio(sample_path, caption=f"Sample {i}", sample_rate=train_args.sr),
+                                        wandb.Audio(gt_path, caption=f"Ground Truth {i}", sample_rate=train_args.sr)
                                      ]}, step=global_step)
                 # Save logs
                 eval_logs = {
-                    "loss": eval_loss.detach().item(),
+                    "eval_loss": eval_loss.detach().item(),
                 }
 
                 for loss_name in eval_loss_dict.keys():
