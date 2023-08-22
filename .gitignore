@@ -24,3 +24,4 @@ running_slides
 *.out
 *.err
 processed_vctk*
+VCTK-Corpus

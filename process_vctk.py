@@ -11,7 +11,7 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
-MODE = "train"
+MODE = "val"
 
 def process_filelist(filelist):
     # initiate models
@@ -49,7 +49,7 @@ def process_filelist(filelist):
             z_text, y_mask = text_to_z(text, sid=sid, hps=hps)
             audio_48k = librosa.resample(audio, orig_sr=sr, target_sr=48000, res_type="kaiser_fast")
             audio_embed = audio_embedder(torch.tensor(audio_48k))
-
+        
         np.savez_compressed(
             file_path,
             audio=audio,
@@ -60,7 +60,7 @@ def process_filelist(filelist):
             z_text=z_text.cpu().numpy(),
             clap_embed=audio_embed.cpu().numpy()
             )
-    
+        
     for filename in tqdm(filelist):
         file_to_z_data(filename)
     
