@@ -182,6 +182,7 @@ def main(opt):
         hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", conf_path),
         checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], ckpt_path)
         )
+    
     z_to_audio = get_Z_to_audio(vits_model)
     
     for loader_itr, data in enumerate(val_loader):
@@ -195,6 +196,12 @@ def main(opt):
         y_masks_audio = data["y_mask_audio"]
         y_masks_text = data["y_mask_text"]
 
+        # generate vector for switching the sids
+        sids_shuffle = torch.randperm(x0.shape[0])
+        print(sids_shuffle)
+        if opt.shuffle:
+            embeds = torch.permute(embeds, sids_shuffle.item())
+        
         xs, pred_x0s = runner.ddpm_sampling(
             opt, x1,
             x1_mask=x1_mask,
@@ -235,7 +242,8 @@ def main(opt):
             start_audio = z_to_audio(z=start.cuda(), y_mask=y_mask_text.cuda(), sid=sid).cpu().squeeze(0)
 
             # save
-            sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}.wav")
+            permutation = "" if opt.shuffle is False else f"_{i}_{sids_shuffle[i].item()}"
+            sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}{permutation}.wav")
             gt_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"vits_audio_{i}.wav")
             audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{i}.wav")
             start_audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"start_audio_{i}.wav")
@@ -272,7 +280,7 @@ if __name__ == '__main__':
     parser.add_argument("--beta-max",       type=float, default=0.3,         help="max diffusion for the diffusion model")
     # parser.add_argument("--beta-min",       type=float, default=0.1)
     parser.add_argument("--ot-ode",         action="store_true",             help="use OT-ODE model")
-
+    parser.add_argument("--shuffle",        action="store_true",             help="shuffle the embeddings")
     # data
     parser.add_argument("--image-size",     type=int,  default=256)
     parser.add_argument("--dataset-dir",    type=Path, default="/dataset",  help="path to LMDB dataset")
