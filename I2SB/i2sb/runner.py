@@ -151,13 +151,10 @@ class Runner(object):
         
         clean_img = data["z_audio"]
         x0_mask = data["z_audio_mask"]
-        y_mask = data["y_mask"]
         corrupt_img = data["z_text"]
         x1_mask = data["z_text_mask"]
         embeds = data["clap_embed"]
-        # masking information
-        offset = data["offset"]
-        z_length = data["z_audio_length"]
+        
         if opt.conf_file["training"]["dataset"] == "VCTK":
             sid = data["sid"]
             Z_MEAN = VCTK_MEAN_TEXT
@@ -180,7 +177,7 @@ class Runner(object):
 
         assert x0.shape == x1.shape
 
-        return x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length
+        return x0, x1, sid, cond, embeds, x0_mask, x1_mask, data
 
     def train(self, opt, train_dataset, val_dataset, corrupt_method):
         self.writer = util.build_log_writer(opt)
@@ -347,7 +344,7 @@ class Runner(object):
         log = self.log
         log.info(f"========== Evaluation started: iter={it} ==========")
 
-        x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, val_loader)
+        x0, x1, sid, cond, embeds, x0_mask, x1_mask, offset, z_length = self.sample_batch(opt, val_loader)
         sid = sid.squeeze() if sid is not None else None
 
         x1 = x1.to(opt.device) # TODO load the actual target image
@@ -372,6 +369,9 @@ class Runner(object):
             self.writer.add_image(it, tag, tu.make_grid(img, nrow=nrow))
 
         img_target_pred = xs[:, 0, ...]
+
+        y_masks_audio = data["y_mask_audio"]
+        y_masks_text = data["y_mask_text"]
 
         # logging audio
         for i in range(batch):

@@ -30,7 +30,7 @@ from i2sb import ckpt_util
 
 import colored_traceback.always
 from ipdb import set_trace as debug
-from custom_dataset import LJS_Latent, LJSSlidingWindow
+from custom_dataset import LJS_Latent, LJSSlidingWindow, VCTKSlidingWindow
 from torchaudio import save as save_audio
 
 import sys
@@ -40,9 +40,7 @@ sys.path.append(os.path.join(this_file_path, "..", ".."))
 from vits.utils_diffusion import load_vits_model, get_Z_to_audio
 import yaml
 import time
-
-
-RESULT_DIR = Path("results")
+from train import RESULT_DIR
 
 def set_seed(seed):
     # https://github.com/pytorch/pytorch/issues/7068
@@ -154,11 +152,14 @@ def main(opt):
     #corrupt_method = build_corruption(opt, log, corrupt_type=corrupt_type)
 
     # build imagenet val dataset
-    val_dataset = LJSSlidingWindow(root=opt.dataset_dir, mode="val", normalize=False)
+    if opt.conf_file.training.dataset == "LJS":
+        val_dataset = LJSSlidingWindow(root=opt.conf_file.training.data_root, mode="val", normalize=False)
+    elif opt.conf_file.training.dataset == "VCTK":
+        val_dataset = VCTKSlidingWindow(root=opt.conf_file.training.data_root, mode="val", normalize=False)
+
     n_samples = len(val_dataset)
 
     # build dataset per gpu and loader
-    #subset_dataset = build_subset_per_gpu(opt, val_dataset, log)
     val_loader = DataLoader(val_dataset,batch_size=opt.batch_size, shuffle=False, pin_memory=True, num_workers=1, drop_last=False,)
 
     # build runner
@@ -170,10 +171,17 @@ def main(opt):
         runner.net.diffusion_model.convert_to_fp16()
         runner.ema = ExponentialMovingAverage(runner.net.parameters(), decay=0.99) # re-init ema with fp16 weight
 
+    if opt.conf_file["training"]["dataset"] == "LJS":
+                conf_path = "ljs_base.json"
+                ckpt_path = "pretrained_ljs.pth"
+    else:
+        conf_path = "vctk_base.json"
+        ckpt_path = "pretrained_vctk.pth"
+
     vits_model, hps = load_vits_model(
-                hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", "ljs_base.json"),
-                checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], "pretrained_ljs.pth")
-                )
+        hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", conf_path),
+        checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], ckpt_path)
+        )
     z_to_audio = get_Z_to_audio(vits_model)
     
     for loader_itr, data in enumerate(val_loader):
@@ -181,9 +189,12 @@ def main(opt):
         if loader_itr > opt.sample_batches:
             break
 
-        x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = runner.sample_batch(opt, val_loader, data=data)
-        sid = sid.squeeze() if sid is not None else None
+        x0, x1, sids, cond, embeds, x0_mask, x1_mask, _ = runner.sample_batch(opt, val_loader, data=data)
+        sids = sids.squeeze() if sids is not None else None
         
+        y_masks_audio = data["y_mask_audio"]
+        y_masks_text = data["y_mask_text"]
+
         xs, pred_x0s = runner.ddpm_sampling(
             opt, x1,
             x1_mask=x1_mask,
@@ -206,13 +217,11 @@ def main(opt):
             sample = img_target_pred[i]
             gt = x0[i]
             start = x1[i]
-            mask = y_mask[i]
-            sid = torch.LongTensor([int(sid[i])]).cuda() if sid is not None else None
-            
-            sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
-            gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
-            mask = mask[:, offset[i]:offset[i]+z_length[i]]
-            start = start[:, :, offset[i]:offset[i]+z_length[i]]
+            y_mask_text = y_masks_text[i]
+            y_mask_audio = y_masks_audio[i]
+
+            sid = torch.LongTensor([int(sids[i])]).cuda() if sids is not None else None
+            audio = data["audio"][i]
 
             msesp = torch.nn.functional.mse_loss(start.cpu(), sample.cpu()).unsqueeze(0)
             msepgt = torch.nn.functional.mse_loss(sample.cpu(), gt.cpu()).unsqueeze(0)
@@ -221,21 +230,19 @@ def main(opt):
             mse_pred_gt = torch.cat((mse_pred_gt, msepgt), dim=0) if mse_pred_gt.numel() > 0 else msepgt
 
             # pass through vocoder
-            model_audio =  z_to_audio(z=sample.cuda(), y_mask=mask.cuda(), sid=sid).cpu().squeeze(0)
-            gt_audio = z_to_audio(z=gt.cuda(), y_mask=mask.cuda(), sid=sid).cpu().squeeze(0)
-            start_audio = z_to_audio(z=start.cuda(), y_mask=mask.cuda(), sid=sid).cpu().squeeze(0)
+            model_audio =  z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
+            gt_audio = z_to_audio(z=gt.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
+            start_audio = z_to_audio(z=start.cuda(), y_mask=y_mask_text.cuda(), sid=sid).cpu().squeeze(0)
 
             # save
             sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}.wav")
-            gt_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{i}.wav")
+            gt_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"vits_audio_{i}.wav")
+            audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{i}.wav")
             start_audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"start_audio_{i}.wav")
-
-            os.makedirs(os.path.dirname(sample_path), exist_ok=True)
-            os.makedirs(os.path.dirname(gt_path), exist_ok=True)
-            os.makedirs(os.path.dirname(start_audio_path), exist_ok=True)
 
             save_audio(sample_path, model_audio, 22050)
             save_audio(gt_path, gt_audio, 22050)
+            save_audio(audio_path, audio, 22050)
             save_audio(start_audio_path, start_audio, 22050)
 
         stats_path = '/'.join(sample_path.split('/')[:-1]) + "/stats.txt"
