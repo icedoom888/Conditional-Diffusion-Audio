@@ -39,6 +39,9 @@ def process_filelist(filelist):
         
         audio, sr = librosa.load(file, sr=hps.data.sampling_rate)
         
+        # trim the audio
+        audio, trim_idx = librosa.effects.trim(audio)
+        
         # extract the embeddings
         with torch.no_grad():
             z_audio_data = audio_to_z(torch.tensor(audio[None, :]).cuda(), sid=sid)

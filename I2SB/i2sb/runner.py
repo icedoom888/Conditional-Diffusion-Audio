@@ -154,7 +154,7 @@ class Runner(object):
         corrupt_img = data["z_text"]
         x1_mask = data["z_text_mask"]
         embeds = data["clap_embed"]
-        
+
         if opt.conf_file["training"]["dataset"] == "VCTK":
             sid = data["sid"]
             Z_MEAN = VCTK_MEAN_TEXT
@@ -213,7 +213,6 @@ class Runner(object):
 
             for _ in range(n_inner_loop):
                 # ===== sample boundary pair =====
-                # TODO this is actually okay, the x0 is the end, x1 will be the start, mask is None, is not used and cond will be x1
                 x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, train_loader)
 
                 # ===== compute loss =====

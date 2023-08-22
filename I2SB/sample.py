@@ -198,67 +198,85 @@ def main(opt):
 
         # generate vector for switching the sids
         sids_shuffle = torch.randperm(x0.shape[0])
-        print(sids_shuffle)
-        if opt.shuffle:
-            embeds = torch.permute(embeds, sids_shuffle.item())
+        embeds_shuffled = torch.tensor([]).to(x0.device)
+        for idx in sids_shuffle:
+            embeds_shuffled = torch.cat((embeds_shuffled, embeds[idx].unsqueeze(0)))
         
-        xs, pred_x0s = runner.ddpm_sampling(
-            opt, x1,
-            x1_mask=x1_mask,
-            embeds=embeds,
-            cond=cond,
-            nfe=opt.nfe,
-            cfg=opt.cfg,
-            clip_denoise=opt.clip_denoise,
-            verbose=opt.global_rank==0
-        )
+        if opt.shuffle:
+            shuffle_methods = [True, False]
+        else:
+            shuffle_methods = [False]
+        
+        for shuffling in shuffle_methods:
+            xs, pred_x0s = runner.ddpm_sampling(
+                opt, x1,
+                x1_mask=x1_mask,
+                embeds=embeds if not shuffling else embeds_shuffled,
+                cond=cond,
+                nfe=opt.nfe,
+                cfg=opt.cfg,
+                clip_denoise=opt.clip_denoise,
+                verbose=opt.global_rank==0
+            )
 
-        img_target_pred = xs[:, 0, ...]
-        batch, len_t, *xdim = xs.shape
+            img_target_pred = xs[:, 0, ...]
+            batch, len_t, *xdim = xs.shape
 
-        # logging audio
-        mse_start_pred = torch.tensor([])
-        mse_pred_gt = torch.tensor([])
+            # logging audio
+            mse_start_pred = torch.tensor([])
+            mse_pred_gt = torch.tensor([])
 
-        for i in range(batch):
-            sample = img_target_pred[i]
-            gt = x0[i]
-            start = x1[i]
-            y_mask_text = y_masks_text[i]
-            y_mask_audio = y_masks_audio[i]
+            for i in range(batch):
+                sample = img_target_pred[i]
+                gt = x0[i]
+                start = x1[i]
+                y_mask_text = y_masks_text[i]
+                y_mask_audio = y_masks_audio[i]
 
-            sid = torch.LongTensor([int(sids[i])]).cuda() if sids is not None else None
-            audio = data["audio"][i]
+                sid = torch.LongTensor([int(sids[i])]).cuda() if sids is not None else None
+                audio = data["audio"][i]
 
-            msesp = torch.nn.functional.mse_loss(start.cpu(), sample.cpu()).unsqueeze(0)
-            msepgt = torch.nn.functional.mse_loss(sample.cpu(), gt.cpu()).unsqueeze(0)
+                msesp = torch.nn.functional.mse_loss(start.cpu(), sample.cpu()).unsqueeze(0)
+                msepgt = torch.nn.functional.mse_loss(sample.cpu(), gt.cpu()).unsqueeze(0)
 
-            mse_start_pred = torch.cat((mse_start_pred, msesp), dim=0) if mse_start_pred.numel() > 0 else msesp
-            mse_pred_gt = torch.cat((mse_pred_gt, msepgt), dim=0) if mse_pred_gt.numel() > 0 else msepgt
+                mse_start_pred = torch.cat((mse_start_pred, msesp), dim=0) if mse_start_pred.numel() > 0 else msesp
+                mse_pred_gt = torch.cat((mse_pred_gt, msepgt), dim=0) if mse_pred_gt.numel() > 0 else msepgt
 
-            # pass through vocoder
-            model_audio =  z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
-            gt_audio = z_to_audio(z=gt.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
-            start_audio = z_to_audio(z=start.cuda(), y_mask=y_mask_text.cuda(), sid=sid).cpu().squeeze(0)
+                # pass through vocoder
+                model_audio =  z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
 
-            # save
-            permutation = "" if opt.shuffle is False else f"_{i}_{sids_shuffle[i].item()}"
-            sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}{permutation}.wav")
-            gt_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"vits_audio_{i}.wav")
-            audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{i}.wav")
-            start_audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"start_audio_{i}.wav")
+                # calculate the audio of model prediction if passed the shuffled sid too
+                if shuffling:
+                    shuffled_sid = torch.LongTensor([int(sids[sids_shuffle[i]])]).cuda()
+                    model_audio_sid_shufle = z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=shuffled_sid).cpu().squeeze(0)
+                
+                gt_audio = z_to_audio(z=gt.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
+                start_audio = z_to_audio(z=start.cuda(), y_mask=y_mask_text.cuda(), sid=sid).cpu().squeeze(0)
 
-            save_audio(sample_path, model_audio, 22050)
-            save_audio(gt_path, gt_audio, 22050)
-            save_audio(audio_path, audio, 22050)
-            save_audio(start_audio_path, start_audio, 22050)
+                # save
+                permutation = "" if shuffling is False else f"_{sids_shuffle[i].item()}"
+                sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}{permutation}.wav")
+                gt_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"vits_audio_{i}.wav")
+                audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{i}.wav")
+                start_audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"start_audio_{i}.wav")
 
-        stats_path = '/'.join(sample_path.split('/')[:-1]) + "/stats.txt"
-        log.info(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
-        with open (stats_path, 'w') as f:
-            f.write(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
+                os.makedirs(os.path.dirname(sample_path), exist_ok=True)
 
-        dist.barrier()
+                save_audio(sample_path, model_audio, 22050)
+                save_audio(gt_path, gt_audio, 22050)
+                save_audio(audio_path, audio, 22050)
+                save_audio(start_audio_path, start_audio, 22050)
+
+                if shuffling:
+                    sample_shuffled_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}{permutation}_vocoder_changed.wav")
+                    save_audio(sample_shuffled_path, model_audio_sid_shufle, 22050)
+
+            stats_path = '/'.join(sample_path.split('/')[:-1]) + "/stats.txt"
+            log.info(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
+            with open (stats_path, 'w') as f:
+                f.write(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
+
+            dist.barrier()
     del runner
     dist.barrier()
     # sleep to avoid cuda not found errors when sampling many times
