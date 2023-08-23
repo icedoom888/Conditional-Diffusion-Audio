@@ -11,7 +11,7 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
-MODE = "val"
+MODE = "test"
 
 def process_filelist(filelist):
     # initiate models
@@ -36,11 +36,11 @@ def process_filelist(filelist):
         if os.path.exists(file_path+".npz") and updating == []:
             pass
         
-        audio, sr = librosa.load(file, sr=hps.data.sampling_rate, res_type="kaiser_fast")
-        audio = librosa.util.normalize(audio)
-
-        # trim the audio
-        audio, trim_idx = librosa.effects.trim(audio, top_db=25, frame_length=1024, hop_length=256)
+        if "z_audio" in updating or "clap_embed" in updating or updating == []:
+            audio, sr = librosa.load(file, sr=hps.data.sampling_rate, res_type="kaiser_fast")
+            audio = librosa.util.normalize(audio)
+            # trim the audio
+            audio, trim_idx = librosa.effects.trim(audio, top_db=25, frame_length=1024, hop_length=256)
         
         # extract the embeddings
         with torch.no_grad():
@@ -88,7 +88,7 @@ def process_filelist(filelist):
 
     for filename in tqdm(filelist):
         file_to_z_data(filename,
-                       updating = []
+                       updating = ["z_preflow"]
                        #updating=["audio", "z_audio", "clap_embed", "z_text"]
                        )
     
