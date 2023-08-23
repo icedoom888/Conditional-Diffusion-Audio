@@ -34,6 +34,9 @@ sys.path.append(os.path.join(this_file_path, "..", ".."))
 from vits.utils_diffusion import load_vits_model, get_Z_to_audio
 from custom_dataset import *
 
+import matplotlib.pyplot as plt
+DEBUG = False
+
 def build_optimizer_sched(opt, net, log):
 
     optim_dict = {"lr": opt.lr, 'weight_decay': opt.l2_norm}
@@ -157,8 +160,8 @@ class Runner(object):
 
         if opt.conf_file["training"]["dataset"] == "VCTK":
             sid = data["sid"]
-            Z_MEAN = VCTK_MEAN_TEXT
-            Z_STD = VCTK_STD_TEXT
+            Z_MEAN = VCTK_MEAN_AUDIO
+            Z_STD = VCTK_STD_AUDIO
         else:
             sid = None
             Z_MEAN = LJS_MEAN_TEXT
@@ -170,11 +173,12 @@ class Runner(object):
         x0_mask = x0_mask.detach().to(opt.device)
         x1_mask = x1_mask.detach().to(opt.device)
 
-        cond = x1.detach() if opt.cond_x1 else None # TODO load the conditioning here
+        cond = x1.detach() if opt.cond_x1 else None
 
         if opt.add_x1_noise:
-            x1 = x1 + torch.normal(mean=Z_MEAN, std=Z_STD, size=x1.shape, device=x1.device)
-
+            x1 = x1 + torch.normal(mean=1, std=0, size=x1.shape, device=x1.device)
+            #x1 = x1 + torch.normal(mean=Z_MEAN, std=Z_STD, size=x1.shape, device=x1.device)
+ 
         assert x0.shape == x1.shape
 
         return x0, x1, sid, cond, embeds, x0_mask, x1_mask, data
@@ -213,7 +217,7 @@ class Runner(object):
 
             for _ in range(n_inner_loop):
                 # ===== sample boundary pair =====
-                x0, x1, sid, cond, embeds, x0_mask, x1_mask, y_mask, offset, z_length = self.sample_batch(opt, train_loader)
+                x0, x1, sid, cond, embeds, x0_mask, x1_mask, data = self.sample_batch(opt, train_loader)
 
                 # ===== compute loss =====
                 step = torch.randint(0, opt.interval, (x0.shape[0],))
@@ -238,7 +242,24 @@ class Runner(object):
                 )
 
                 assert label.shape == pred.shape
-                
+
+                if DEBUG:
+                    print("step: ", step)
+                    # make shared x plot for prediction and label
+                    fig, axs = plt.subplots(2, 1)
+                    axs[0].imshow(pred[0].detach().cpu().numpy().squeeze())
+                    axs[1].imshow(label[0].detach().cpu().numpy().squeeze())
+                    os.makedirs("debug", exist_ok=True)
+                    plt.savefig(f"debug/{step[0]}_{it}.png")
+
+                    # pass the target audio through vits and save audio
+                    sid_i = torch.LongTensor([int(sid[0])]).cuda() if sid is not None else None
+                    y_mask_audio = data["y_mask_audio"][0]
+                    gt_audio =  self.z_to_audio(z=label[0].cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
+                    save_audio(f"debug/gt_audio_{step[0]}_{it}.wav", gt_audio, 22050)
+                    model_audio = self.z_to_audio(z=pred[0].cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
+                    save_audio(f"debug/model_audio_{step[0]}_{it}.wav", model_audio, 22050)
+
                 loss = F.mse_loss(pred, label)
                 loss.backward()
 
@@ -276,7 +297,7 @@ class Runner(object):
                 if opt.distributed:
                     torch.distributed.barrier()
 
-            if it % 500 == 0: # 0, 0.5k, 3k, 6k 9k
+            if it % 1 == 0: # 0, 0.5k, 3k, 6k 9k
                 net.eval()
                 self.evaluation(opt, it, val_loader, corrupt_method)
                 net.train()
@@ -343,13 +364,13 @@ class Runner(object):
         log = self.log
         log.info(f"========== Evaluation started: iter={it} ==========")
 
-        x0, x1, sid, cond, embeds, x0_mask, x1_mask, offset, z_length = self.sample_batch(opt, val_loader)
+        x0, x1, sid, cond, embeds, x0_mask, x1_mask, data = self.sample_batch(opt, val_loader)
         sid = sid.squeeze() if sid is not None else None
 
         x1 = x1.to(opt.device) # TODO load the actual target image
 
         xs, pred_x0s = self.ddpm_sampling(
-            opt, x1, x1_mask=x1_mask, embeds=embeds, cond=cond, nfe=200, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
+            opt, x1, x1_mask=x1_mask, embeds=embeds, cond=cond, nfe=20, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
         )
 
         batch, len_t, *xdim = xs.shape
@@ -371,23 +392,22 @@ class Runner(object):
 
         y_masks_audio = data["y_mask_audio"]
         y_masks_text = data["y_mask_text"]
+        offset = data["offset"]
+        z_length = data["z_audio_length"]
 
         # logging audio
         for i in range(batch):
             sample = img_target_pred[i]
             gt = x0[i]
             start = x1[i]
-            mask = y_mask[i]
+            y_mask_text = y_masks_text[i]
+            y_mask_audio = y_masks_audio[i]
             sid_i = torch.LongTensor([int(sid[i])]).cuda() if sid is not None else None
-
-            sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
-            gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
-            mask = mask[:, offset[i]:offset[i]+z_length[i]]
-
+            print(sid_i)
             # pass through vocoder
-            model_audio =  self.z_to_audio(z=sample.cuda(), y_mask=mask.cuda(), sid=sid_i).cpu().squeeze(0)
-            gt_audio = self.z_to_audio(z=gt.cuda(), y_mask=mask.cuda(), sid=sid_i).cpu().squeeze(0)
-            start_audio = self.z_to_audio(z=start.cuda(), y_mask=mask.cuda(), sid=sid_i).cpu().squeeze(0)
+            model_audio =  self.z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
+            gt_audio = self.z_to_audio(z=gt.cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
+            start_audio = self.z_to_audio(z=start.cuda(), y_mask=y_mask_text.cuda(), sid=sid_i).cpu().squeeze(0)
 
             # save
             sample_path = os.path.join(opt.ckpt_path, "samples", str(it), f"model_audio_{i}.wav")

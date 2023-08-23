@@ -1,1 +1,1 @@
-python I2SB/train.py --name test --n-gpu-per-node 1 --dataset-dir /vits/LJS_Processed --batch-size 16 --microbatch 4 --ot-ode --beta-max 1.0 --model_conf_path configs/V0_img2img_test.yaml --log-writer wandb
+python train.py --name test --n-gpu-per-node 1 --batch-size 64 --microbatch 2 --ot-ode --beta-max 1.0 --model_conf_path configs/V4.yaml --add-x1-noise --log-writer wandb

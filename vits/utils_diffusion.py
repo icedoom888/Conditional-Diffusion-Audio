@@ -123,7 +123,7 @@ def get_text_to_Z(net_g):
         text_to_Z (function): A function that takes text and returns the latent space representation.
     """
 
-    def text_to_Z(text, hps, sid=None, noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None, y_lengths=None):
+    def text_to_Z(text, hps, sid=None, noise_scale=.667, length_scale=1, noise_scale_w=0.8, max_len=None, y_lengths=None):
         stn_tst = get_text(text, hps)
         with torch.no_grad():
             x_tst = stn_tst.cuda().unsqueeze(0)
