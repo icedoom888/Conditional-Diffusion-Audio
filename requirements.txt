@@ -21,3 +21,4 @@ rich
 prefetch_generator
 lmdb
 colored_traceback
+auraloss
