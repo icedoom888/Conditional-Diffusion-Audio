@@ -112,6 +112,35 @@ def get_Z_to_audio(net_g):
     return Z_to_audio
 
 
+def mp_to_zp(m_p, logs_p, noise_scale=.667):
+    z_p = m_p + torch.randn_like(m_p) * torch.exp(logs_p) * noise_scale
+    return z_p
+
+
+def get_Z_preflow_to_audio(net_g):
+    """Returns a function that takes latent space representation and returns audio.
+    
+    Args:
+        net_g (SynthesizerTrn): The VITS model.
+
+    Returns:
+        Z_to_audio (function): A function that takes latent space representation and returns audio.  
+    """
+
+    def func(z_p, y_mask, sid=None):
+        if sid is not None:
+            g = net_g.emb_g(sid).unsqueeze(-1) # [b, h, 1]
+        else:
+            g = None
+        
+        # decode latent space to audio
+        with torch.no_grad():
+            z = net_g.flow(z_p, y_mask, g=g, reverse=True)
+            o_hat = net_g.dec(z * y_mask, g=g)
+        return o_hat
+    return func
+
+
 def get_text_to_Z(net_g):
     """Returns a function that takes text and returns the latent space representation.
 
@@ -133,6 +162,29 @@ def get_text_to_Z(net_g):
             y_mask = net_out[2]
         return z, y_mask
     return text_to_Z
+
+
+def get_text_to_Z_preflow(net_g):
+    """Returns a function that takes text and returns the latent space representation.
+
+    Args:
+        text (str): The text to be converted to latent space representation.
+        net_g (SynthesizerTrn): The VITS model.
+
+    Returns:
+        text_to_Z (function): A function that takes text and returns the latent space representation.
+    """
+
+    def text_to_Z_preflow(text, hps, sid=None, noise_scale=.667, length_scale=1, noise_scale_w=0.8, max_len=None, y_lengths=None):
+        stn_tst = get_text(text, hps)
+        with torch.no_grad():
+            x_tst = stn_tst.cuda().unsqueeze(0)
+            x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
+            net_out = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, length_scale=length_scale, noise_scale_w=noise_scale_w, max_len=max_len, y_lengths=y_lengths)
+            m_p, logs_p = net_out[3][2], net_out[3][3]
+            y_mask = net_out[2]
+        return m_p, logs_p, y_mask
+    return text_to_Z_preflow
 
 
 def get_text_embedder(model="CLAP"):
