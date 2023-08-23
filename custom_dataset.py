@@ -113,7 +113,7 @@ class VCTKSlidingWindow(Dataset):
     Returns:
         dict: dictionary of the data
     """
-    def __init__(self, root, mode="train", max_len_seq=384, z_downsampling_factor=8, sr=22050, mean_on="audio", normalize=True):
+    def __init__(self, root, mode="train", max_len_seq=384, z_downsampling_factor=8, sr=22050, mean_on="audio", normalize=True, sliding_window=False):
         super().__init__()
         self.root = root
         self.mode = mode
@@ -122,6 +122,7 @@ class VCTKSlidingWindow(Dataset):
         self.max_len_seq = max_len_seq
         self.max_len_audio = self.max_len_seq * self.z_to_audio
         self.normalization = normalize
+        self.sliding_window = sliding_window
 
         # normalization initialization
         assert mean_on in ["audio", "text"]
@@ -174,7 +175,7 @@ class VCTKSlidingWindow(Dataset):
         elif audio.shape[-2] == 2:
             audio = audio.mean(-2, keepdim=True)
 
-        if z_audio.shape[-1] > self.max_len_seq:
+        if z_audio.shape[-1] > self.max_len_seq and self.sliding_window:
             # take random slize
             random_offset = torch.randint(0, z_audio.shape[-1] - self.max_len_seq, (1,)).item()
 
