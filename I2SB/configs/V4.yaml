@@ -2,6 +2,7 @@
 training:
   output_dir: V4
   dataset: VCTK
+  z_start: "pre_flow"
   data_root: ../vits/VCTKProcessedFull
   vits_root: ../vits
   wandb_project: natural_voices
