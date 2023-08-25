@@ -3,15 +3,12 @@ training:
   output_dir: V4
   dataset: VCTK
   z_start: "pre_flow"
-  data_root: ../vits/VCTKProcessedFull
+  data_root: /cluster/scratch/matvogel/VCTKProcessedFull
   vits_root: ../vits
   wandb_project: natural_voices
   wandb_log_every: 50
   train_batch_size: 8
   eval_batch_size: 4
-  num_epochs: 20
-  save_images_epochs: 1
-  save_model_epochs: 1
   gradient_accumulation_steps: 4
   loss_fn_diffusion: l2
   learning_rate: 1.e-4
@@ -30,7 +27,7 @@ training:
   start_epoch: 0
   num_train_steps: 500_000
 model:
-  channels: [32, 32, 32, 32, 32]
+  channels: [128, 256, 512, 512, 1024]
   factors: [1, 2, 2, 2, 2]
   layers: [1, 2, 2, 2, 2]
   attentions: [0, 0, 0, 1, 1]
