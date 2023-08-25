@@ -176,6 +176,7 @@ class VCTKVitsLatents(Dataset):
         clap_embed = torch.from_numpy(data["clap_embed"])
         audio = torch.from_numpy(data["audio"])
         audio_length = audio.shape[-1]
+        z_audio_length = z_audio.shape[-1]
         sid = data["sid"]
         
         if audio.ndim == 1:
@@ -226,6 +227,7 @@ class VCTKVitsLatents(Dataset):
             "z_audio": z_audio,
             "z_audio_mask": z_audio_mask,
             "y_mask_audio": y_mask_audio,
+            "z_audio_length": z_audio_length,
             # text to z related
             "z_text": z_text,
             "y_mask_text": y_mask_text,

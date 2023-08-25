@@ -66,7 +66,7 @@ class Diffusion(nn.Module):
 
 class VDiffusion(Diffusion):
     def __init__(
-        self, net: nn.Module, sigma_distribution: Distribution = UniformDistribution(), loss_fn: Any = F.mse_loss, randn_mean = 0.0, randn_std = 1.0
+        self, net: nn.Module, sigma_distribution: Distribution = UniformDistribution(), loss_fn: Any = F.mse_loss, randn_mean = 0.0, randn_std = 1.0, return_x = False
     ):
         super().__init__()
         self.net = net
@@ -74,6 +74,7 @@ class VDiffusion(Diffusion):
         self.loss_fn = loss_fn
         self.randn_mean = randn_mean
         self.randn_std = randn_std
+        self.return_x = return_x
 
     def get_alpha_beta(self, sigmas: Tensor) -> Tuple[Tensor, Tensor]:
         angle = sigmas * pi / 2
@@ -85,11 +86,9 @@ class VDiffusion(Diffusion):
         # Sample amount of noise to add for each batch element
         sigmas = self.sigma_distribution(num_samples=batch_size, device=device)
         sigmas_batch = extend_dim(sigmas, dim=x.ndim)
-        # Get noise
-        noise = torch.normal(mean=self.randn_mean, std=self.randn_std, size=x.shape, device=device)
+        # Get noise (must be unit circle for formulas to work)
+        noise = torch.rand_like(x, device=device)
         # Combine input and noise weighted by half-circle
-        # The above code is not doing anything. It is just a list of words without any context or
-        # purpose.
         alphas, betas = self.get_alpha_beta(sigmas_batch)
         x_noisy = alphas * x + betas * noise
         v_target = alphas * noise - betas * x
@@ -98,7 +97,12 @@ class VDiffusion(Diffusion):
             x_noisy = torch.cat([x_noisy, init_image], dim=1)
         # Predict velocity and return loss
         v_pred = self.net(x_noisy, sigmas, **kwargs)
-        return self.loss_fn(v_pred, v_target)
+        if self.return_x:
+            x_pred = (alphas * noise - v_pred) / betas
+            snr_weight = 1 + alphas**2 / betas**2
+            return self.loss_fn(v_pred, v_target), x_pred, sigmas, snr_weight
+        else:
+            return self.loss_fn(v_pred, v_target)
 
 
 class ARVDiffusion(Diffusion):

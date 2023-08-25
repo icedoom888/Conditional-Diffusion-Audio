@@ -27,6 +27,7 @@ class DiffusionModel(nn.Module):
         sampler_t: Callable = VSampler,
         loss_fn: Callable = torch.nn.functional.mse_loss,
         dim: int = 1,
+        return_x: bool = False,
         **kwargs,
     ):
         super().__init__()
@@ -34,7 +35,7 @@ class DiffusionModel(nn.Module):
         sampler_kwargs, kwargs = groupby("sampler_", kwargs)
 
         self.net = net_t(dim=dim, **kwargs)
-        self.diffusion = diffusion_t(net=self.net, loss_fn=loss_fn, **diffusion_kwargs)
+        self.diffusion = diffusion_t(net=self.net, loss_fn=loss_fn, return_x=return_x, **diffusion_kwargs)
         self.sampler = sampler_t(net=self.net, **sampler_kwargs)
 
     def forward(self, *args, **kwargs) -> Tensor:
