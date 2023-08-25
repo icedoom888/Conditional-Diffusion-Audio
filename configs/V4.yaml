@@ -1,0 +1,45 @@
+training:
+  output_dir: V4_diffusion
+  dataset: VCTK
+  z_start: "pre_flow"
+  return_x: true
+  data_root: vits/VCTKProcessedFull
+  wandb_project: natural_voices
+  log_every: 10
+  eval_every: 100
+  save_every: 500
+  train_batch_size: 4
+  micro_batch_size: 2
+  eval_batch_size: 1
+  loss_fn_diffusion: l2
+  learning_rate: 1.e-4
+  lr_scheduler: constant
+  lr_warmup_steps: 500
+  adam_beta1: 0.95
+  adam_beta2: 0.999
+  adam_epsilon: 1.e-8
+  CFG_mask_proba: 0.1
+  adam_weight_decay: 1.e-6
+  use_ema: true
+  ema_inv_gamma: 1
+  ema_power: 0.75
+  ema_max_decay: 0.999
+  mixed_precision: "fp16"
+  start_epoch: 0
+  num_train_steps: 100_000
+model:
+  #channels: [128, 256, 512, 512, 1024]
+  channels: [32, 32, 32, 32, 32]
+  factors: [1, 2, 2, 2, 2]
+  layers: [1, 2, 2, 2, 2]
+  attentions: [0, 0, 0, 1, 1]
+  cross_attentions: [0, 0, 0, 1, 1]
+  attention_heads: 8
+  attention_features: 64
+  use_additional_time_conditioning: true
+  use_initial_image: true
+  use_embedding_cfg: true
+  embedding_max_length: 64
+  embedding_features: 512
+
+

@@ -199,6 +199,8 @@ class VCTKVitsLatents(Dataset):
         if z_audio.shape[-1] < self.max_len_seq or y_mask_audio.shape[-1] < self.max_len_seq:
             z_audio, z_audio_mask = self.zero_pad(z_audio)
             y_mask_audio, _ = self.zero_pad(y_mask_audio)
+        else:
+            z_audio_mask, _ = self.zero_pad(z_audio_mask)
         if z_text.shape[-1] < self.max_len_seq or y_mask_text.shape[-1] < self.max_len_seq:
             z_text, _ = self.zero_pad(z_text)
             y_mask_text, _ = self.zero_pad(y_mask_text)  

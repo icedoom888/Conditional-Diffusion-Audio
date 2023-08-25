@@ -99,15 +99,18 @@ def get_Z_to_audio(net_g):
         Z_to_audio (function): A function that takes latent space representation and returns audio.  
     """
 
-    def Z_to_audio(z, y_mask, sid=None):
+    def Z_to_audio(z, y_mask, sid=None, grad=False):
         if sid is not None:
             g = net_g.emb_g(sid).unsqueeze(-1) # [b, h, 1]
         else:
             g = None
         
         # decode latent space to audio
-        with torch.no_grad():
+        if grad:
             o_hat = net_g.dec(z * y_mask, g=g)
+        else:
+            with torch.no_grad():
+                o_hat = net_g.dec(z * y_mask, g=g)
         return o_hat
     return Z_to_audio
 

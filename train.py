@@ -13,14 +13,19 @@ import custom_dataset
 from torchvision.utils import save_image
 from omegaconf import OmegaConf
 from audio_diffusion_pytorch import DiffusionModel, UNetV0, VDiffusion, VSampler
-from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model, get_Z_to_audio
+from vits.utils_diffusion import load_vits_model, get_Z_to_audio, get_Z_preflow_to_audio, mp_to_zp
 from einops import rearrange
 import wandb
 from torchaudio import save as save_audio
 import torch.multiprocessing as mp
+from torch.multiprocessing import Process
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from I2SB.logger import Logger
+import auraloss.freq
+import auraloss.time
+import time
+import copy
 
 logger = get_logger(__name__)
 
@@ -36,31 +41,34 @@ def train(gpu, conf):
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(os.path.join(output_dir, "samples"), exist_ok=True)
     # seed alls
-    set_seed(42)
+    set_seed(0)
 
     if conf.DDP:
         conf.rank = gpu
+        set_seed(gpu)
+        os.environ['MASTER_ADDR'] = 'localhost'
+        os.environ['MASTER_PORT'] = '6020'
+        torch.cuda.set_device(gpu)
         dist.init_process_group(
             backend='nccl',
             init_method=conf.dist_url,
             world_size=conf.world_size,
             rank=conf.rank
-        )
-        torch.cuda.set_device(gpu)         
+        )    
 
     # setup dataset specific parameters
     if train_args.dataset == "LJS":
         train_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="train", normalize=False)
         val_dataset = custom_dataset.LJSSlidingWindow(root=train_args.data_root, mode="val", normalize=False)
-        data_mean = custom_dataset.LJS_MEAN_TEXT
-        data_std = custom_dataset.LJS_STD_TEXT
+        data_mean = custom_dataset.LJS_MEAN_AUDIO
+        data_std = custom_dataset.LJS_STD_AUDIO
         conf_path = "vits/configs/ljs_base.json"
         ckpt_path = "vits/pretrained_ljs.pth"
     elif train_args.dataset == "VCTK":
-        train_dataset = custom_dataset.VCTKSlidingWindow(root=train_args.data_root, mode="train", normalize=False)
-        val_dataset = custom_dataset.VCTKSlidingWindow(root=train_args.data_root, mode="val", normalize=False)
-        data_mean = custom_dataset.VCTK_MEAN_TEXT
-        data_std = custom_dataset.VCTK_STD_TEXT
+        train_dataset = custom_dataset.VCTKVitsLatents(root=train_args.data_root, mode="train", normalize=False)
+        val_dataset = custom_dataset.VCTKVitsLatents(root=train_args.data_root, mode="val", normalize=False)
+        data_mean = 0.0 if train_args.z_start == "pre_flow" else custom_dataset.VCTK_MEAN_AUDIO
+        data_std = 1.0 if train_args.z_start == "pre_flow" else custom_dataset.VCTK_STD_AUDIO
         conf_path = "vits/configs/vctk_base.json"
         ckpt_path = "vits/pretrained_vctk.pth"
     else:
@@ -81,6 +89,21 @@ def train(gpu, conf):
         loss_fn = torch.nn.functional.mse_loss
     else:
         raise NotImplementedError
+    
+    ''' this takes ages :(
+    freq_loss = MultiResolutionSTFTLoss(
+        fft_sizes=[512, 1024, 2048],
+        hop_sizes=[256, 512, 1024],
+        win_lengths=[512, 1024, 2048],
+        scale="mel",
+        n_bins=80,
+        sample_rate=22050,
+        perceptual_weighting=True,
+    )'''
+
+
+    freq_loss = auraloss.freq.MultiResolutionSTFTLoss()
+
 
     model = DiffusionModel(
         net_t=UNetV0,
@@ -97,6 +120,7 @@ def train(gpu, conf):
         diffusion_t=VDiffusion, # The diffusion method used
         sampler_t=VSampler, # The diffusion sampler used
         loss_fn=loss_fn, # The loss function used
+        return_x = train_args.return_x, # U-Net: return the generated image
         use_text_conditioning=False, # U-Net: enables text conditioning (default T5-base)
         use_additional_time_conditioning=model_args.use_additional_time_conditioning, # U-Net: enables additional time conditionings
         use_embedding_cfg=model_args.use_embedding_cfg, # U-Net: enables classifier free guidance
@@ -147,9 +171,10 @@ def train(gpu, conf):
         model.load_state_dict(state_dicts["model"])
         if "ema" in state_dicts.keys():
             ema.load_state_dict(state_dicts["ema"])
-        optimizer.load_state_dict(state_dicts["optimizer"])
-        lr_scheduler.load_state_dict(state_dicts["lr_scheduler"])
-        start_step = state_dicts["global_step"]
+        if not conf.reinitialize:
+            optimizer.load_state_dict(state_dicts["optimizer"])
+            lr_scheduler.load_state_dict(state_dicts["lr_scheduler"])
+            start_step = state_dicts["global_step"]
         log.info("Weights successfully loaded...")
 
     if gpu == 0:
@@ -157,7 +182,10 @@ def train(gpu, conf):
         wandb.init(project=train_args.wandb_project, entity="ethz-mtc", config=OmegaConf.to_container(conf, resolve=True))
         # initialize vits functions
         vits_model, hps = load_vits_model(hps_path=conf_path, checkpoint_path=ckpt_path)
+        vits_model = vits_model.to(gpu)
+        vits_model = vits_model.eval()
         z_to_audio = get_Z_to_audio(vits_model)
+        pre_flow_to_audio = get_Z_preflow_to_audio(vits_model)
         # export master ip to MASTER_ADDR
     
     n_inner_loop = train_args.train_batch_size // (conf.world_size * train_args.micro_batch_size)
@@ -174,33 +202,68 @@ def train(gpu, conf):
         # do gradient accumulations
         for _ in range(n_inner_loop):
             batch = next(train_iter)
-    
-            # extract the batch
+
+            # start distribution
+            if train_args.z_start == "post_flow":
+                z_start = batch["z_text"].to(gpu)
+            elif train_args.z_start == "pre_flow":
+                # load the statistics of the pre-flow distribution
+                m_p = batch["m_p"].to(gpu)
+                logs_p = batch["logs_p"].to(gpu)
+                # sample from the pre-flow distribution
+                z_start = mp_to_zp(m_p, logs_p)
+            else:
+                raise NotImplementedError("z_start must be either post_flow or pre_flow")
+
+            # target distribution
             z_audio = batch["z_audio"].to(gpu)
             z_audio_mask = batch["z_audio_mask"].to(gpu)
-            z_text = batch["z_text"].to(gpu)
-            z_text_mask = batch["z_text_mask"].to(gpu)
             embeds = batch["clap_embed"].to(gpu)
+            audio_length = batch["audio_length"]
             
             # process the pair to get the latents Z and the embeddings
             init_image = z_audio_mask
             if model_args.use_initial_image:
-                init_image = torch.cat([init_image, z_text], dim=1)
+                init_image = torch.cat([init_image, z_start], dim=1)
             with torch.cuda.amp.autocast(enabled=not scaler is None):
-                loss = model(
+                model_out = model(
                     z_audio,
-                    features = z_text.mean(-3) if model_args.use_additional_time_conditioning else None,
+                    features = z_start.mean(-3) if model_args.use_additional_time_conditioning else None,
                     init_image=init_image,
                     embedding=embeds,
                     embedding_mask_proba=train_args.CFG_mask_proba
                 )
 
+            # extract predicted x if needed
+            if train_args.return_x:
+                loss_diffusion, x_pred, sigmas, snr_weight = model_out
+                # convert x_pred to audio and gt too
+                loss_audio = torch.tensor([], requires_grad=True, device=gpu)
+
+                for idx in range(x_pred.shape[0]):
+                    z_pred = x_pred[idx]
+                    z_gt = z_audio[idx]
+                    mask = batch["y_mask_audio"][idx].cuda()
+                    sid = batch["sid"][idx].cuda() if "sid" in batch.keys() else None
+                    # pass through vocoder and cut
+                    audio_pred = z_to_audio(z_pred, y_mask=mask, sid=sid, grad=train_args.return_x)
+                    audio_gt = z_to_audio(z_gt, y_mask=mask, sid=sid)
+                    audio_pred = audio_pred[..., :audio_length[idx]]
+                    audio_gt = audio_gt[..., :audio_length[idx]]
+                    f_loss = freq_loss(audio_pred, audio_gt) * snr_weight[idx] * 0.1 # scale by SNR + 1 weighting and 0.1
+                    loss_audio = torch.cat([loss_audio, f_loss.unsqueeze(0)], dim=0)
+                
+                loss = loss_diffusion + loss_audio.mean()
+            else:
+                loss = model_out
+            
             if scaler is not None:
                 scaler.scale(loss).backward()
             else:
                 loss.backward()
 
-            #torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            if train_args.return_x:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
 
         if scaler is not None:
             scaler.step(optimizer)
@@ -217,6 +280,9 @@ def train(gpu, conf):
             "lr": lr_scheduler.get_last_lr()[0],
             "step": global_step,
         }
+        if train_args.return_x:
+            logs["loss_diffusion"] = loss_diffusion.detach().item()
+            logs["loss_audio"] = loss_audio.mean().detach().item()
 
         if (global_step + 1) % train_args.log_every == 0:
             log.info("train_it {}/{} | lr:{} | loss:{}".format(
@@ -254,15 +320,30 @@ def train(gpu, conf):
                 for k, v in eval_batch.items():
                     eval_batch[k] = v.to(gpu)
 
-                z_audio = eval_batch["z_audio"]
-                z_audio_mask = eval_batch["z_audio_mask"]
-                y_mask = eval_batch["y_mask"]
-                z_text = eval_batch["z_text"]
-                z_text_mask = eval_batch["z_text_mask"]
-                embeds = eval_batch["clap_embed"]
-                # masking information
-                offset = eval_batch["offset"]
-                z_length = eval_batch["z_audio_length"]
+                # start distribution
+                if train_args.z_start == "post_flow":
+                    z_start = batch["z_text"].to(gpu)
+                elif train_args.z_start == "pre_flow":
+                    # load the statistics of the pre-flow distribution
+                    m_p = batch["m_p"].to(gpu)
+                    logs_p = batch["logs_p"].to(gpu)
+                    # sample from the pre-flow distribution
+                    z_start = mp_to_zp(m_p, logs_p)
+                else:
+                    raise NotImplementedError("z_start must be either post_flow or pre_flow")
+
+                # target distribution
+                z_audio = batch["z_audio"].to(gpu)
+                z_audio_mask = batch["z_audio_mask"].to(gpu)
+
+                embeds = batch["clap_embed"].to(gpu)
+
+                y_masks_audio = batch["y_mask_audio"]
+                y_masks_text = batch["y_mask_text"]
+                preflow_mask = batch["preflow_mask"]
+                offset = batch["offset"]
+                audio_length = batch["audio_length"]
+
                 # sid for multi speaker ds
                 if "sid" in batch.keys():
                     sids = batch["sid"]
@@ -275,7 +356,7 @@ def train(gpu, conf):
                 init_image = z_audio_mask
                 # append initial image
                 if model_args.use_initial_image:
-                    init_image = torch.cat([init_image, z_text], dim=1)
+                    init_image = torch.cat([init_image, z_start], dim=1)
                 
                 if conf.DDP:
                     sample_model = model.model
@@ -285,10 +366,10 @@ def train(gpu, conf):
                 model_samples = sample_model.sample(
                     initial_noise, # NOISE | MASK | OPTIONAL(INIT IMAGE)
                     init_image=init_image,
-                    features = z_text.mean(-3) if model_args.use_additional_time_conditioning else None,
+                    features = z_start.mean(-3) if model_args.use_additional_time_conditioning else None,
                     embedding=embeds, # ImageBind / CLAP
                     embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
-                    num_steps=50 # Higher for better quality, suggested num_steps: 10-100
+                    num_steps=10 # Higher for better quality, suggested num_steps: 10-100
                 )
 
                 # calculate loss between samples and original
@@ -320,20 +401,15 @@ def train(gpu, conf):
                 for i in range(model_samples.shape[0]):
                     sample = model_samples[i]
                     gt = z_audio[i]
-                    mask = y_mask[i]
+
                     if sids is not None:
                         sid = torch.LongTensor([int(sids[i])]).cuda()
                     else:
                         sid = None
-                    
-                    # cut padding
-                    sample = sample[:, :, offset[i]:offset[i]+z_length[i]]
-                    gt = gt[:, :, offset[i]:offset[i]+z_length[i]]
-                    mask = mask[:, offset[i]:offset[i]+z_length[i]]
 
                     # pass through vocoder
-                    model_audio =  z_to_audio(z=sample, y_mask=mask, sid=sid).cpu().squeeze(0)
-                    gt_audio = z_to_audio(z=gt, y_mask=mask, sid=sid).cpu().squeeze(0)
+                    model_audio =  z_to_audio(z=sample, y_mask=y_masks_audio[i].cuda(), sid=sid).cpu().squeeze(0)
+                    gt_audio = z_to_audio(z=gt, y_mask=y_masks_audio[i].cuda(), sid=sid).cpu().squeeze(0)
 
                     # save
                     sample_path = os.path.join(output_dir, "samples", f"model_audio_{log_step}_{i}.wav")
@@ -357,6 +433,9 @@ def train(gpu, conf):
             dist.barrier()
         
     wandb.finish()
+    
+    if conf.DDP:
+        dist.destroy_process_group()
 
 
 if __name__ == "__main__":
@@ -364,26 +443,38 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default="configs/train_conf.yaml")
     parser.add_argument("--DDP", action="store_true", default=False)
+    parser.add_argument("--reinitialize", action="store_true", default=False, help="start new training with old weights")
     args = parser.parse_args()
 
     conf = OmegaConf.load(args.config)
-    conf.DDP = args.DDP
-
-    DIST_FILE = "ddp_sync_"
+    conf.update(args.__dict__)
 
     ngpus = torch.cuda.device_count()
-    print("Number of GPUs: {}".format(ngpus))
+    print("Number of GPUs: {}".format(ngpus))        
 
     # setup for DDP
     if conf.DDP:
+        mp.set_start_method('forkserver')
+        DIST_FILE = "ddp_sync_"
         conf.gpus = ngpus
         conf.world_size = conf.gpus
         job_id = os.environ["SLURM_JOBID"]
-        conf.dist_url = "file://{}.{}".format(os.path.realpath(DIST_FILE), job_id)
+        #conf.dist_url = "file://{}.{}".format(os.path.realpath(DIST_FILE), job_id)
+        conf.dist_url = 'env://'
     else:
         conf.world_size = ngpus
-
+        
     if conf.DDP and ngpus > 1:
-        mp.spawn(train, nprocs=conf.gpus, args=(conf,))
+        processes = []
+        for rank in range(ngpus):
+            conf = copy.deepcopy(conf)
+            conf.local_rank = rank
+            p = Process(target=train, args=(conf,))
+            p.start()
+            processes.append(p)
+
+        for p in processes:
+            p.join()
+        #mp.spawn(train, nprocs=conf.gpus, args=(conf,))
     else:
         train(0, conf)
