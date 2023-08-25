@@ -18,6 +18,7 @@ from datetime import datetime
 
 import numpy as np
 import torch
+import torch.multiprocessing as mp
 from torch.multiprocessing import Process
 
 from logger import Logger
@@ -27,8 +28,8 @@ from i2sb import Runner
 from custom_dataset import LJS_Latent, LJSSlidingWindow, VCTKVitsLatents
 import yaml
 
-#RESULT_DIR = Path("/cluster/scratch/matvogel/I2SB/results")
-RESULT_DIR = Path("results")
+RESULT_DIR = Path("/cluster/scratch/matvogel/I2SB/results")
+#RESULT_DIR = Path("results")
 
 def set_seed(seed):
     # https://github.com/pytorch/pytorch/issues/7068
@@ -147,11 +148,12 @@ def main(opt):
 if __name__ == '__main__':
     opt = create_training_options()
 
+    mp.set_start_method('forkserver')
+
     if opt.distributed:
         size = opt.n_gpu_per_node
         global_size = opt.num_proc_node * opt.n_gpu_per_node
 
-        '''
         processes = []
         for rank in range(size):
             opt = copy.deepcopy(opt)
@@ -167,9 +169,6 @@ if __name__ == '__main__':
 
         for p in processes:
             p.join()
-        '''
-
-        torch.multiprocessing.spawn(init_processes, args=(global_size, main, opt), nprocs=size, join=True, daemon=False, start_method='spawn')
 
     else:
         torch.cuda.set_device(0)
