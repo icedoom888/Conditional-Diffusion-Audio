@@ -1,16 +1,16 @@
 training:
-  output_dir: V4_diffusion
+  output_dir: /cluster/scratch/matvogel/traditional/V4_diffusion
   dataset: VCTK
   z_start: "pre_flow"
   return_x: true
-  data_root: vits/VCTKProcessedFull
+  data_root: /cluster/scratch/matvogel/VCTKProcessedFull
   wandb_project: natural_voices
   log_every: 10
   eval_every: 100
   save_every: 500
-  train_batch_size: 4
-  micro_batch_size: 2
-  eval_batch_size: 1
+  train_batch_size: 64
+  micro_batch_size: 4
+  eval_batch_size: 4
   loss_fn_diffusion: l2
   learning_rate: 1.e-4
   lr_scheduler: constant
@@ -28,8 +28,8 @@ training:
   start_epoch: 0
   num_train_steps: 100_000
 model:
-  #channels: [128, 256, 512, 512, 1024]
-  channels: [32, 32, 32, 32, 32]
+  channels: [128, 256, 512, 512, 1024]
+  #channels: [32, 32, 32, 32, 32]
   factors: [1, 2, 2, 2, 2]
   layers: [1, 2, 2, 2, 2]
   attentions: [0, 0, 0, 1, 1]

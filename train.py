@@ -180,13 +180,12 @@ def train(gpu, conf):
     if gpu == 0:
         # initialize wandb
         wandb.init(project=train_args.wandb_project, entity="ethz-mtc", config=OmegaConf.to_container(conf, resolve=True))
-        # initialize vits functions
-        vits_model, hps = load_vits_model(hps_path=conf_path, checkpoint_path=ckpt_path)
-        vits_model = vits_model.to(gpu)
-        vits_model = vits_model.eval()
-        z_to_audio = get_Z_to_audio(vits_model)
-        pre_flow_to_audio = get_Z_preflow_to_audio(vits_model)
-        # export master ip to MASTER_ADDR
+
+    # initialize vits functions
+    vits_model, hps = load_vits_model(hps_path=conf_path, checkpoint_path=ckpt_path)
+    vits_model = vits_model.to(gpu)
+    vits_model = vits_model.eval()
+    z_to_audio = get_Z_to_audio(vits_model)
     
     n_inner_loop = train_args.train_batch_size // (conf.world_size * train_args.micro_batch_size)
     train_iter = custom_dataset.iterate_loader(train_dataloader)
@@ -363,38 +362,42 @@ def train(gpu, conf):
                 else:
                     sample_model = model
                 
-                model_samples = sample_model.sample(
-                    initial_noise, # NOISE | MASK | OPTIONAL(INIT IMAGE)
-                    init_image=init_image,
-                    features = z_start.mean(-3) if model_args.use_additional_time_conditioning else None,
-                    embedding=embeds, # ImageBind / CLAP
-                    embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
-                    num_steps=10 # Higher for better quality, suggested num_steps: 10-100
-                )
+                with torch.no_grad():
+                    model_samples = sample_model.sample(
+                        initial_noise, # NOISE | MASK | OPTIONAL(INIT IMAGE)
+                        init_image=init_image,
+                        features = z_start.mean(-3) if model_args.use_additional_time_conditioning else None,
+                        embedding=embeds, # ImageBind / CLAP
+                        embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
+                        num_steps=10 # Higher for better quality, suggested num_steps: 10-100
+                    )
 
                 # calculate loss between samples and original
-                eval_loss =loss_fn(model_samples, z_audio)
-
-                batch_images = rearrange(model_samples, "b c h w -> c h (b w)")
-                batch_gt = rearrange(z_audio, "b c h w -> c h (b w)")
-                # scale to 0-1
-                batch_images = custom_dataset.scale_0_1(batch_images)
-                batch_gt = custom_dataset.scale_0_1(batch_gt)
-                # save locally
-                #save_image(batch_images, os.path.join(output_dir, "samples", f"model_samples_{log_step}.png"))
-                #save_image(batch_gt, os.path.join(output_dir, "samples", f"gt_samples_{log_step}.png"))
-                # scale to 0-255
-                batch_images = batch_images * 255
-                batch_gt = batch_gt * 255
-                # clamp to 0-255
-                batch_images = batch_images.clamp(0, 255).long()
-                batch_gt = batch_gt.clamp(0, 255).long()
-                # create wandb images
-                batch_images = rearrange(batch_images, "c h w -> h w c").cpu().numpy()
-                batch_gt = rearrange(batch_gt, "c h w -> h w c").cpu().numpy()
-                images_model = wandb.Image(batch_images, caption="Model Samples")
-                images_gt = wandb.Image(batch_gt, caption="Ground Truth")
-
+                eval_loss = loss_fn(model_samples, z_audio)
+                
+                # log images
+                if False:
+                    batch_images = rearrange(model_samples, "b c h w -> c h (b w)")
+                    batch_gt = rearrange(z_audio, "b c h w -> c h (b w)")
+                    # scale to 0-1
+                    batch_images = custom_dataset.scale_0_1(batch_images)
+                    batch_gt = custom_dataset.scale_0_1(batch_gt)
+                    # save locally
+                    #save_image(batch_images, os.path.join(output_dir, "samples", f"model_samples_{log_step}.png"))
+                    #save_image(batch_gt, os.path.join(output_dir, "samples", f"gt_samples_{log_step}.png"))
+                    # scale to 0-255
+                    batch_images = batch_images * 255
+                    batch_gt = batch_gt * 255
+                    # clamp to 0-255
+                    batch_images = batch_images.clamp(0, 255).long()
+                    batch_gt = batch_gt.clamp(0, 255).long()
+                    # create wandb images
+                    batch_images = rearrange(batch_images, "c h w -> h w c").cpu().numpy()
+                    batch_gt = rearrange(batch_gt, "c h w -> h w c").cpu().numpy()
+                    images_model = wandb.Image(batch_images, caption="Model Samples")
+                    images_gt = wandb.Image(batch_gt, caption="Ground Truth")
+                    wandb.log({"eval_images": [images_model, images_gt]}, step=log_step)
+                    
                 msg = f"Saving {model_samples.shape[0]} samples..."
                 log.info(msg)
 
@@ -425,8 +428,7 @@ def train(gpu, conf):
                                      ]}, step=log_step)
 
                 # log to wandb
-                wandb.log({"eval_loss": eval_loss.detach().item()}, step=log_step)
-                wandb.log({"eval_images": [images_model, images_gt]}, step=log_step)
+                wandb.log({"eval_loss_diffusion": eval_loss.detach().item()}, step=log_step)
                 log.info("Sampling finished...")
         
         if conf.DDP:
@@ -469,7 +471,7 @@ if __name__ == "__main__":
         for rank in range(ngpus):
             conf = copy.deepcopy(conf)
             conf.local_rank = rank
-            p = Process(target=train, args=(conf,))
+            p = Process(target=train, args=(rank, conf))
             p.start()
             processes.append(p)
 
