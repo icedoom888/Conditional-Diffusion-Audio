@@ -25,3 +25,7 @@ running_slides
 *.err
 processed_vctk*
 VCTK-Corpus
+sampling_*
+sample.sh
+train.sh
+train*.sh
