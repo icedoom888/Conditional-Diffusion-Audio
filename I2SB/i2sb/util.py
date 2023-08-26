@@ -11,20 +11,23 @@ import wandb
 
 import torch
 from torch.utils.data import DataLoader
+from torch.utils.data.distributed import DistributedSampler
 from prefetch_generator import BackgroundGenerator
 
 class DataLoaderX(DataLoader):
     def __iter__(self):
         return BackgroundGenerator(super().__iter__())
 
-def setup_loader(dataset, batch_size, num_workers=4):
+def setup_loader(dataset, batch_size, num_workers=2):
+    sampler = DistributedSampler(dataset) if torch.distributed.is_initialized() else None
     loader = DataLoaderX(
         dataset,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=True if sampler is None else False,
         pin_memory=True,
         num_workers=num_workers,
         drop_last=True,
+        sampler=sampler,
     )
 
     while True:
@@ -56,7 +59,8 @@ class WandBWriter(BaseWriter):
             wandb.log({key: wandb.Image(image)}, step=step)
     
     def add_sound(self, step, caption, key, sound_path):
-        wandb.log({key: wandb.Audio(sound_path, caption=caption, sample_rate=22050)}, step=step)
+        if self.rank == 0:
+            wandb.log({key: wandb.Audio(sound_path, caption=caption, sample_rate=22050)}, step=step)
 
 
 class TensorBoardWriter(BaseWriter):

@@ -5,7 +5,7 @@ import numpy as np
 from multiprocessing import Pool
 from vits import utils_diffusion
 from tqdm import tqdm
-
+import gc
 
 # suppress warnings
 import warnings
@@ -23,7 +23,7 @@ def process_filelist(filelist):
 
     def file_to_z_data(filename, root="vits", data_root=f"processed_vctk_{MODE}", updating=[]):
         split = filename.split("|")
-        file = "/mnt/d/data/" + split[0]
+        file = "vits" + split[0]
         filename = split[0].split('/')[-1].split('.')[0]
         sid = torch.LongTensor([int(split[1])]).cuda()
         text = split[2]
@@ -34,8 +34,12 @@ def process_filelist(filelist):
 
         # skip saved files
         if os.path.exists(file_path+".npz") and updating == []:
-            pass
+            return
         
+        keys = dict(np.load(file_path+".npz")).keys()
+        if "y_mask_preflow" in keys:
+            return
+
         if "z_audio" in updating or "clap_embed" in updating or updating == []:
             audio, sr = librosa.load(file, sr=hps.data.sampling_rate, res_type="kaiser_fast")
             audio = librosa.util.normalize(audio)
@@ -50,7 +54,7 @@ def process_filelist(filelist):
             if "z_text" in updating or updating == []:
                 z_text, y_mask = text_to_z(text, sid=sid, hps=hps)
             if "z_preflow" in updating or updating == []:
-                m_p, logs_p, y_mask = text_to_z_preflow(text, sid=sid, hps=hps)
+                m_p, logs_p, y_mask_preflow = text_to_z_preflow(text, sid=sid, hps=hps)
             if "clap_embed" in updating or updating == []:
                 audio_48k = librosa.resample(audio, orig_sr=sr, target_sr=48000, res_type="kaiser_fast")
                 audio_embed = audio_embedder(torch.tensor(audio_48k))
@@ -79,6 +83,7 @@ def process_filelist(filelist):
             if "z_preflow" in updating:
                 data["m_p"] = m_p.cpu().numpy()
                 data["logs_p"] = logs_p.cpu().numpy()
+                data["y_mask_preflow"] = y_mask_preflow.cpu().numpy()
             if "clap_embed" in updating:
                 data["clap_embed"] = audio_embed.cpu().numpy()
             if "audio" in updating:
@@ -92,6 +97,8 @@ def process_filelist(filelist):
                        #updating=["audio", "z_audio", "clap_embed", "z_text"]
                        )
     
+    del model
+    gc.collect()
     print("Processed chunk")
 
 
@@ -107,6 +114,9 @@ if __name__ == "__main__":
     
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-    with Pool(8) as p:
-        p.map(process_filelist, chunks)
+    p = Pool(4, maxtasksperchild=1)
+    p.map(process_filelist, chunks)
+    p.close()
+    p.join()
+        
 

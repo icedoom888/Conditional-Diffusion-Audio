@@ -43,7 +43,6 @@ def setup_loader(dataset, batch_size, num_workers=4):
 
     return loader
 
-
 def iterate_loader(loader):
     while True:
         yield from loader
@@ -98,7 +97,7 @@ class DummyDataset(Dataset):
         return 100
 
 
-class VCTKSlidingWindow(Dataset):
+class VCTKVitsLatents(Dataset):
     """
     Dataset for LJ-Speech with sliding window
 
@@ -113,7 +112,7 @@ class VCTKSlidingWindow(Dataset):
     Returns:
         dict: dictionary of the data
     """
-    def __init__(self, root, mode="train", max_len_seq=384, z_downsampling_factor=8, sr=22050, mean_on="audio", normalize=True):
+    def __init__(self, root, mode="train", max_len_seq=384, z_downsampling_factor=8, sr=22050, mean_on="audio", normalize=True, sliding_window=False):
         super().__init__()
         self.root = root
         self.mode = mode
@@ -122,6 +121,7 @@ class VCTKSlidingWindow(Dataset):
         self.max_len_seq = max_len_seq
         self.max_len_audio = self.max_len_seq * self.z_to_audio
         self.normalization = normalize
+        self.sliding_window = sliding_window
 
         # normalization initialization
         assert mean_on in ["audio", "text"]
@@ -161,12 +161,22 @@ class VCTKSlidingWindow(Dataset):
     def __getitem__(self, index):
         data = np.load(os.path.join(self.root, self.mode, self.data[index]))
 
+        # z embeddings comign from audio file and text
         z_audio = torch.from_numpy(data["z_audio"])
+        z_text = torch.from_numpy(data["z_text"])
+        # pre flow tensors
+        m_p = torch.from_numpy(data["m_p"])
+        logs_p = torch.from_numpy(data["logs_p"])
+        preflow_mask = torch.from_numpy(data["y_mask_preflow"])
+        m_p_length = m_p.shape[-1]
+        # attention masks for vits
         y_mask_audio = torch.from_numpy(data["z_audio_mask"])
         y_mask_text = torch.from_numpy(data["y_mask"])
-        z_text = torch.from_numpy(data["z_text"])
+        # audio embedding and speaker id
         clap_embed = torch.from_numpy(data["clap_embed"])
         audio = torch.from_numpy(data["audio"])
+        audio_length = audio.shape[-1]
+        z_audio_length = z_audio.shape[-1]
         sid = data["sid"]
         
         if audio.ndim == 1:
@@ -174,42 +184,35 @@ class VCTKSlidingWindow(Dataset):
         elif audio.shape[-2] == 2:
             audio = audio.mean(-2, keepdim=True)
 
-        if z_audio.shape[-1] > self.max_len_seq:
-            # take random slize
-            random_offset = torch.randint(0, z_audio.shape[-1] - self.max_len_seq, (1,)).item()
-
-            # take slices
-            z_audio = z_audio[..., random_offset:random_offset+self.max_len_seq]
-            y_mask_text = y_mask_text[..., random_offset:random_offset+self.max_len_seq]
-            y_mask_audio = y_mask_audio[..., random_offset:random_offset+self.max_len_seq]
-            z_text = z_text[..., random_offset:random_offset+self.max_len_seq]
-            audio = audio[..., random_offset*self.z_to_audio:(random_offset+self.max_len_seq)*self.z_to_audio]
-
-            # make dummy masks
-            z_audio_mask = torch.ones_like(z_audio)
-            z_text_mask = torch.ones_like(z_text)
-            y_mask_text_mask = torch.ones_like(y_mask_text)
-            y_mask_audio_mask = torch.ones_like(y_mask_audio)
-        else:
-            # the gt audio is shorter than we need, this does not mean that the others are shorter too
-            # so we cut to be sure
-            z_audio = z_audio[..., :self.max_len_seq]
-            y_mask_text = y_mask_text[..., :self.max_len_seq]
-            y_mask_audio = y_mask_audio[..., :self.max_len_seq]
-            z_text = z_text[..., :self.max_len_seq]
-            audio = audio[..., :self.max_len_seq*self.z_to_audio]
+        z_audio = z_audio[..., :self.max_len_seq]
+        z_text = z_text[..., :self.max_len_seq]
+        y_mask_text = y_mask_text[..., :self.max_len_seq]
+        y_mask_audio = y_mask_audio[..., :self.max_len_seq]
+        audio = audio[..., :self.max_len_seq*self.z_to_audio]
+        m_p = m_p[..., :self.max_len_seq]
+        logs_p = logs_p[..., :self.max_len_seq]
+        preflow_mask = preflow_mask[..., :self.max_len_seq]
         
+        # initialize the mask to adapt to varying image sized if padding is applied
+        z_audio_mask = torch.ones_like(z_audio)
+
         # pad the tensors
-        if z_audio.shape[-1] < self.max_len_seq:
+        if z_audio.shape[-1] < self.max_len_seq or y_mask_audio.shape[-1] < self.max_len_seq:
             z_audio, z_audio_mask = self.zero_pad(z_audio)
-        if z_text.shape[-1] < self.max_len_seq:
-            z_text, z_text_mask = self.zero_pad(z_text)
-        if y_mask_text.shape[-1] < self.max_len_seq:
-            y_mask_text, y_mask_text_mask = self.zero_pad(y_mask_text)     
-        if y_mask_audio.shape[-1] < self.max_len_seq:
-            y_mask_audio, y_mask_audio_mask = self.zero_pad(y_mask_audio)
-        
+            y_mask_audio, _ = self.zero_pad(y_mask_audio)
+        else:
+            z_audio_mask, _ = self.zero_pad(z_audio_mask)
+        if z_text.shape[-1] < self.max_len_seq or y_mask_text.shape[-1] < self.max_len_seq:
+            z_text, _ = self.zero_pad(z_text)
+            y_mask_text, _ = self.zero_pad(y_mask_text)  
+        if m_p.shape[-1] < self.max_len_seq or logs_p.shape[-1] < self.max_len_seq:
+            m_p, _ = self.zero_pad(m_p)
+            logs_p, _ = self.zero_pad(logs_p)
+            preflow_mask, _ = self.zero_pad(preflow_mask)
+        # make sure audio is perfect length
+        audio = torch.cat([audio, torch.zeros((1, max(0, self.max_len_seq*self.z_to_audio - audio.shape[-1])))], dim=-1)   
 
+        # normalize the z latens (pre flow not included)
         if self.normalization:
             z_audio = self.normalize(z_audio)
             z_text = self.normalize(z_text)
@@ -217,29 +220,29 @@ class VCTKSlidingWindow(Dataset):
         
         # random audio phase flip
         if torch.rand((1,)).item() > 0.5:
-            audio = -audio
-
-        # make sure audio is perfect length
-        audio = torch.cat([audio, torch.zeros((1, max(0, self.max_len_seq*self.z_to_audio - audio.shape[-1])))], dim=-1)   
+            audio = -audio        
 
         data = {
             # audio to z related
             "z_audio": z_audio,
             "z_audio_mask": z_audio_mask,
             "y_mask_audio": y_mask_audio,
-            "y_mask_audio_mask": y_mask_audio_mask,
+            "z_audio_length": z_audio_length,
             # text to z related
             "z_text": z_text,
-            "z_text_mask": z_text_mask,
             "y_mask_text": y_mask_text,
-            "y_mask_text_mask": y_mask_text_mask,
+            # pre flow related
+            "m_p": m_p,
+            "m_p_length": m_p_length,
+            "logs_p": logs_p,
+            "preflow_mask": preflow_mask,
             # audio and embeddings
             "clap_embed": clap_embed,
             "audio": audio,
             # others
             "offset": 0,
             "sid": sid,
-            "z_audio_length": self.max_len_seq,
+            "audio_length": audio_length,
         }
 
         return data

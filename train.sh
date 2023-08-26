@@ -1,1 +1,1 @@
-python train.py --config configs/V2_img2img.yaml
+python train.py --config configs/V4.yaml

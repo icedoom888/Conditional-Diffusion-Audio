@@ -31,11 +31,8 @@ import os
 this_file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
 sys.path.append(os.path.join(this_file_path, "..", ".."))
-from vits.utils_diffusion import load_vits_model, get_Z_to_audio
+from vits.utils_diffusion import load_vits_model, get_Z_to_audio, get_Z_preflow_to_audio, mp_to_zp
 from custom_dataset import *
-
-import matplotlib.pyplot as plt
-DEBUG = False
 
 def build_optimizer_sched(opt, net, log):
 
@@ -152,11 +149,26 @@ class Runner(object):
     def sample_batch(self, opt, loader, data=None):
         data = next(loader) if data is None else data
         
-        clean_img = data["z_audio"]
-        x0_mask = data["z_audio_mask"]
-        corrupt_img = data["z_text"]
-        x1_mask = data["z_text_mask"]
-        embeds = data["clap_embed"]
+        # start distribution
+        if opt.conf_file["training"]["z_start"] == "post_flow":
+            x1 = data["z_text"].to(opt.device)
+            x1_mask = None
+        elif opt.conf_file["training"]["z_start"] == "pre_flow":
+            # load the statistics of the pre-flow distribution
+            m_p = data["m_p"].to(opt.device)
+            logs_p = data["logs_p"].to(opt.device)
+            # sample from the pre-flow distribution
+            x1 = mp_to_zp(m_p, logs_p)
+            x1_mask = None
+        else:
+            raise NotImplementedError("z_start must be either post_flow or pre_flow")
+
+        # target distribution
+        x0 = data["z_audio"].to(opt.device)
+        x0_mask = data["z_audio_mask"].to(opt.device)
+
+        # embeddings of audio
+        embeds = data["clap_embed"].to(opt.device)
 
         if opt.conf_file["training"]["dataset"] == "VCTK":
             sid = data["sid"]
@@ -167,21 +179,12 @@ class Runner(object):
             Z_MEAN = LJS_MEAN_TEXT
             Z_STD = LJS_STD_TEXT
 
-        x0 = clean_img.detach().to(opt.device)
-        x1 = corrupt_img.detach().to(opt.device)
-        embeds = embeds.detach().to(opt.device)
-        x0_mask = x0_mask.detach().to(opt.device)
-        x1_mask = x1_mask.detach().to(opt.device)
-
-        cond = x1.detach() if opt.cond_x1 else None
-
         if opt.add_x1_noise:
-            x1 = x1 + torch.normal(mean=1, std=0, size=x1.shape, device=x1.device)
-            #x1 = x1 + torch.normal(mean=Z_MEAN, std=Z_STD, size=x1.shape, device=x1.device)
+            x1 = x1 + torch.randn_like(x1, device=x1.device) * 1.0 + 0.0 # reparametrization if needed
  
         assert x0.shape == x1.shape
 
-        return x0, x1, sid, cond, embeds, x0_mask, x1_mask, data
+        return x0, x1, sid, embeds, x0_mask, x1_mask, data
 
     def train(self, opt, train_dataset, val_dataset, corrupt_method):
         self.writer = util.build_log_writer(opt)
@@ -196,28 +199,28 @@ class Runner(object):
 
         net.train()
 
-        # load vits
-        if opt.global_rank == 0:
-            if opt.conf_file["training"]["dataset"] == "LJS":
-                conf_path = "ljs_base.json"
-                ckpt_path = "pretrained_ljs.pth"
-            else:
-                conf_path = "vctk_base.json"
-                ckpt_path = "pretrained_vctk.pth"
+        if opt.conf_file["training"]["dataset"] == "LJS":
+            conf_path = "ljs_base.json"
+            ckpt_path = "pretrained_ljs.pth"
+        else:
+            conf_path = "vctk_base.json"
+            ckpt_path = "pretrained_vctk.pth"
 
-            self.vits_model, hps = load_vits_model(
-                hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", conf_path),
-                checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], ckpt_path)
-                )
-            self.z_to_audio = get_Z_to_audio(self.vits_model)
+        self.vits_model, hps = load_vits_model(
+            hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", conf_path),
+            checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], ckpt_path)
+            )
+        self.z_to_audio = get_Z_to_audio(self.vits_model)
+        self.preflow_to_audio = get_Z_preflow_to_audio(self.vits_model)
 
         n_inner_loop = opt.batch_size // (opt.global_size * opt.microbatch)
+
         for it in range(opt.num_itr):
             optimizer.zero_grad()
 
             for _ in range(n_inner_loop):
                 # ===== sample boundary pair =====
-                x0, x1, sid, cond, embeds, x0_mask, x1_mask, data = self.sample_batch(opt, train_loader)
+                x0, x1, sid, embeds, x0_mask, x1_mask, data = self.sample_batch(opt, train_loader)
 
                 # ===== compute loss =====
                 step = torch.randint(0, opt.interval, (x0.shape[0],))
@@ -225,9 +228,9 @@ class Runner(object):
                 xt = self.diffusion.q_sample(step, x0, x1, ot_ode=opt.ot_ode) # gets the noisy latent at timestep t
                 label = self.compute_label(step, x0, xt)
 
-                # concat with mask for guidance in varying length inputs
+                # concat with mask for guidance in varying length outputs
                 if self.conf.model.use_data_mask:
-                    xt = torch.cat([xt, x1_mask], dim=1)
+                    xt = torch.cat([xt, x0_mask], dim=1)
 
                 # concat x1 and cond for image/x1 conditioning
                 if self.conf.model.use_initial_image:
@@ -242,23 +245,6 @@ class Runner(object):
                 )
 
                 assert label.shape == pred.shape
-
-                if DEBUG:
-                    print("step: ", step)
-                    # make shared x plot for prediction and label
-                    fig, axs = plt.subplots(2, 1)
-                    axs[0].imshow(pred[0].detach().cpu().numpy().squeeze())
-                    axs[1].imshow(label[0].detach().cpu().numpy().squeeze())
-                    os.makedirs("debug", exist_ok=True)
-                    plt.savefig(f"debug/{step[0]}_{it}.png")
-
-                    # pass the target audio through vits and save audio
-                    sid_i = torch.LongTensor([int(sid[0])]).cuda() if sid is not None else None
-                    y_mask_audio = data["y_mask_audio"][0]
-                    gt_audio =  self.z_to_audio(z=label[0].cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
-                    save_audio(f"debug/gt_audio_{step[0]}_{it}.wav", gt_audio, 22050)
-                    model_audio = self.z_to_audio(z=pred[0].cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
-                    save_audio(f"debug/model_audio_{step[0]}_{it}.wav", model_audio, 22050)
 
                 loss = F.mse_loss(pred, label)
                 loss.backward()
@@ -297,14 +283,18 @@ class Runner(object):
                 if opt.distributed:
                     torch.distributed.barrier()
 
-            if it % 1 == 0: # 0, 0.5k, 3k, 6k 9k
-                net.eval()
-                self.evaluation(opt, it, val_loader, corrupt_method)
-                net.train()
+            if it % 500 == 0: # 0, 0.5k, 3k, 6k 9k
+                if opt.global_rank == 0:
+                    net.eval()
+                    self.evaluation(opt, it, val_loader, corrupt_method)
+                    net.train()
+                if opt.distributed:
+                    torch.distributed.barrier()
+                torch.cuda.empty_cache()
         self.writer.close()
 
     @torch.no_grad()
-    def ddpm_sampling(self, opt, x1, x1_mask=None, embeds=None, cond=None, clip_denoise=False, nfe=None, log_count=10, verbose=True, cfg=1.0):
+    def ddpm_sampling(self, opt, x1, target_mask=None, embeds=None, cond=None, clip_denoise=False, nfe=None, log_count=10, verbose=True, cfg=1.0):
 
         # create discrete time steps that split [0, INTERVAL] into NFE sub-intervals.
         # e.g., if NFE=2 & INTERVAL=1000, then STEPS=[0, 500, 999] and 2 network
@@ -332,8 +322,8 @@ class Runner(object):
 
                 # concat with mask for guidance in varying length inputs
                 if self.conf.model.use_data_mask:
-                    assert x1_mask is not None, "x1_mask is None, but use_data_mask is True"
-                    xt_total = torch.cat([xt, x1_mask], dim=1)
+                    assert target_mask is not None, "target_mask is None, but use_data_mask is True"
+                    xt_total = torch.cat([xt, target_mask], dim=1)
 
                 # concat x1 and cond for image/x1 conditioning
                 if self.conf.model.use_initial_image:
@@ -354,6 +344,7 @@ class Runner(object):
             )
 
         b, *xdim = x1.shape
+
         assert xs.shape == pred_x0.shape == (b, log_count, *xdim)
 
         return xs, pred_x0
@@ -364,24 +355,26 @@ class Runner(object):
         log = self.log
         log.info(f"========== Evaluation started: iter={it} ==========")
 
-        x0, x1, sid, cond, embeds, x0_mask, x1_mask, data = self.sample_batch(opt, val_loader)
+        x0, x1, sid, embeds, x0_mask, x1_mask, data = self.sample_batch(opt, val_loader)
         sid = sid.squeeze() if sid is not None else None
 
         x1 = x1.to(opt.device) # TODO load the actual target image
 
         xs, pred_x0s = self.ddpm_sampling(
-            opt, x1, x1_mask=x1_mask, embeds=embeds, cond=cond, nfe=20, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
+            opt, x1, target_mask=x0_mask, embeds=embeds, cond=None, nfe=20, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
         )
+
+        #log.info("Collecting tensors ...")
+        #img_target   = all_cat_cpu(opt, log, x0)
+        #img_source = all_cat_cpu(opt, log, x1)
+        #xs          = all_cat_cpu(opt, log, xs)
+        #pred_x0s    = all_cat_cpu(opt, log, pred_x0s)
+        #data = {k: all_cat_cpu(opt, log, v) for k, v in data.items()}
+        #sid = all_cat_cpu(opt, log, sid)
 
         batch, len_t, *xdim = xs.shape
 
-        log.info("Collecting tensors ...")
-        img_target   = all_cat_cpu(opt, log, x0)
-        img_source = all_cat_cpu(opt, log, x1)
-        xs          = all_cat_cpu(opt, log, xs)
-        pred_x0s    = all_cat_cpu(opt, log, pred_x0s)
-
-        assert img_target.shape == img_source.shape == (batch, *xdim)
+        #assert img_target.shape == img_source.shape == (batch, *xdim)
         assert xs.shape == pred_x0s.shape
         log.info(f"Generated recon trajectories: size={xs.shape}")
 
@@ -392,31 +385,38 @@ class Runner(object):
 
         y_masks_audio = data["y_mask_audio"]
         y_masks_text = data["y_mask_text"]
+        preflow_mask = data["preflow_mask"]
         offset = data["offset"]
-        z_length = data["z_audio_length"]
+        audio_length = data["audio_length"]
 
         # logging audio
         for i in range(batch):
+            # extract necessary data
             sample = img_target_pred[i]
             gt = x0[i]
             start = x1[i]
-            y_mask_text = y_masks_text[i]
             y_mask_audio = y_masks_audio[i]
             sid_i = torch.LongTensor([int(sid[i])]).cuda() if sid is not None else None
-            print(sid_i)
+
             # pass through vocoder
             model_audio =  self.z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
             gt_audio = self.z_to_audio(z=gt.cuda(), y_mask=y_mask_audio.cuda(), sid=sid_i).cpu().squeeze(0)
-            start_audio = self.z_to_audio(z=start.cuda(), y_mask=y_mask_text.cuda(), sid=sid_i).cpu().squeeze(0)
+
+            if opt.conf_file["training"]["z_start"] == "pre_flow":
+                start_audio = self.preflow_to_audio(z_p=start.cuda(), y_mask=preflow_mask[i].cuda(), sid=sid_i).cpu().squeeze(0)
+            elif opt.conf_file["training"]["z_start"] == "post_flow":
+                start_audio = self.z_to_audio(z=start.cuda(), y_mask=y_masks_text[i].cuda(), sid=sid_i).cpu().squeeze(0)
 
             # save
             sample_path = os.path.join(opt.ckpt_path, "samples", str(it), f"model_audio_{i}.wav")
             gt_path = os.path.join(opt.ckpt_path, "samples", str(it), f"gt_audio_{i}.wav")
             start_audio_path = os.path.join(opt.ckpt_path, "samples", str(it), f"start_audio_{i}.wav")
-
             os.makedirs(os.path.dirname(sample_path), exist_ok=True)
-            os.makedirs(os.path.dirname(gt_path), exist_ok=True)
-            os.makedirs(os.path.dirname(start_audio_path), exist_ok=True)
+
+            # trim the audio
+            model_audio = model_audio[..., offset[i]:offset[i]+audio_length[i]]
+            gt_audio = gt_audio[..., offset[i]:offset[i]+audio_length[i]]
+            start_audio = start_audio[..., offset[i]:offset[i]+audio_length[i]]
 
             save_audio(sample_path, model_audio, 22050)
             save_audio(gt_path, gt_audio, 22050)
@@ -427,16 +427,12 @@ class Runner(object):
             self.writer.add_sound(step=it, caption=f"start_audio_{i}", key="start_audio", sound_path=start_audio_path)
 
         log.info("Logging images ...")
-        log_image("image/clean",   scale_0_1(img_target)) # target image
-        log_image("image/corrupt", scale_0_1(img_source)) # source image
+        log_image("image/clean",   scale_0_1(x0)) # target image
+        log_image("image/corrupt", scale_0_1(x1)) # source image
         log_image("image/recon",   scale_0_1(img_target_pred))
         log_image("debug/pred_clean_traj", scale_0_1(pred_x0s.reshape(-1, *xdim)), nrow=len_t)
         log_image("debug/recon_traj",      scale_0_1(xs.reshape(-1, *xdim)),      nrow=len_t)
 
-        #log.info("Logging accuracies ...")
-        #log_accuracy("accuracy/clean",   img_clean)
-        #log_accuracy("accuracy/corrupt", img_corrupt)
-        #log_accuracy("accuracy/recon",   img_recon)
 
         log.info(f"========== Evaluation finished: iter={it} ==========")
         torch.cuda.empty_cache()

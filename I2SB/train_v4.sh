@@ -1,0 +1,1 @@
+python train.py --n-gpu-per-node 1 --batch-size 8 --microbatch 2 --beta-max 1.0 --num-itr 500000 --model_conf_path configs/V4.yaml --log-writer wandb --ot-ode --add-x1-noise
