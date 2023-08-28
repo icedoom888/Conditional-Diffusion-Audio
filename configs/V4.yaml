@@ -1,6 +1,5 @@
 training:
-  #output_dir: /cluster/scratch/matvogel/traditional/V4_diffusion
-  output_dir: V4_test_postflow
+  output_dir: /cluster/scratch/matvogel/traditional/V4_tanh
   dataset: VCTK
   z_start: "post_flow"
   return_x: true
