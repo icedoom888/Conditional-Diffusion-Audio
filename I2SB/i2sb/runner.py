@@ -287,10 +287,10 @@ class Runner(object):
                 if opt.global_rank == 0:
                     net.eval()
                     self.evaluation(opt, it, val_loader, corrupt_method)
-                    net.train()
                 if opt.distributed:
                     torch.distributed.barrier()
                 torch.cuda.empty_cache()
+                net.train()
         self.writer.close()
 
     @torch.no_grad()

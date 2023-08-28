@@ -79,8 +79,8 @@ def train(gpu, conf):
     else:
         sampler = None
     
-    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.micro_batch_size, shuffle=False, num_workers=4, sampler=sampler)
-    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=False, num_workers=4, sampler=sampler)
+    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.micro_batch_size, shuffle=False, num_workers=2, sampler=sampler)
+    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=False, num_workers=2, sampler=sampler)
 
     # setup diffusion loss
     if train_args.loss_fn_diffusion == "l1":
@@ -89,18 +89,6 @@ def train(gpu, conf):
         loss_fn = torch.nn.functional.mse_loss
     else:
         raise NotImplementedError
-    
-    ''' this takes ages :(
-    freq_loss = MultiResolutionSTFTLoss(
-        fft_sizes=[512, 1024, 2048],
-        hop_sizes=[256, 512, 1024],
-        win_lengths=[512, 1024, 2048],
-        scale="mel",
-        n_bins=80,
-        sample_rate=22050,
-        perceptual_weighting=True,
-    )'''
-
 
     freq_loss = auraloss.freq.MultiResolutionSTFTLoss()
 
@@ -249,10 +237,12 @@ def train(gpu, conf):
                     audio_gt = z_to_audio(z_gt, y_mask=mask, sid=sid)
                     audio_pred = audio_pred[..., :audio_length[idx]]
                     audio_gt = audio_gt[..., :audio_length[idx]]
-                    f_loss = freq_loss(audio_pred, audio_gt) * snr_weight[idx] * 0.1 # scale by SNR + 1 weighting and 0.1
+                    f_loss = freq_loss(audio_pred, audio_gt) #* snr_weight[idx] * 0.1 # scale by SNR + 1 weighting and 0.1
+                    f_loss = torch.tanh(f_loss) * 0.1
                     loss_audio = torch.cat([loss_audio, f_loss.unsqueeze(0)], dim=0)
                 
-                loss = loss_diffusion + loss_audio.mean()
+                loss_audio = loss_audio.mean()
+                loss = loss_diffusion + loss_audio
             else:
                 loss = model_out
             
@@ -261,8 +251,9 @@ def train(gpu, conf):
             else:
                 loss.backward()
 
-            if train_args.return_x:
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        if train_args.return_x:
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, norm_type='inf')
 
         if scaler is not None:
             scaler.step(optimizer)
@@ -281,7 +272,7 @@ def train(gpu, conf):
         }
         if train_args.return_x:
             logs["loss_diffusion"] = loss_diffusion.detach().item()
-            logs["loss_audio"] = loss_audio.mean().detach().item()
+            logs["loss_audio"] = loss_audio.detach().item()
 
         if (global_step + 1) % train_args.log_every == 0:
             log.info("train_it {}/{} | lr:{} | loss:{}".format(
@@ -314,6 +305,7 @@ def train(gpu, conf):
 
             if log_step % train_args.eval_every == 0:
                 log.info("Sampling...")
+                model.eval()
                 eval_batch = next(val_iter)
                 # put everything on device
                 for k, v in eval_batch.items():
@@ -357,21 +349,15 @@ def train(gpu, conf):
                 if model_args.use_initial_image:
                     init_image = torch.cat([init_image, z_start], dim=1)
                 
-                if conf.DDP:
-                    sample_model = model.model
-                else:
-                    sample_model = model
-                
-                with torch.no_grad():
-                    model_samples = sample_model.sample(
-                        initial_noise, # NOISE | MASK | OPTIONAL(INIT IMAGE)
-                        init_image=init_image,
-                        features = z_start.mean(-3) if model_args.use_additional_time_conditioning else None,
-                        embedding=embeds, # ImageBind / CLAP
-                        embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
-                        num_steps=10 # Higher for better quality, suggested num_steps: 10-100
-                    )
-
+                model_samples = model.sample(
+                    initial_noise, # NOISE | MASK | OPTIONAL(INIT IMAGE)
+                    init_image=init_image,
+                    features = z_start.mean(-3) if model_args.use_additional_time_conditioning else None,
+                    embedding=embeds, # ImageBind / CLAP
+                    embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
+                    num_steps=10 # Higher for better quality, suggested num_steps: 10-100
+                )
+                print("sampled")
                 # calculate loss between samples and original
                 eval_loss = loss_fn(model_samples, z_audio)
                 
@@ -430,6 +416,7 @@ def train(gpu, conf):
                 # log to wandb
                 wandb.log({"eval_loss_diffusion": eval_loss.detach().item()}, step=log_step)
                 log.info("Sampling finished...")
+                model.train()
         
         if conf.DDP:
             dist.barrier()
