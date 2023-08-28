@@ -1,14 +1,15 @@
 training:
   output_dir: /cluster/scratch/matvogel/traditional/V4_tanh
   dataset: VCTK
-  z_start: "pre_flow"
+  z_start: "post_flow"
   return_x: true
-  data_root: /cluster/scratch/matvogel/VCTKProcessedFull
+  #data_root: /cluster/scratch/matvogel/VCTKProcessedFull
+  data_root: vits/VCTKProcessedFull
   wandb_project: natural_voices
   log_every: 10
   eval_every: 100
   save_every: 500
-  train_batch_size: 64
+  train_batch_size: 8
   micro_batch_size: 4
   eval_batch_size: 4
   loss_fn_diffusion: l2
@@ -26,7 +27,7 @@ training:
   ema_max_decay: 0.999
   mixed_precision: "fp16"
   start_epoch: 0
-  num_train_steps: 100_000
+  num_train_steps: 5000
 model:
   channels: [128, 256, 512, 512, 1024]
   #channels: [32, 32, 32, 32, 32]
