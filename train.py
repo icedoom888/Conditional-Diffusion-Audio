@@ -223,26 +223,27 @@ def train(gpu, conf):
 
             # extract predicted x if needed
             if train_args.return_x:
-                loss_diffusion, x_pred, sigmas, snr_weight = model_out
-                # convert x_pred to audio and gt too
-                loss_audio = torch.tensor([], requires_grad=True, device=gpu)
+                with torch.cuda.amp.autocast(enabled=not scaler is None):
+                    loss_diffusion, x_pred, sigmas, snr_weight = model_out
+                    # convert x_pred to audio and gt too
+                    loss_audio = torch.tensor([], requires_grad=True, device=gpu)
 
-                for idx in range(x_pred.shape[0]):
-                    z_pred = x_pred[idx]
-                    z_gt = z_audio[idx]
-                    mask = batch["y_mask_audio"][idx].cuda()
-                    sid = batch["sid"][idx].cuda() if "sid" in batch.keys() else None
-                    # pass through vocoder and cut
-                    audio_pred = z_to_audio(z_pred, y_mask=mask, sid=sid, grad=train_args.return_x)
-                    audio_gt = z_to_audio(z_gt, y_mask=mask, sid=sid)
-                    audio_pred = audio_pred[..., :audio_length[idx]]
-                    audio_gt = audio_gt[..., :audio_length[idx]]
-                    f_loss = freq_loss(audio_pred, audio_gt) #* snr_weight[idx] * 0.1 # scale by SNR + 1 weighting and 0.1
-                    f_loss = torch.tanh(f_loss) * 0.1
-                    loss_audio = torch.cat([loss_audio, f_loss.unsqueeze(0)], dim=0)
-                
-                loss_audio = loss_audio.mean()
-                loss = loss_diffusion + loss_audio
+                    for idx in range(x_pred.shape[0]):
+                        z_pred = x_pred[idx]
+                        z_gt = z_audio[idx]
+                        mask = batch["y_mask_audio"][idx].cuda()
+                        sid = batch["sid"][idx].cuda() if "sid" in batch.keys() else None
+                        # pass through vocoder and cut
+                        audio_pred = z_to_audio(z_pred, y_mask=mask, sid=sid, grad=train_args.return_x)
+                        audio_gt = z_to_audio(z_gt, y_mask=mask, sid=sid)
+                        audio_pred = audio_pred[..., :audio_length[idx]]
+                        audio_gt = audio_gt[..., :audio_length[idx]]
+                        f_loss = freq_loss(audio_pred, audio_gt) * 0.1 #* snr_weight[idx] * 0.1 # scale by SNR + 1 weighting and 0.1
+                        f_loss = torch.tanh(f_loss) * 0.1
+                        loss_audio = torch.cat([loss_audio, f_loss.unsqueeze(0)], dim=0)
+                    
+                    loss_audio = loss_audio.mean()
+                    loss = loss_diffusion + loss_audio
             else:
                 loss = model_out
             
@@ -275,12 +276,13 @@ def train(gpu, conf):
             logs["loss_audio"] = loss_audio.detach().item()
 
         if (global_step + 1) % train_args.log_every == 0:
-            log.info("train_it {}/{} | lr:{} | loss:{}".format(
+            log.info("train_it {}/{} | lr:{} | loss:{} |loss_audio:{}".format(
                 1+global_step,
                 int(train_args.num_train_steps),
                 "{:.2e}".format(optimizer.param_groups[0]['lr']),
                 "{:+.4f}".format(loss.item()),
-            ))
+                "{:+.4f}".format(loss_audio.item()) if train_args.return_x else "none")
+            )
 
             if gpu==0:
                 wandb_log = logs.copy()
