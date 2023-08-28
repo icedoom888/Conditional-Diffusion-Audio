@@ -221,9 +221,8 @@ def train(gpu, conf):
                     embedding_mask_proba=train_args.CFG_mask_proba
                 )
 
-            # extract predicted x if needed
-            if train_args.return_x:
-                with torch.cuda.amp.autocast(enabled=not scaler is None):
+                # extract predicted x if needed
+                if train_args.return_x:
                     loss_diffusion, x_pred, sigmas, snr_weight = model_out
                     # convert x_pred to audio and gt too
                     loss_audio = torch.tensor([], requires_grad=True, device=gpu)
@@ -244,8 +243,8 @@ def train(gpu, conf):
                     
                     loss_audio = loss_audio.mean()
                     loss = loss_diffusion + loss_audio
-            else:
-                loss = model_out
+                else:
+                    loss = model_out
             
             if scaler is not None:
                 scaler.scale(loss).backward()
