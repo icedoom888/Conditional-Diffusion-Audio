@@ -1,1 +1,1 @@
-python train.py --config configs/V4.yaml
+python train.py --config configs/V4.yaml --DDP

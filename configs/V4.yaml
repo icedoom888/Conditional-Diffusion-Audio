@@ -1,5 +1,5 @@
 training:
-  output_dir: /cluster/scratch/matvogel/traditional/V4_diffusion
+  output_dir: /cluster/scratch/matvogel/traditional/V4_tanh
   dataset: VCTK
   z_start: "pre_flow"
   return_x: true
