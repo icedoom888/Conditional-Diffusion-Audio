@@ -17,6 +17,8 @@ def process_filelist(filelist):
     # initiate models
     audio_embedder = utils_diffusion.get_audio_embedder(model="CLAP")
     model, hps = utils_diffusion.load_vits_model(hps_path="vits/configs/vctk_base.json", checkpoint_path="vits/pretrained_vctk.pth")
+    model = model.cuda()
+    model = model.eval()
     audio_to_z = utils_diffusion.get_audio_to_Z(model, hps)
     text_to_z = utils_diffusion.get_text_to_Z(model)
     text_to_z_preflow = utils_diffusion.get_text_to_Z_preflow(model)
