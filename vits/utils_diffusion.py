@@ -9,7 +9,7 @@ import utils as vits_utils
 import torch
 from text import text_to_sequence
 import commons
-from transformers import AutoTokenizer, ClapTextModelWithProjection, ClapModel, AutoFeatureExtractor
+from transformers import AutoTokenizer, ClapTextModelWithProjection, ClapModel, AutoFeatureExtractor, AutoProcessor
 
 def get_text(text, hps):
     text_norm = text_to_sequence(text, hps.data.text_cleaners)
@@ -192,16 +192,18 @@ def get_text_to_Z_preflow(net_g):
 
 def get_text_embedder(model="CLAP"):
     if model == "CLAP":
-        model = ClapTextModelWithProjection.from_pretrained("laion/clap-htsat-unfused")
-        tokenizer = AutoTokenizer.from_pretrained("laion/clap-htsat-unfused")
+        model = ClapModel.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
+        feature_extractor = AutoProcessor.from_pretrained("laion/clap-htsat-unfused")
 
         def text_embedder(text):
-            tokens = tokenizer(text, padding=True, return_tensors="pt")
-            embeds = model(**tokens)['text_embeds']
-            return embeds
+            inputs = feature_extractor(text=text, return_tensors="pt", padding=True)
+
+            for k, v in inputs.items():
+                inputs[k] = v.to("cuda", non_blocking=True)
+
+            text_features = model.get_text_features(**inputs)
+            return text_features
         return text_embedder
-    else:
-        raise NotImplementedError
 
 
 def get_audio_embedder(model="CLAP"):

@@ -64,6 +64,7 @@ def create_training_options():
     # parser.add_argument("--beta-min",       type=float, default=0.1)
     parser.add_argument("--ot-ode",         action="store_true",             help="use OT-ODE model")
     parser.add_argument("--clip-denoise",   action="store_true",             help="clamp predicted image to [-1,1] at each")
+    parser.add_argument("--train-on-sampling", action="store_true",          help="train on sampling")
 
     # optional configs for conditional network
     parser.add_argument("--cond-x1",        action="store_true",             help="conditional the network on degraded images")

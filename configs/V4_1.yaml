@@ -1,7 +1,7 @@
 training:
-  output_dir: /cluster/scratch/matvogel/traditional/V4_tanh
+  output_dir: /cluster/scratch/matvogel/traditional/V4_1
   dataset: VCTK
-  z_start: "pre_flow"
+  z_start: "post_flow"
   return_x: true
   data_root: /cluster/scratch/matvogel/VCTKProcessedFull
   #data_root: vits/VCTKProcessedFull
@@ -9,7 +9,7 @@ training:
   log_every: 10
   eval_every: 100
   save_every: 500
-  train_batch_size: 128
+  train_batch_size: 64
   micro_batch_size: 16
   eval_batch_size: 8
   loss_fn_diffusion: l2
@@ -33,9 +33,9 @@ model:
   #channels: [32, 32, 32, 32, 32]
   factors: [1, 2, 2, 2, 2]
   layers: [1, 2, 2, 2, 2]
-  attentions: [0, 0, 0, 1, 1]
-  cross_attentions: [0, 0, 0, 1, 1]
-  attention_heads: 8
+  attentions: [0, 0, 0, 0, 1]
+  cross_attentions: [0, 0, 0, 0, 1]
+  attention_heads: 12
   attention_features: 64
   use_additional_time_conditioning: true
   use_initial_image: true

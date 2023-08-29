@@ -28,6 +28,7 @@ from audio_diffusion_pytorch import UNetV0
 from omegaconf import OmegaConf
 import sys
 import os
+import auraloss.freq
 this_file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
 sys.path.append(os.path.join(this_file_path, "..", ".."))
@@ -212,6 +213,7 @@ class Runner(object):
             )
         self.z_to_audio = get_Z_to_audio(self.vits_model)
         self.preflow_to_audio = get_Z_preflow_to_audio(self.vits_model)
+        freq_loss = auraloss.freq.MultiResolutionSTFTLoss()
 
         n_inner_loop = opt.batch_size // (opt.global_size * opt.microbatch)
 
@@ -236,18 +238,42 @@ class Runner(object):
                 if self.conf.model.use_initial_image:
                     xt = torch.cat([xt, x1], dim=1)
 
-                pred = net(
-                    xt, # latent sample at timestep t
-                    time = step, # timestep 
-                    features = x1.mean(-3) if self.conf.model.use_additional_time_conditioning else None, # embeds an image to additional embeddings that are added to the time embeddings TODO mload configuration of the embedder from the config file
-                    embedding = embeds, # embedding for CFG
-                    embedding_mask_proba = 0.1
-                )
+                if not opt.train_on_sampling:
+                    pred = net(
+                        xt, # latent sample at timestep t
+                        time = step, # timestep 
+                        features = x1.mean(-3) if self.conf.model.use_additional_time_conditioning else None, # embeds an image to additional embeddings that are added to the time embeddings TODO mload configuration of the embedder from the config file
+                        embedding = embeds, # embedding for CFG
+                        embedding_mask_proba = 0.1
+                    )
 
-                assert label.shape == pred.shape
+                    assert label.shape == pred.shape
 
-                loss = F.mse_loss(pred, label)
-                loss.backward()
+                    loss = F.mse_loss(pred, label)
+                    loss.backward()
+                else: # train on sampling
+                    x_pred, _ = self.ddpm_sampling(opt, x1, target_mask=x0_mask, embeds=embeds, cond=None, nfe=1)
+                    audio_length = data["audio_length"]
+                    
+                    # compute the loss
+                    loss_audio = torch.tensor([], requires_grad=True, device=x_pred.device)
+
+                    for idx in range(x_pred.shape[0]):
+                        z_pred = x_pred[idx]
+                        z_gt = x0[idx]
+                        mask = data["y_mask_audio"][idx].cuda()
+                        sid = data["sid"][idx].cuda() if "sid" in data.keys() else None
+                        # pass through vocoder and cut
+                        audio_pred = self.z_to_audio(z_pred, y_mask=mask, sid=sid, grad=True)
+                        audio_gt = self.z_to_audio(z_gt, y_mask=mask, sid=sid)
+                        audio_pred = audio_pred[..., :audio_length[idx]]
+                        audio_gt = audio_gt[..., :audio_length[idx]]
+                        f_loss = freq_loss(audio_pred, audio_gt) * 0.1 #* snr_weight[idx] * 0.1 # scale by SNR + 1 weighting and 0.1
+                        f_loss = torch.tanh(f_loss)
+                        loss_audio = torch.cat([loss_audio, f_loss.unsqueeze(0)], dim=0)
+                    
+                    loss = loss_audio.mean()
+                    loss.backward()
 
             optimizer.step()
             ema.update()
@@ -293,7 +319,6 @@ class Runner(object):
                 net.train()
         self.writer.close()
 
-    @torch.no_grad()
     def ddpm_sampling(self, opt, x1, target_mask=None, embeds=None, cond=None, clip_denoise=False, nfe=None, log_count=10, verbose=True, cfg=1.0):
 
         # create discrete time steps that split [0, INTERVAL] into NFE sub-intervals.
@@ -360,9 +385,10 @@ class Runner(object):
 
         x1 = x1.to(opt.device) # TODO load the actual target image
 
-        xs, pred_x0s = self.ddpm_sampling(
-            opt, x1, target_mask=x0_mask, embeds=embeds, cond=None, nfe=20, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
-        )
+        with torch.no_grad():
+            xs, pred_x0s = self.ddpm_sampling(
+                opt, x1, target_mask=x0_mask, embeds=embeds, cond=None, nfe=20, clip_denoise=opt.clip_denoise, verbose=opt.global_rank==0
+            )
 
         #log.info("Collecting tensors ...")
         #img_target   = all_cat_cpu(opt, log, x0)

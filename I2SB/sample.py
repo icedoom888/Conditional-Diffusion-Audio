@@ -30,14 +30,16 @@ from i2sb import ckpt_util
 
 import colored_traceback.always
 from ipdb import set_trace as debug
-from custom_dataset import LJS_Latent, LJSSlidingWindow, VCTKSlidingWindow
+from custom_dataset import LJS_Latent, LJSSlidingWindow, VCTKVitsLatents
 from torchaudio import save as save_audio
+from einops import rearrange
+
 
 import sys
 this_file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(this_file_path, "..", "..", "vits"))
 sys.path.append(os.path.join(this_file_path, "..", ".."))
-from vits.utils_diffusion import load_vits_model, get_Z_to_audio
+from vits.utils_diffusion import load_vits_model, get_Z_to_audio, get_Z_preflow_to_audio, get_text_embedder
 import yaml
 import time
 from train import RESULT_DIR
@@ -155,7 +157,7 @@ def main(opt):
     if opt.conf_file.training.dataset == "LJS":
         val_dataset = LJSSlidingWindow(root=opt.conf_file.training.data_root, mode="val", normalize=False)
     elif opt.conf_file.training.dataset == "VCTK":
-        val_dataset = VCTKSlidingWindow(root=opt.conf_file.training.data_root, mode="val", normalize=False)
+        val_dataset = VCTKVitsLatents(root=opt.conf_file.training.data_root, mode="val", normalize=False)
 
     n_samples = len(val_dataset)
 
@@ -172,8 +174,8 @@ def main(opt):
         runner.ema = ExponentialMovingAverage(runner.net.parameters(), decay=0.99) # re-init ema with fp16 weight
 
     if opt.conf_file["training"]["dataset"] == "LJS":
-                conf_path = "ljs_base.json"
-                ckpt_path = "pretrained_ljs.pth"
+        conf_path = "ljs_base.json"
+        ckpt_path = "pretrained_ljs.pth"
     else:
         conf_path = "vctk_base.json"
         ckpt_path = "pretrained_vctk.pth"
@@ -182,19 +184,33 @@ def main(opt):
         hps_path=os.path.join(opt.conf_file["training"]["vits_root"], "configs", conf_path),
         checkpoint_path=os.path.join(opt.conf_file["training"]["vits_root"], ckpt_path)
         )
-    
+    vits_model = vits_model.cuda().eval()
+
     z_to_audio = get_Z_to_audio(vits_model)
+    preflow_to_audio = get_Z_preflow_to_audio(vits_model)
+
+    if opt.txt_embeds:
+        text_embedder = get_text_embedder()
+        texts_man = ["recording of a man speaking"] * opt.batch_size
+        texts_woman = ["recording of a woman speaking"] * opt.batch_size
+        text_embeds_man = text_embedder(texts_man)
+        text_embeds_woman = text_embedder(texts_woman)
+        text_embeds_man = rearrange(text_embeds_man, 'b d -> b 1 d')
+        text_embeds_woman = rearrange(text_embeds_woman, 'b d -> b 1 d')
     
     for loader_itr, data in enumerate(val_loader):
 
         if loader_itr > opt.sample_batches:
             break
 
-        x0, x1, sids, cond, embeds, x0_mask, x1_mask, _ = runner.sample_batch(opt, val_loader, data=data)
+        x0, x1, sids, embeds, x0_mask, x1_mask, data = runner.sample_batch(opt, val_loader, data=data)
         sids = sids.squeeze() if sids is not None else None
         
         y_masks_audio = data["y_mask_audio"]
         y_masks_text = data["y_mask_text"]
+        preflow_mask = data["preflow_mask"]
+        offset = data["offset"]
+        audio_length = data["audio_length"]
 
         # generate vector for switching the sids
         sids_shuffle = torch.randperm(x0.shape[0])
@@ -207,20 +223,35 @@ def main(opt):
         else:
             shuffle_methods = [False]
         
+        if opt.txt_embeds:
+            opt.shuffle = False
+            shuffle_methods = [False, 'man', 'woman']
+
+        
         for shuffling in shuffle_methods:
-            xs, pred_x0s = runner.ddpm_sampling(
-                opt, x1,
-                x1_mask=x1_mask,
-                embeds=embeds if not shuffling else embeds_shuffled,
-                cond=cond,
-                nfe=opt.nfe,
-                cfg=opt.cfg,
-                clip_denoise=opt.clip_denoise,
-                verbose=opt.global_rank==0
-            )
+            # case of shuffling
+            if shuffling == False:
+                embs = embeds
+            elif shuffling == True:
+                embs = embeds_shuffled
+            # case of text embeddings
+            if shuffling == 'man':
+                embs = text_embeds_man
+            elif shuffling == 'woman':
+                embs = text_embeds_woman
+
+            with torch.no_grad():
+                xs, _ = runner.ddpm_sampling(
+                    opt, x1,
+                    target_mask=x0_mask,
+                    embeds=embs,
+                    nfe=opt.nfe,
+                    cfg=opt.cfg,
+                    verbose=opt.global_rank==0
+                )
 
             img_target_pred = xs[:, 0, ...]
-            batch, len_t, *xdim = xs.shape
+            batch = xs.shape[0]
 
             # logging audio
             mse_start_pred = torch.tensor([])
@@ -246,15 +277,33 @@ def main(opt):
                 model_audio =  z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
 
                 # calculate the audio of model prediction if passed the shuffled sid too
-                if shuffling:
+                if shuffling == True:
                     shuffled_sid = torch.LongTensor([int(sids[sids_shuffle[i]])]).cuda()
                     model_audio_sid_shufle = z_to_audio(z=sample.cuda(), y_mask=y_mask_audio.cuda(), sid=shuffled_sid).cpu().squeeze(0)
                 
                 gt_audio = z_to_audio(z=gt.cuda(), y_mask=y_mask_audio.cuda(), sid=sid).cpu().squeeze(0)
-                start_audio = z_to_audio(z=start.cuda(), y_mask=y_mask_text.cuda(), sid=sid).cpu().squeeze(0)
+                
+                if opt.conf_file["training"]["z_start"] == "pre_flow":
+                    start_audio = preflow_to_audio(z_p=start.cuda(), y_mask=preflow_mask[i].cuda(), sid=sid).cpu().squeeze(0)
+                elif opt.conf_file["training"]["z_start"] == "post_flow":
+                    start_audio = z_to_audio(z=start.cuda(), y_mask=y_masks_text[i].cuda(), sid=sid).cpu().squeeze(0)
+
+                # cut lengths
+                model_audio = model_audio[..., :audio_length[i]]
+                gt_audio = gt_audio[..., :audio_length[i]]
+                start_audio = start_audio[..., :audio_length[i]]
+                audio = audio[..., :audio_length[i]]
 
                 # save
-                permutation = "" if shuffling is False else f"_{sids_shuffle[i].item()}"
+                if shuffling is True:
+                    permutation = f"_{sids_shuffle[i].item()}"
+                elif shuffling == 'man':
+                    permutation = '_man'
+                elif shuffling == 'woman':
+                    permutation = '_woman'
+                else:
+                    permutation = ""
+                
                 sample_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}{permutation}.wav")
                 gt_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"vits_audio_{i}.wav")
                 audio_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"gt_audio_{i}.wav")
@@ -267,13 +316,13 @@ def main(opt):
                 save_audio(audio_path, audio, 22050)
                 save_audio(start_audio_path, start_audio, 22050)
 
-                if shuffling:
+                if shuffling is True:
                     sample_shuffled_path = os.path.join(RESULT_DIR, opt.conf_file.training.output_dir, f"sampling_{opt.nfe}_{opt.cfg}", f"model_audio_{i}{permutation}_vocoder_changed.wav")
                     save_audio(sample_shuffled_path, model_audio_sid_shufle, 22050)
 
             stats_path = '/'.join(sample_path.split('/')[:-1]) + "/stats.txt"
             log.info(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
-            with open (stats_path, 'w') as f:
+            with open (stats_path, 'w', encoding='utf-8') as f:
                 f.write(f"MSE_START_PRED={mse_start_pred.mean()}\tMSE_PRED_GT={mse_pred_gt.mean()}")
 
             dist.barrier()
@@ -299,6 +348,7 @@ if __name__ == '__main__':
     # parser.add_argument("--beta-min",       type=float, default=0.1)
     parser.add_argument("--ot-ode",         action="store_true",             help="use OT-ODE model")
     parser.add_argument("--shuffle",        action="store_true",             help="shuffle the embeddings")
+    parser.add_argument("--txt_embeds",     action="store_true",             help="use text embeddings")
     # data
     parser.add_argument("--image-size",     type=int,  default=256)
     parser.add_argument("--dataset-dir",    type=Path, default="/dataset",  help="path to LMDB dataset")
@@ -313,7 +363,7 @@ if __name__ == '__main__':
     parser.add_argument("--use-fp16",       action="store_true",            help="use fp16 network weight for faster sampling")
 
     arg = parser.parse_args()
-
+    
     opt = edict(
         distributed=(arg.n_gpu_per_node > 1),
         device="cuda",
@@ -322,7 +372,8 @@ if __name__ == '__main__':
 
     config = yaml.load(open(opt.model_conf_path, "r"), Loader=yaml.FullLoader)
     opt.conf_file = config
-    
+    os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+
     # one-time download: ADM checkpoint
     #download_ckpt("data/")
 

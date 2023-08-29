@@ -1,17 +1,15 @@
+# V4 but training on sampling with one step
 training:
-  output_dir: /cluster/scratch/matvogel/traditional/V4_tanh
+  output_dir: V5
   dataset: VCTK
   z_start: "pre_flow"
-  return_x: true
   data_root: /cluster/scratch/matvogel/VCTKProcessedFull
-  #data_root: vits/VCTKProcessedFull
+  vits_root: ../vits
   wandb_project: natural_voices
-  log_every: 10
-  eval_every: 100
-  save_every: 500
-  train_batch_size: 128
-  micro_batch_size: 16
-  eval_batch_size: 8
+  wandb_log_every: 50
+  train_batch_size: 8
+  eval_batch_size: 4
+  gradient_accumulation_steps: 4
   loss_fn_diffusion: l2
   learning_rate: 1.e-4
   lr_scheduler: constant
@@ -27,18 +25,18 @@ training:
   ema_max_decay: 0.999
   mixed_precision: "fp16"
   start_epoch: 0
-  num_train_steps: 50000
+  num_train_steps: 500_000
 model:
   channels: [128, 256, 512, 512, 1024]
-  #channels: [32, 32, 32, 32, 32]
   factors: [1, 2, 2, 2, 2]
   layers: [1, 2, 2, 2, 2]
   attentions: [0, 0, 0, 1, 1]
   cross_attentions: [0, 0, 0, 1, 1]
   attention_heads: 8
   attention_features: 64
-  use_additional_time_conditioning: true
-  use_initial_image: true
+  use_additional_time_conditioning: false
+  use_initial_image: false
+  use_data_mask: true
   use_embedding_cfg: true
   embedding_max_length: 64
   embedding_features: 512
