@@ -18,4 +18,5 @@ from .models import (
     DiffusionVocoder,
     EncoderBase,
     ConditionalDiffusionVocoder,
+    ConditionalDiffusionLLM
 )

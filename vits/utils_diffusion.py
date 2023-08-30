@@ -128,8 +128,8 @@ def get_text_to_Z(net_g):
 
 def get_text_embedder(model="CLAP"):
     if model == "CLAP":
-        model = ClapTextModelWithProjection.from_pretrained("laion/clap-htsat-unfused")
-        tokenizer = AutoTokenizer.from_pretrained("laion/clap-htsat-unfused")
+        model = ClapTextModelWithProjection.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
+        tokenizer = AutoTokenizer.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
 
         def text_embedder(text):
             tokens = tokenizer(text, padding=True, return_tensors="pt")
@@ -145,9 +145,10 @@ def get_audio_embedder(model="CLAP"):
     if model == "CLAP":
         model = ClapModel.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
         feature_extractor = AutoFeatureExtractor.from_pretrained("laion/clap-htsat-unfused")
-        print("Make sure you upsample the audio to a sampling rate of 48000 before passing it to the audio embedder!")
 
         def audio_embedder(audio):
+            
+            # upsample the audio to a sampling rate of 48000 before passing it to the audio embedder
             inputs = feature_extractor(audio, return_tensors="pt", sampling_rate=48000)
 
             for k, v in inputs.items():

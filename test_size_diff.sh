@@ -1,0 +1,1 @@
+accelerate launch --config_file configs/accelerate_local.yaml test_size_diff.py --config configs/accelerate_vocoder_v1.yaml

@@ -79,7 +79,7 @@ class VDiffusion(Diffusion):
         alpha, beta = torch.cos(angle), torch.sin(angle)
         return alpha, beta
 
-    def forward(self, x: Tensor, init_image: Optional[Tensor] = None, **kwargs) -> Tensor:  # type: ignore
+    def forward(self, x: Tensor, **kwargs) -> Tensor:  # type: ignore
         batch_size, device = x.shape[0], x.device
         # Sample amount of noise to add for each batch element
         sigmas = self.sigma_distribution(num_samples=batch_size, device=device)
@@ -90,9 +90,6 @@ class VDiffusion(Diffusion):
         alphas, betas = self.get_alpha_beta(sigmas_batch)
         x_noisy = alphas * x + betas * noise
         v_target = alphas * noise - betas * x
-        # concat the conditional image with the noisy x
-        if init_image is not None:
-            x_noisy = torch.cat([x_noisy, init_image], dim=1)
         # Predict velocity and return loss
         v_pred = self.net(x_noisy, sigmas, **kwargs)
         return self.loss_fn(v_pred, v_target)

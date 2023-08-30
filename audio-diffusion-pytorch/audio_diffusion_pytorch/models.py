@@ -3,10 +3,11 @@ from math import floor
 from typing import Any, Callable, Optional, Sequence, Tuple, Union
 
 import torch
+import torch.nn.functional as F
 from einops import pack, rearrange, unpack
 from torch import Generator, Tensor, nn
 
-from .components import AppendChannelsPlugin, MelSpectrogram
+from .components import AppendChannelsPlugin, MelSpectrogram, DurationPredictor
 from .diffusion import ARVDiffusion, ARVSampler, VDiffusion, VSampler
 from .utils import (
     closest_power_2,
@@ -294,6 +295,9 @@ class ConditionalDiffusionLLM(DiffusionModel):
     def __init__(
         self,
         net_t: Callable,
+        text_emb_channels: int,
+        audio_emb_channels: int,
+        max_len: int,
         in_channels: int = 1,  # Ignored: channels are automatically batched.
         **kwargs,
     ):
@@ -304,29 +308,70 @@ class ConditionalDiffusionLLM(DiffusionModel):
             **kwargs,
         )
 
+        self.max_len = max_len
+        self.duration_predictor = DurationPredictor(text_emb_channels, audio_emb_channels)
 
-    def forward(self, x: Tensor, input_text_embedding: Tensor, *args, **kwargs) -> Tensor:  # type: ignore
+        # To append text emb to wav noise, has to be same size
+        self.sentence_to_audio = nn.Sequential(
+            nn.Linear(text_emb_channels, 2048),
+            nn.ReLU(),
+            nn.Linear(2048, max_len),
+            nn.Sigmoid()
+        )
+
+        self.duration_loss = nn.L1Loss()
+
+    def forward(self, 
+                x: Tensor,
+                input_text_embedding: Tensor,
+                audio_text_embedding: Tensor, 
+                audio_lenght: int,
+                *args, 
+                **kwargs) -> Tensor:  # type: ignore
 
         # Pack wave channels
         x = rearrange(x, "b c t -> (b c) 1 t")
-        return super().forward(x, *args, append_channels=input_text_embedding, **kwargs)
+
+        # Warp embeddings to wav size
+        audio_text = self.sentence_to_audio(input_text_embedding)
+        loss, loss_dict = super().forward(x, *args, append_channels=audio_text, **kwargs)
+
+        # Compute duration prediction loss
+        predicted_lenght = self.duration_predictor(text_emb=input_text_embedding, audio_emb=audio_text_embedding)
+        d_loss = self.duration_loss(predicted_lenght, audio_lenght/self.max_len)
+
+        # update loss_dict
+        loss += d_loss
+        loss_dict["duration_loss"] = d_loss
+        
+        return loss, loss_dict
 
 
     @torch.no_grad()
     def sample(  # type: ignore
-        self, spectrogram: Tensor, input_text_embedding: Tensor, generator: Optional[Generator] = None, **kwargs
+        self, 
+        input_text_embedding: Tensor, 
+        audio_text_embedding: Tensor,
+        generator: Optional[Generator] = None, 
+        **kwargs
     ) -> Tensor:  # type: ignore
-        # Pack channels and flatten spectrogram
-        spectrogram, ps = pack([spectrogram], "* f l")
-        spectrogram_flat = self.to_flat(spectrogram)
+                
+        # Compute duration prediction loss
+        predicted_lenght = self.duration_predictor(text_emb=input_text_embedding, audio_emb=audio_text_embedding)
 
-        # Get start noise same as VITS prediction size
-        noise = randn_like(spectrogram_flat, generator=generator)
+        # Get start noise 
+        bs = input_text_embedding.size()[0]
+        noise_shape = (bs, 1, int(predicted_lenght[0].item() * self.max_len))
+        noise = torch.randn(noise_shape, generator=generator).to(input_text_embedding)
+        # Pad for the audio_text warping
+        noise = F.pad(noise, (0, self.max_len - noise_shape[-1], 0, 0, 0, 0), 'constant', 0)
 
-        waveform = super().sample(noise, append_channels=input_text_embedding, **kwargs)
+        audio_text = self.sentence_to_audio(input_text_embedding)
+        waveform = super().sample(noise, append_channels=audio_text, **kwargs)
+
         # Unpack wave channels
         waveform = rearrange(waveform, "... 1 t -> ... t")
-        waveform = unpack(waveform, ps, "* t")[0]
+        waveform = torch.reshape(waveform, shape=(bs, 1, self.max_len))
         return waveform
 
 

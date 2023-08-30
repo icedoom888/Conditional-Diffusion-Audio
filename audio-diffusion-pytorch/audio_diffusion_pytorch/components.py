@@ -245,3 +245,34 @@ class MelSpectrogram(nn.Module):
             mel_spectrogram = torch.log(torch.clamp(mel_spectrogram, min=1e-5))
         # Unpack non-spectrogram dimension
         return unpack(mel_spectrogram, ps, "* f l")[0]
+
+
+class DurationPredictor(nn.Module):
+    def __init__(
+        self,
+        text_emb_channels: int, 
+        audio_emb_channels: int,
+    ):
+        super().__init__()
+
+        self.text_emb_channels = text_emb_channels
+        self.audio_emb_channels = audio_emb_channels
+        
+        self.model = nn.Sequential(
+            nn.Linear(self.audio_emb_channels + self.text_emb_channels, 256),
+            nn.ReLU(),
+            nn.Linear(256, 32),
+            nn.ReLU(),
+            nn.Linear(32, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, text_emb: Tensor, audio_emb: Tensor) -> Tensor:
+        # Pack non-time dimension
+        full_emb = torch.cat((text_emb, audio_emb), dim=2)
+        full_emb = torch.squeeze(full_emb, dim=1)
+
+        # use model to predict
+        pred = self.model(full_emb)
+        
+        return pred

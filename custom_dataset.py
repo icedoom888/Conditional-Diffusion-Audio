@@ -128,7 +128,10 @@ class SlidingWindow(Dataset):
         y_mask = torch.from_numpy(data["y_mask"])
         z_text = torch.from_numpy(data["z_text"])
         clap_embed = torch.from_numpy(data["clap_embed"])
+        sentence_embed = torch.from_numpy(data["sentence_embed"])
         audio = torch.from_numpy(data["audio"])
+
+        audio_lenght = audio.size()[0]
 
         if audio.ndim == 1:
             audio = audio[None, :]
@@ -211,7 +214,9 @@ class SlidingWindow(Dataset):
             "y_mask": y_mask,
             "z_text": z_text,
             "clap_embed": clap_embed,
+            "sentence_embed": sentence_embed,
             "audio": audio,
+            "audio_lenght": audio_lenght,
             "z_audio_mask": z_audio_mask,
             "z_text_mask": z_text_mask,
             "y_mask_mask": y_mask_mask,

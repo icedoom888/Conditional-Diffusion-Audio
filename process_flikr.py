@@ -13,6 +13,8 @@ def process_filelist(filelist, skip_long=True):
     # initiate models
     audio_embedder = utils_diffusion.get_audio_embedder(model="CLAP")
     model, hps = utils_diffusion.load_vits_model(hps_path="vits/configs/ljs_base.json", checkpoint_path="vits/pretrained_ljs.pth")
+    model = model.cuda()
+    model = model.eval()
     audio_to_z = utils_diffusion.get_audio_to_Z(model, hps)
     text_to_z = utils_diffusion.get_text_to_Z(model)
     sentence_embedder = utils_diffusion.get_sentence_embedder(model='all-MiniLM-L6-v2')
@@ -98,6 +100,9 @@ if __name__ == "__main__":
 
     for split, filelist in zip(splits, files):
         # if split == 'test':
-        #     transcribe_filelist(filelist)
+            # transcribe_filelist(filelist)
+            # print(filelist)
         process_filelist(filelist)
+
+
 

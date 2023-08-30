@@ -2,55 +2,29 @@
 import argparse
 import os
 import torch
-# torch.cuda.empty_cache()
 import torch.nn.functional as F
-from torch.utils import data
-from torch import distributed as dist
-from torch import nn, autograd, optim
+from accelerate import Accelerator
+from accelerate.logging import get_logger
+from accelerate.utils import DistributedDataParallelKwargs
 
 from diffusers.optimization import get_scheduler
 from diffusers.training_utils import EMAModel, set_seed
 from tqdm.auto import tqdm
 import custom_dataset
-from torchvision.utils import save_image
 from omegaconf import OmegaConf
-from audio_diffusion_pytorch import DiffusionModel, UNetV0, VDiffusion, VSampler, DiffusionVocoder, ConditionalDiffusionVocoder
-from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model, get_Z_to_audio
-from einops import rearrange
+from audio_diffusion_pytorch import UNetV0, VDiffusion, VSampler, ConditionalDiffusionVocoder, ConditionalDiffusionLLM
 import wandb
 from torchaudio import save as save_audio
 from utils import print_sizes, CompositeLoss
 import warnings
 warnings.filterwarnings("ignore")
 
-def get_rank():
-    if not dist.is_available():
-        return 0
-    if not dist.is_initialized():
-        return 0
-    return dist.get_rank()
-
-def synchronize():
-    if not dist.is_available():
-        return
-
-    if not dist.is_initialized():
-        return
-
-    world_size = dist.get_world_size()
-
-    if world_size == 1:
-        return
-
-    dist.barrier()
-
+logger = get_logger(__name__)
 
 def main(conf):
     train_args = conf.training
     model_args = conf.model
     loss_args = conf.loss
-
-    print(args)
 
     # create working directory
     output_dir = train_args.output_dir
@@ -58,6 +32,14 @@ def main(conf):
     os.makedirs(os.path.join(output_dir, "samples"), exist_ok=True)
     # seed alls
     set_seed(42)
+
+    accelerator = Accelerator(
+        kwargs_handlers=[DistributedDataParallelKwargs(broadcast_buffers=False)],
+        gradient_accumulation_steps=train_args.gradient_accumulation_steps,
+        mixed_precision=train_args.mixed_precision,
+        log_with="wandb"
+    )
+
 
     if train_args.dataset_name == 'SlidingWindow':
         print(f'Building dataset: {train_args.dataset_name}')
@@ -72,30 +54,17 @@ def main(conf):
     else:
         raise ValueError
 
-    args.n_gpu = int(os.environ['WORLD_SIZE']) if 'WORLD_SIZE' in os.environ else 1
-    args.distributed = args.n_gpu > 1
-
-    if args.distributed:
-        torch.cuda.set_device(args.local_rank)
-        torch.distributed.init_process_group(backend='nccl', init_method='env://')
-        synchronize()
-
-    # Dataloaders
-    train_dataloader = torch.utils.data.DataLoader(train_dataset,
-                                                   batch_size=train_args.train_batch_size, 
-                                                   sampler=data.distributed.DistributedSampler(train_dataset, shuffle=False))
-    val_dataloader = torch.utils.data.DataLoader(val_dataset, 
-                                                 batch_size=train_args.eval_batch_size, 
-                                                 sampler=data.distributed.DistributedSampler(val_dataset, shuffle=False))
+    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.train_batch_size, shuffle=False)
+    val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True)
 
     # setup diffusion loss
     loss_fn = CompositeLoss(loss_args)
 
     # Set up model
-    model = ConditionalDiffusionVocoder(
-        mel_n_fft=1024, # Mel-spectrogram n_fft
-        mel_channels=192, # Mel-spectrogram channels
-        mel_sample_rate=train_args.sr, # sample rate
+    model = ConditionalDiffusionLLM(
+        text_emb_channels=384,
+        audio_emb_channels=512,
+        max_len=98304,
         net_t=UNetV0,
         dim=1, # 2D U-Net working on images
         in_channels=3, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
@@ -116,16 +85,6 @@ def main(conf):
         embedding_max_length=model_args.embedding_max_length, # U-Net: text embedding maximum length (default for T5-base)
         embedding_features=model_args.embedding_features, # text embedding dimensions, is used for CFG
     )
-    model.to('cuda')
-
-    # Multi-GPU
-    if args.distributed:
-        model = nn.parallel.DistributedDataParallel(
-            model,
-            device_ids=[args.local_rank],
-            output_device=args.local_rank,
-            broadcast_buffers=False,
-        )
 
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -143,10 +102,12 @@ def main(conf):
         train_args.gradient_accumulation_steps,
     )
 
+    model, optimizer, train_dataloader, val_dataloader, lr_scheduler = accelerator.prepare(model, optimizer, train_dataloader, val_dataloader, lr_scheduler)
     global_step = 0
+    
     # load weights
     if os.path.exists(os.path.join(output_dir, f"model_latest.pt")):
-        map_location = "cpu"
+        map_location = {"cuda:%d" % 0: "cuda:%d" % accelerator.process_index}
         state_dicts = torch.load(os.path.join(output_dir, f"model_latest.pt"), map_location=map_location)
         model.load_state_dict(state_dicts["model"])
         optimizer.load_state_dict(state_dicts["optimizer"])
@@ -164,17 +125,21 @@ def main(conf):
     if global_step > 0:
         ema_model.optimization_step = global_step
 
-    # Pass the config dictionary when you initialize W&B
-    run = wandb.init(
-        entity="ethz-mtc",
-        group="conditional-vocoder",
-        project=train_args.wandb_project
-    )
-
+    if accelerator.is_main_process:
+        # initialize wandb
+        print(train_args.wandb_project)
+        accelerator.init_trackers(
+            project_name=train_args.wandb_project,
+            config=OmegaConf.to_container(conf, resolve=True),
+            init_kwargs={"wandb": {"entity": "ethz-mtc", "group": "conditional-vocoder"}}
+            )
+    
     for epoch in range(train_args.start_epoch, train_args.num_epochs):
-        progress_bar = tqdm(total=len(train_dataloader), initial=epoch)
+        progress_bar = tqdm(total=len(train_dataloader), initial=epoch, disable=not accelerator.is_local_main_process)
         progress_bar.set_description(f"Epoch {epoch}")
 
+        model.train()
+        
         for step, batch in enumerate(train_dataloader):
 
             # extract the batch
@@ -183,7 +148,9 @@ def main(conf):
             z_audio_mask = batch["z_audio_mask"]
             z_text = batch["z_text"]
             z_text_mask = batch["z_text_mask"]
-            embeds = batch["clap_embed"]
+            clap_embed = batch["clap_embed"]
+            sentence_embed = batch["sentence_embed"] 
+            audio_lenght = batch["audio_lenght"]
 
             if train_args.dataset_name == 'SlidingWindow':
                 z_audio = torch.squeeze(z_audio, 1)
@@ -191,24 +158,30 @@ def main(conf):
                 z_audio_mask = torch.squeeze(z_audio_mask, 1)
                 z_text_mask = torch.squeeze(z_text_mask, 1)
 
+            # print_sizes(batch)
 
             # process the pair to get the latents Z and the embeddings
             input_spec = z_audio
             
-            loss, loss_dict = model(
-                audio,
-                input_spec=input_spec,
-                embedding=embeds,
-                embedding_mask_proba=train_args.CFG_mask_proba
-            )
+            with accelerator.accumulate(model):
+                # run forward 
+                loss, loss_dict = model(
+                    audio,
+                    input_text_embedding=sentence_embed,
+                    audio_text_embedding=clap_embed,
+                    audio_lenght=audio_lenght,
+                    embedding=clap_embed,
+                    embedding_mask_proba=train_args.CFG_mask_proba
+                )    
+                accelerator.backward(loss)
 
-            loss.backward()
-            optimizer.step()
-            lr_scheduler.step()
-
-            if train_args.use_ema:
-                ema_model.step(model)
-            optimizer.zero_grad()
+                if accelerator.sync_gradients:
+                    accelerator.clip_grad_norm_(model.parameters(), 1.0)
+                optimizer.step()
+                lr_scheduler.step()
+                if train_args.use_ema:
+                    ema_model.step(model)
+                optimizer.zero_grad()
 
             progress_bar.update(1)
 
@@ -231,16 +204,18 @@ def main(conf):
             if (global_step) % train_args.wandb_log_every == 0 or global_step == 1:
                 wandb_log = logs.copy()
                 wandb_log.pop("step")
-                wandb.log(wandb_log, step=global_step)
-        
+                accelerator.log(wandb_log, step=global_step)
+
         progress_bar.close()
 
+        accelerator.wait_for_everyone()
+
         # Generate sample images for visual inspection
-        if get_rank() == 0:
+        if accelerator.is_main_process:
             if ((epoch + 1) % train_args.save_model_epochs == 0
                     or (epoch + 1) % train_args.save_images_epochs == 0
                     or epoch == train_args.num_epochs - 1):
-                unet = model
+                unet = accelerator.unwrap_model(model)
                 if train_args.use_ema:
                     ema_model.copy_to(unet.parameters())
 
@@ -263,7 +238,9 @@ def main(conf):
                 z_audio_mask = eval_batch["z_audio_mask"]
                 z_text = eval_batch["z_text"]
                 z_text_mask = eval_batch["z_text_mask"]
-                embeds = eval_batch["clap_embed"]
+                clap_embed = eval_batch["clap_embed"]
+                sentence_embed = eval_batch["sentence_embed"] 
+                audio_lenght = eval_batch["audio_lenght"]
 
                 if train_args.dataset_name == 'SlidingWindow':
                     z_audio = torch.squeeze(z_audio, 1)
@@ -274,16 +251,16 @@ def main(conf):
                 # print_sizes(eval_batch)
                 
                 # Turn noise into new audio sample with diffusion
-                with torch.no_grad():
-                    model_samples = model.module.sample(
-                        spectrogram=z_text.unsqueeze(1).cuda(),
-                        embedding=embeds, # ImageBind / CLAP
-                        embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
-                        num_steps=50 # Higher for better quality, suggested num_steps: 10-100
-                    )
+                model_samples = model.sample(
+                    input_text_embedding=sentence_embed,
+                    audio_text_embedding=clap_embed,
+                    embedding=clap_embed, # ImageBind / CLAP
+                    embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
+                    num_steps=50 # Higher for better quality, suggested num_steps: 10-100
+                )
 
-                    # calculate loss between samples and original
-                    eval_loss, eval_loss_dict = loss_fn(model_samples, audio)
+                # calculate loss between samples and original
+                eval_loss, eval_loss_dict = loss_fn(model_samples, audio)
 
                 for i in range(model_samples.shape[0]):
                     sample = model_samples[i]
@@ -296,7 +273,7 @@ def main(conf):
                     save_audio(gt_path, audio[i].cpu(), train_args.sr)
 
                     # log to wandb
-                    wandb.log({"audio_examples":
+                    accelerator.log({"audio_examples":
                                      [
                                         wandb.Audio(sample_path, caption=f"Sample {i}", sample_rate=train_args.sr),
                                         wandb.Audio(gt_path, caption=f"Ground Truth {i}", sample_rate=train_args.sr)
@@ -310,24 +287,20 @@ def main(conf):
                     eval_logs[loss_name] = eval_loss_dict[loss_name].detach().item()
 
                 # log to wandb
-                wandb.log(eval_logs, step=global_step)
+                accelerator.log(eval_logs, step=global_step)
 
+
+        accelerator.wait_for_everyone()
+
+    accelerator.end_training()
 
 
 if __name__ == "__main__":
-
-    # Set available GPUS
-    torch.cuda.empty_cache()
-    os.environ["CUDA_VISIBLE_DEVICES"]="4,5,6"
-    # os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
-
-
     # parse arguments for rank
     parser = argparse.ArgumentParser()
-    parser.add_argument('--local-rank', type=int, default=0)
     parser.add_argument("--config", type=str, default="configs/train_conf.yaml")
-
     args = parser.parse_args()
+
     conf = OmegaConf.load(args.config)
 
     main(conf)
