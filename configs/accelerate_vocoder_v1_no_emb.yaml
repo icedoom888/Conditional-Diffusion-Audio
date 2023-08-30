@@ -1,6 +1,6 @@
 training:
-  output_dir: results/vocoder_v1_multiloss_long_dataset_no_emb
-  data_root: data/LJSProcessedFull
+  output_dir: results/vocoder_v1_no_emb
+  data_root: data/processed_LJSpeech
   dataset_name: SlidingWindow
   sr: 22050
   wandb_project: natural_voices
@@ -12,12 +12,12 @@ training:
   save_model_epochs: 50
   gradient_accumulation_steps: 2
   learning_rate: 1.e-4
-  lr_scheduler: constant
+  lr_scheduler: linear
   lr_warmup_steps: 500
   adam_beta1: 0.95
   adam_beta2: 0.999
   adam_epsilon: 1.e-8
-  CFG_mask_proba: 0
+  CFG_mask_proba: 1.0
   adam_weight_decay: 1.e-6
   use_ema: true
   ema_inv_gamma: 1

@@ -1,7 +1,7 @@
 training:
-  output_dir: results/vocoder_v1_multiloss_long_dataset_decay
-  data_root: data/LJSProcessedFull
-  dataset_name: LJSSlidingWindow
+  output_dir: results/vocoder_v1
+  data_root: data/processed_LJSpeech
+  dataset_name: SlidingWindow
   sr: 22050
   wandb_project: natural_voices
   wandb_log_every: 100

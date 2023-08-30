@@ -1,1 +1,1 @@
-accelerate launch --config_file configs/accelerate_hypnos.yaml train_vocoder.py --config configs/accelerate_vocoder_v2_flickr.yaml
+accelerate launch --config_file configs/accelerate_hypnos_monogpu.yaml train_vocoder.py --config configs/accelerate_vocoder_v1_no_emb.yaml

@@ -1,5 +1,5 @@
 training:
-  output_dir: results/vocoder_v1_multiloss_flickr_decay
+  output_dir: results/vocoder_v1_flickr
   data_root: data/processed_flickr
   dataset_name: SlidingWindow
   sr: 16000
