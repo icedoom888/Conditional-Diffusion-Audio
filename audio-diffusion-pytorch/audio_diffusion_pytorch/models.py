@@ -290,6 +290,47 @@ class ConditionalDiffusionVocoder(DiffusionModel):
         return waveform
 
 
+class ConditionalDiffusionLLM(DiffusionModel):
+    def __init__(
+        self,
+        net_t: Callable,
+        in_channels: int = 1,  # Ignored: channels are automatically batched.
+        **kwargs,
+    ):
+  
+        super().__init__(
+            net_t=AppendChannelsPlugin(net_t, channels=1),
+            in_channels=1,
+            **kwargs,
+        )
+
+
+    def forward(self, x: Tensor, input_text_embedding: Tensor, *args, **kwargs) -> Tensor:  # type: ignore
+
+        # Pack wave channels
+        x = rearrange(x, "b c t -> (b c) 1 t")
+        return super().forward(x, *args, append_channels=input_text_embedding, **kwargs)
+
+
+    @torch.no_grad()
+    def sample(  # type: ignore
+        self, spectrogram: Tensor, input_text_embedding: Tensor, generator: Optional[Generator] = None, **kwargs
+    ) -> Tensor:  # type: ignore
+        # Pack channels and flatten spectrogram
+        spectrogram, ps = pack([spectrogram], "* f l")
+        spectrogram_flat = self.to_flat(spectrogram)
+
+        # Get start noise same as VITS prediction size
+        noise = randn_like(spectrogram_flat, generator=generator)
+
+        waveform = super().sample(noise, append_channels=input_text_embedding, **kwargs)
+        # Unpack wave channels
+        waveform = rearrange(waveform, "... 1 t -> ... t")
+        waveform = unpack(waveform, ps, "* t")[0]
+        return waveform
+
+
+
 class DiffusionAR(DiffusionModel):
     def __init__(
         self,

@@ -11,10 +11,11 @@ os.environ["TOKENIZERS_PARALLELISM"]='true'
 
 def process_filelist(filelist, skip_long=True):
     # initiate models
-    text_embedder = utils_diffusion.get_text_embedder(model="CLAP")
+    audio_embedder = utils_diffusion.get_audio_embedder(model="CLAP")
     model, hps = utils_diffusion.load_vits_model(hps_path="vits/configs/ljs_base.json", checkpoint_path="vits/pretrained_ljs.pth")
     audio_to_z = utils_diffusion.get_audio_to_Z(model, hps)
     text_to_z = utils_diffusion.get_text_to_Z(model)
+    sentence_embedder = utils_diffusion.get_sentence_embedder(model='all-MiniLM-L6-v2')
 
     os.makedirs(os.path.join("data", f"processed_flickr/{split}"), exist_ok=True)
 
@@ -36,7 +37,8 @@ def process_filelist(filelist, skip_long=True):
         with torch.no_grad():
             z_audio = audio_to_z(torch.tensor(audio[None, :]).cuda())["z"]
             z_text, y_mask = text_to_z(text, hps=hps)
-            text_embed = text_embedder(text)
+            audio_embed = audio_embedder(audio)
+            sentence_embed = sentence_embedder(text)
 
         # save the embeddings
         file_path = os.path.join(root, data_root, data_split, filename.split('/')[-1].split('.')[0])
@@ -49,7 +51,8 @@ def process_filelist(filelist, skip_long=True):
             z_audio=z_audio.cpu().numpy(),
             y_mask=y_mask.cpu().numpy(),
             z_text=z_text.cpu().numpy(),
-            clap_embed=text_embed.cpu().numpy()
+            clap_embed=audio_embed.cpu().numpy(),
+            sentence_embed=sentence_embed.cpu().numpy(),
             )
     
     for filename in tqdm(filelist):
