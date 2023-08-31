@@ -11,4 +11,4 @@ mixed_precision: 'no'
 num_machines: 1
 num_processes: 1
 use_cpu: false
-gpu_ids: '3'
+gpu_ids: '2'

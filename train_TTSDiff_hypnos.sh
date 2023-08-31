@@ -1,0 +1,1 @@
+accelerate launch --config_file configs/accelerate_hypnos_monogpu.yaml train_TTSDiff.py --config configs/accelerate_TTSDiff_flickr.yaml
