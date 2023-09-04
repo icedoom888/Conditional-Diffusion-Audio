@@ -47,7 +47,7 @@ model:
 loss:
   use_l1: true
   l1_weight: 1.0
-  use_l2: false
+  use_l2: true
   l2_weight: 1.0
   use_mrstft: true
   mrstft_weight: 0.5

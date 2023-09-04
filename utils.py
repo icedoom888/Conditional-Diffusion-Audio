@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, Dict
 import torch.nn as nn
+import torch.nn.functional as F
 import torch
 import auraloss
 from torch import Tensor
@@ -15,12 +16,12 @@ class CompositeLoss(nn.Module):
 
         # add all losses
         if loss_args.use_l1 == True:
-            self.losses.append(nn.functional.l1_loss)
+            self.losses.append(F.l1_loss)
             self.weights.append(loss_args.l1_weight)
             self.loss_names.append('l1_loss')
         
         if loss_args.use_l2 == True:
-            self.losses.append(nn.functional.mse_loss)
+            self.losses.append(F.mse_loss)
             self.weights.append(loss_args.l2_weight)
             self.loss_names.append('l2_loss')
         
