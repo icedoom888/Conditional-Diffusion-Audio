@@ -321,7 +321,7 @@ class ConditionalDiffusionLLM(DiffusionModel):
             nn.Sigmoid()
         )
 
-        self.duration_loss = nn.L1Loss()
+        self.duration_loss = F.mse_loss()
 
     def forward(self, 
                 x: Tensor,
@@ -418,7 +418,7 @@ class ConditionalDiffusionPhonemeToWav(DiffusionModel):
 
         self.duration_predictor = DurationPredictor(out_size, audio_emb_channels)
 
-        self.duration_loss = nn.L1Loss()
+        self.duration_loss = F.mse_loss()
 
     def forward(self, 
                 x: Tensor,

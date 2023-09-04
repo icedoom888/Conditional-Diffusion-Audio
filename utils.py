@@ -15,12 +15,12 @@ class CompositeLoss(nn.Module):
 
         # add all losses
         if loss_args.use_l1 == True:
-            self.losses.append(torch.nn.functional.l1_loss)
+            self.losses.append(nn.functional.l1_loss)
             self.weights.append(loss_args.l1_weight)
             self.loss_names.append('l1_loss')
         
         if loss_args.use_l2 == True:
-            self.losses.append(torch.nn.functional.l2_loss)
+            self.losses.append(nn.functional.mse_loss)
             self.weights.append(loss_args.l2_weight)
             self.loss_names.append('l2_loss')
         
