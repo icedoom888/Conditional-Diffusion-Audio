@@ -3,7 +3,7 @@ import torch
 import os
 import numpy as np
 from torchvision.transforms import Normalize
-from utils import print_sizes
+from funcs import print_sizes, crop_or_pad_tensor
 
 # stats for normalization
 Z_AUDIO_MEAN_SMALL = -0.0270
@@ -129,6 +129,8 @@ class SlidingWindow(Dataset):
         z_text = torch.from_numpy(data["z_text"])
         clap_embed = torch.from_numpy(data["clap_embed"])
         sentence_embed = torch.from_numpy(data["sentence_embed"])
+        phoneme_embed = torch.from_numpy(data["phoneme_embed"])
+
         audio = torch.from_numpy(data["audio"])
 
         audio_lenght = audio.size()[0]
@@ -205,21 +207,20 @@ class SlidingWindow(Dataset):
             z_text = self.normalize(z_text)
             audio = audio / max(audio.max(), -audio.min())
         
-        # random audio phase flip
-        if torch.rand((1,)).item() > 0.5:
-            audio = -audio
+        phoneme_embed = crop_or_pad_tensor(phoneme_embed, target_size=256)
 
         data = {
-            "z_audio": z_audio,
-            "y_mask": y_mask,
-            "z_text": z_text,
+            "z_audio": z_audio.squeeze(1),
+            "y_mask": y_mask.squeeze(1),
+            "z_text": z_text.squeeze(1),
             "clap_embed": clap_embed,
             "sentence_embed": sentence_embed,
+            "phoneme_embed": phoneme_embed,
             "audio": audio,
             "audio_lenght": audio_lenght,
-            "z_audio_mask": z_audio_mask,
-            "z_text_mask": z_text_mask,
-            "y_mask_mask": y_mask_mask,
+            "z_audio_mask": z_audio_mask.squeeze(1),
+            "z_text_mask": z_text_mask.squeeze(1),
+            "y_mask_mask": y_mask_mask.squeeze(1),
             "offset": 0,
             "z_audio_length": self.max_len_seq,
         }
@@ -377,9 +378,10 @@ class Latent_Audio(Dataset):
 
 if __name__ == "__main__":
 
-    dataset = SlidingWindow(root='/home/alberto/conditional-diffusion-audio/data/LJSProcessedFull', mode="train")
+    dataset = SlidingWindow(root='/home/alberto/conditional-diffusion-audio/data/processed_LJSpeech', mode="train")
 
-    train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
+    train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=2, shuffle=False)
 
     for step, batch in enumerate(train_dataloader):
+        print_sizes(batch)
         exit()

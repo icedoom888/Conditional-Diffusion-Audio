@@ -40,6 +40,10 @@ model:
   use_embedding_cfg: true
   embedding_max_length: 64
   embedding_features: 512
+  embedding_features: 512
+  text_emb_channels: 192
+  max_wav_len: 98304
+  model_type: ConditionalDiffusionLLM
 
 loss:
   use_l1: true

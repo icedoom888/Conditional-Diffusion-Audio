@@ -13,7 +13,7 @@ from tqdm.auto import tqdm
 import custom_dataset
 from torchvision.utils import save_image
 from omegaconf import OmegaConf
-from audio_diffusion_pytorch import UNetV0, DiffusionVocoder, ConditionalDiffusionVocoder, ConditionalDiffusionLLM, VDiffusion, VSampler
+from audio_diffusion_pytorch import UNetV0, DiffusionVocoder, ConditionalDiffusionVocoder, ConditionalDiffusionLLM, ConditionalDiffusionPhonemeToWav, VDiffusion, VSampler
 from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model, get_Z_to_audio
 from einops import rearrange
 import wandb
@@ -40,8 +40,8 @@ def main(conf):
     loss_fn = CompositeLoss(loss_args)
 
     # Set up model
-    model = ConditionalDiffusionLLM(
-        text_emb_channels=384,
+    model = ConditionalDiffusionPhonemeToWav(
+        text_emb_channels=192,
         audio_emb_channels=512,
         max_len=98304,
         net_t=UNetV0,
@@ -72,28 +72,25 @@ def main(conf):
     audio_lenght = batch["audio_lenght"]
     clap_embed = batch["clap_embed"]
     sentence_embed = batch["sentence_embed"] 
-    z_audio = torch.squeeze(batch["z_audio"], 1)
-    z_text = torch.squeeze(batch["z_text"], 1)
-    z_audio_mask = torch.squeeze(batch["z_audio_mask"], 1)
-    z_text_mask = torch.squeeze(batch["z_text_mask"], 1)
+    phoneme_embed = batch["phoneme_embed"]
 
     print_sizes(batch)
 
     # run forward 
     loss, loss_dict = model(
-        audio,
-        input_text_embedding=sentence_embed,
-        audio_text_embedding=clap_embed,
-        audio_lenght=audio_lenght,
-        embedding=clap_embed,
-        embedding_mask_proba=train_args.CFG_mask_proba
-    )    
+                    audio,
+                    input_text_embedding=phoneme_embed,
+                    audio_text_embedding=clap_embed,
+                    audio_lenght=audio_lenght,
+                    embedding=clap_embed,
+                    embedding_mask_proba=train_args.CFG_mask_proba
+                )    
 
     print(loss, loss_dict)
 
     # Turn noise into new audio sample with diffusion
     model_samples = model.sample(
-        input_text_embedding=sentence_embed,
+        input_text_embedding=phoneme_embed,
         audio_text_embedding=clap_embed,
         embedding=clap_embed, # ImageBind / CLAP
         embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
@@ -104,6 +101,8 @@ def main(conf):
     eval_loss, eval_loss_dict = loss_fn(model_samples, audio)
 
     print(eval_loss, eval_loss_dict)
+
+    return
 
 
 

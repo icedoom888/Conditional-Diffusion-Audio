@@ -6,6 +6,8 @@ import torch
 import torch.nn.functional as F
 from einops import pack, rearrange, unpack
 from torch import Generator, Tensor, nn
+from collections import OrderedDict
+
 
 from .components import AppendChannelsPlugin, MelSpectrogram, DurationPredictor
 from .diffusion import ARVDiffusion, ARVSampler, VDiffusion, VSampler
@@ -323,8 +325,9 @@ class ConditionalDiffusionLLM(DiffusionModel):
 
     def forward(self, 
                 x: Tensor,
-                input_text_embedding: Tensor,
-                audio_text_embedding: Tensor, 
+                text_embedding: Tensor,
+                phoneme_embedding: Tensor,
+                audio_embedding: Tensor,
                 audio_lenght: int,
                 *args, 
                 **kwargs) -> Tensor:  # type: ignore
@@ -333,11 +336,11 @@ class ConditionalDiffusionLLM(DiffusionModel):
         x = rearrange(x, "b c t -> (b c) 1 t")
 
         # Warp embeddings to wav size
-        audio_text = self.sentence_to_audio(input_text_embedding)
+        audio_text = self.sentence_to_audio(text_embedding)
         loss, loss_dict = super().forward(x, *args, append_channels=audio_text, **kwargs)
 
         # Compute duration prediction loss
-        predicted_lenght = self.duration_predictor(text_emb=input_text_embedding, audio_emb=audio_text_embedding)
+        predicted_lenght = self.duration_predictor(text_emb=text_embedding, audio_emb=audio_embedding)
         d_loss = self.duration_loss(predicted_lenght, audio_lenght/self.max_len)
 
         # update loss_dict
@@ -350,23 +353,24 @@ class ConditionalDiffusionLLM(DiffusionModel):
     @torch.no_grad()
     def sample(  # type: ignore
         self, 
-        input_text_embedding: Tensor, 
-        audio_text_embedding: Tensor,
+        text_embedding: Tensor,
+        phoneme_embedding: Tensor,
+        audio_embedding: Tensor,
         generator: Optional[Generator] = None, 
         **kwargs
     ) -> Tensor:  # type: ignore
                 
         # Compute duration prediction loss
-        predicted_lenght = self.duration_predictor(text_emb=input_text_embedding, audio_emb=audio_text_embedding)
+        predicted_lenght = self.duration_predictor(text_emb=text_embedding, audio_emb=audio_embedding)
 
         # Get start noise 
-        bs = input_text_embedding.size()[0]
+        bs = text_embedding.size()[0]
         noise_shape = (bs, 1, int(predicted_lenght[0].item() * self.max_len))
-        noise = torch.randn(noise_shape, generator=generator).to(input_text_embedding)
+        noise = torch.randn(noise_shape, generator=generator).to(text_embedding)
         # Pad for the audio_text warping
         noise = F.pad(noise, (0, self.max_len - noise_shape[-1], 0, 0, 0, 0), 'constant', 0)
 
-        audio_text = self.sentence_to_audio(input_text_embedding)
+        audio_text = self.sentence_to_audio(text_embedding)
         waveform = super().sample(noise, append_channels=audio_text, **kwargs)
 
         # Unpack wave channels
@@ -374,6 +378,116 @@ class ConditionalDiffusionLLM(DiffusionModel):
         waveform = torch.reshape(waveform, shape=(bs, 1, self.max_len))
         return waveform
 
+
+class ConditionalDiffusionPhonemeToWav(DiffusionModel):
+    def __init__(
+        self,
+        net_t: Callable,
+        text_emb_channels: int,
+        audio_emb_channels: int,
+        max_len: int,
+        in_channels: int = 1,  # Ignored: channels are automatically batched.
+        **kwargs,
+    ):
+  
+        super().__init__(
+            net_t=AppendChannelsPlugin(net_t, channels=1),
+            in_channels=1,
+            **kwargs,
+        )
+
+        self.max_len = max_len
+            
+        # To append text emb to wav noise, has to be same size
+        self.phoneme_to_emb = nn.Sequential(
+            nn.Conv1d(text_emb_channels, 512, kernel_size=5, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(512, 1024, kernel_size=5, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(1024, 1024, kernel_size=5, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(1024, 512, kernel_size=5, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(512, 256, kernel_size=5, stride=2),
+            nn.ReLU()
+        )
+
+        out_size = 1280
+        self.fw = nn.Linear(in_features=out_size, out_features=max_len)
+        self.sigmoid = nn.Sigmoid()
+
+        self.duration_predictor = DurationPredictor(out_size, audio_emb_channels)
+
+        self.duration_loss = nn.L1Loss()
+
+    def forward(self, 
+                x: Tensor,
+                text_embedding: Tensor,
+                phoneme_embedding: Tensor,
+                audio_embedding: Tensor,
+                audio_lenght: int,
+                *args, 
+                **kwargs) -> Tensor:  # type: ignore
+
+        # Pack wave channels
+        x = rearrange(x, "b c t -> (b c) 1 t")
+
+        # Permute phoneme embedding 
+        input_phoneme_embedding = phoneme_embedding.squeeze(dim=1)
+
+        # Warp embeddings to wav size
+        phoneme_emb = self.phoneme_to_emb(input_phoneme_embedding)
+        phoneme_emb_flat = torch.flatten(phoneme_emb, start_dim=1).unsqueeze(1)
+
+        audio_text = self.sigmoid(self.fw(phoneme_emb_flat))
+        loss, loss_dict = super().forward(x, *args, append_channels=audio_text, **kwargs)
+
+        # Compute duration prediction loss
+        predicted_lenght = self.duration_predictor(text_emb=phoneme_emb_flat, audio_emb=audio_embedding)
+        d_loss = self.duration_loss(predicted_lenght, audio_lenght/self.max_len)
+
+        # update loss_dict
+        loss += d_loss
+        loss_dict["duration_loss"] = d_loss
+        
+        return loss, loss_dict
+
+
+    @torch.no_grad()
+    def sample(  # type: ignore
+        self, 
+        text_embedding: Tensor,
+        phoneme_embedding: Tensor,
+        audio_embedding: Tensor,
+        generator: Optional[Generator] = None, 
+        **kwargs
+    ) -> Tensor:  # type: ignore
+        
+        # Permute phoneme embedding 
+        input_phoneme_embedding = phoneme_embedding.squeeze(dim=1)
+
+        # Warp embeddings to wav size
+        phoneme_emb = self.phoneme_to_emb(input_phoneme_embedding)
+        phoneme_emb_flat = torch.flatten(phoneme_emb, start_dim=1).unsqueeze(1)
+
+        audio_text = self.sigmoid(self.fw(phoneme_emb_flat))
+
+        # Compute duration prediction loss
+        predicted_lenght = self.duration_predictor(text_emb=phoneme_emb_flat, audio_emb=audio_embedding)
+
+        # Get start noise 
+        bs = phoneme_embedding.size()[0]
+        noise_shape = (bs, 1, int(predicted_lenght[0].item() * self.max_len))
+        noise = torch.randn(noise_shape, generator=generator).to(phoneme_embedding)
+        # Pad for the audio_text warping
+        noise = F.pad(noise, (0, self.max_len - noise_shape[-1], 0, 0, 0, 0), 'constant', 0)
+
+        waveform = super().sample(noise, append_channels=audio_text, **kwargs)
+
+        # Unpack wave channels
+        waveform = rearrange(waveform, "... 1 t -> ... t")
+        waveform = torch.reshape(waveform, shape=(bs, 1, self.max_len))
+        return waveform
 
 
 class DiffusionAR(DiffusionModel):

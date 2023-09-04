@@ -18,7 +18,8 @@ from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model,
 from einops import rearrange
 import wandb
 from torchaudio import save as save_audio
-from utils import print_sizes, CompositeLoss
+from funcs import print_sizes
+from utils import CompositeLoss
 import warnings
 warnings.filterwarnings("ignore")
 

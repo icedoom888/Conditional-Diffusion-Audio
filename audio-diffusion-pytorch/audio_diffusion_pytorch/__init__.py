@@ -18,5 +18,6 @@ from .models import (
     DiffusionVocoder,
     EncoderBase,
     ConditionalDiffusionVocoder,
-    ConditionalDiffusionLLM
+    ConditionalDiffusionLLM,
+    ConditionalDiffusionPhonemeToWav
 )

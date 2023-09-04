@@ -1,8 +1,8 @@
 training:
-  output_dir: results/TTSDiff
-  data_root: data/processed_LJSpeech
+  output_dir: results/Phoneme2Wav_flickr
+  data_root: data/processed_flickr
   dataset_name: SlidingWindow
-  sr: 22050
+  sr: 16000
   wandb_project: natural_voices
   wandb_log_every: 100
   train_batch_size: 20
@@ -42,7 +42,7 @@ model:
   embedding_features: 512
   text_emb_channels: 192
   max_wav_len: 98304
-  model_type: ConditionalDiffusionLLM
+  model_type: ConditionalDiffusionPhonemeToWav
 
 loss:
   use_l1: true

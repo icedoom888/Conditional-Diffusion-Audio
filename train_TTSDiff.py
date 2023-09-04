@@ -10,12 +10,11 @@ from accelerate.utils import DistributedDataParallelKwargs
 from diffusers.optimization import get_scheduler
 from diffusers.training_utils import EMAModel, set_seed
 from tqdm.auto import tqdm
-import custom_dataset
 from omegaconf import OmegaConf
-from audio_diffusion_pytorch import UNetV0, VDiffusion, VSampler, ConditionalDiffusionVocoder, ConditionalDiffusionLLM
 import wandb
 from torchaudio import save as save_audio
-from utils import print_sizes, CompositeLoss
+from utils import CompositeLoss, get_model, get_datasets
+from funcs import print_sizes
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -40,20 +39,8 @@ def main(conf):
         log_with="wandb"
     )
 
-
-    if train_args.dataset_name == 'SlidingWindow':
-        print(f'Building dataset: {train_args.dataset_name}')
-        train_dataset = custom_dataset.SlidingWindow(root=train_args.data_root, mode="train", sr=train_args.sr)
-        val_dataset = custom_dataset.SlidingWindow(root=train_args.data_root, mode="val", sr=train_args.sr)
-    
-    elif train_args.dataset_name == 'Latent_Audio':
-        print(f'Building dataset: {train_args.dataset_name}')
-        train_dataset = custom_dataset.Latent_Audio(root=train_args.data_root, mode="train")
-        val_dataset = custom_dataset.Latent_Audio(root=train_args.data_root, mode="val")
-    
-    else:
-        raise ValueError
-
+    # Get datasets and dataloaders
+    train_dataset, val_dataset = get_datasets(train_args)
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=train_args.train_batch_size, shuffle=False)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=train_args.eval_batch_size, shuffle=True)
 
@@ -61,31 +48,9 @@ def main(conf):
     loss_fn = CompositeLoss(loss_args)
 
     # Set up model
-    model = ConditionalDiffusionLLM(
-        text_emb_channels=384,
-        audio_emb_channels=512,
-        max_len=98304,
-        net_t=UNetV0,
-        dim=1, # 2D U-Net working on images
-        in_channels=3, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
-        out_channels = 1, # 1 for the output image
-        channels=list(model_args.channels), # U-Net: number of channels per layer
-        factors=list(model_args.factors), # U-Net: image size reduction per layer
-        items=list(model_args.layers), # U-Net: number of layers
-        attentions=list(model_args.attentions), # U-Net: number of attention layers
-        cross_attentions=list(model_args.cross_attentions), # U-Net: number of cross attention layers
-        attention_heads=model_args.attention_heads, # U-Net: number of attention heads per attention item
-        attention_features=model_args.attention_features , # U-Net: number of attention features per attention item
-        diffusion_t=VDiffusion, # The diffusion method used
-        sampler_t=VSampler, # The diffusion sampler used
-        loss_fn=loss_fn, # The loss function used
-        use_text_conditioning=False, # U-Net: enables text conditioning (default T5-base)
-        use_additional_time_conditioning=model_args.use_additional_time_conditioning, # U-Net: enables additional time conditionings
-        use_embedding_cfg=model_args.use_embedding_cfg, # U-Net: enables classifier free guidance
-        embedding_max_length=model_args.embedding_max_length, # U-Net: text embedding maximum length (default for T5-base)
-        embedding_features=model_args.embedding_features, # text embedding dimensions, is used for CFG
-    )
-
+    model = get_model(model_args, loss_fn)
+    
+    # Set up optimizer
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=train_args.learning_rate,
@@ -94,6 +59,7 @@ def main(conf):
         eps=train_args.adam_epsilon,
     )
 
+    # Set up scheduler
     lr_scheduler = get_scheduler(
         train_args.lr_scheduler,
         optimizer=optimizer,
@@ -102,6 +68,7 @@ def main(conf):
         train_args.gradient_accumulation_steps,
     )
 
+    # Accelerate
     model, optimizer, train_dataloader, val_dataloader, lr_scheduler = accelerator.prepare(model, optimizer, train_dataloader, val_dataloader, lr_scheduler)
     global_step = 0
     
@@ -144,31 +111,20 @@ def main(conf):
 
             # extract the batch
             audio = batch["audio"]
-            z_audio = batch["z_audio"]
-            z_audio_mask = batch["z_audio_mask"]
-            z_text = batch["z_text"]
-            z_text_mask = batch["z_text_mask"]
             clap_embed = batch["clap_embed"]
             sentence_embed = batch["sentence_embed"] 
+            phoneme_embed = batch["phoneme_embed"]
             audio_lenght = batch["audio_lenght"]
 
-            if train_args.dataset_name == 'SlidingWindow':
-                z_audio = torch.squeeze(z_audio, 1)
-                z_text = torch.squeeze(z_text, 1)
-                z_audio_mask = torch.squeeze(z_audio_mask, 1)
-                z_text_mask = torch.squeeze(z_text_mask, 1)
-
             # print_sizes(batch)
-
-            # process the pair to get the latents Z and the embeddings
-            input_spec = z_audio
             
             with accelerator.accumulate(model):
                 # run forward 
                 loss, loss_dict = model(
                     audio,
-                    input_text_embedding=sentence_embed,
-                    audio_text_embedding=clap_embed,
+                    text_embedding=sentence_embed,
+                    phoneme_embedding=phoneme_embed,
+                    audio_embedding=clap_embed,
                     audio_lenght=audio_lenght,
                     embedding=clap_embed,
                     embedding_mask_proba=train_args.CFG_mask_proba
@@ -234,26 +190,17 @@ def main(conf):
 
                 # extract the batch
                 audio = eval_batch["audio"]
-                z_audio = eval_batch["z_audio"]
-                z_audio_mask = eval_batch["z_audio_mask"]
-                z_text = eval_batch["z_text"]
-                z_text_mask = eval_batch["z_text_mask"]
                 clap_embed = eval_batch["clap_embed"]
                 sentence_embed = eval_batch["sentence_embed"] 
                 audio_lenght = eval_batch["audio_lenght"]
-
-                if train_args.dataset_name == 'SlidingWindow':
-                    z_audio = torch.squeeze(z_audio, 1)
-                    z_text = torch.squeeze(z_text, 1)
-                    z_audio_mask = torch.squeeze(z_audio_mask, 1)
-                    z_text_mask = torch.squeeze(z_text_mask, 1)
 
                 # print_sizes(eval_batch)
                 
                 # Turn noise into new audio sample with diffusion
                 model_samples = model.sample(
-                    input_text_embedding=sentence_embed,
-                    audio_text_embedding=clap_embed,
+                    text_embedding=sentence_embed,
+                    phoneme_embedding=phoneme_embed,
+                    audio_embedding=clap_embed,
                     embedding=clap_embed, # ImageBind / CLAP
                     embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
                     num_steps=50 # Higher for better quality, suggested num_steps: 10-100
@@ -288,7 +235,6 @@ def main(conf):
 
                 # log to wandb
                 accelerator.log(eval_logs, step=global_step)
-
 
         accelerator.wait_for_everyone()
 

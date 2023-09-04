@@ -2,12 +2,12 @@ import librosa
 import torch
 import os
 import numpy as np
-from multiprocessing import Pool
 from vits import utils_diffusion
 from tqdm import tqdm
 from math import floor
 
 os.environ["TOKENIZERS_PARALLELISM"]='true'
+
 
 def process_filelist(filelist, skip_long=True):
     # initiate models
@@ -18,6 +18,8 @@ def process_filelist(filelist, skip_long=True):
     audio_to_z = utils_diffusion.get_audio_to_Z(model, hps)
     text_to_z = utils_diffusion.get_text_to_Z(model)
     sentence_embedder = utils_diffusion.get_sentence_embedder(model='all-MiniLM-L6-v2')
+    phoneme_embedder = utils_diffusion.get_phoneme_embedder(model)
+
 
     os.makedirs(os.path.join("data", f"processed_flickr/{split}"), exist_ok=True)
 
@@ -41,6 +43,7 @@ def process_filelist(filelist, skip_long=True):
             z_text, y_mask = text_to_z(text, hps=hps)
             audio_embed = audio_embedder(audio)
             sentence_embed = sentence_embedder(text)
+            phoneme_embed = phoneme_embedder(text, hps)[0]
 
         # save the embeddings
         file_path = os.path.join(root, data_root, data_split, filename.split('/')[-1].split('.')[0])
@@ -55,6 +58,7 @@ def process_filelist(filelist, skip_long=True):
             z_text=z_text.cpu().numpy(),
             clap_embed=audio_embed.cpu().numpy(),
             sentence_embed=sentence_embed.cpu().numpy(),
+            phoneme_embed=phoneme_embed.cpu().numpy(),
             )
     
     for filename in tqdm(filelist):

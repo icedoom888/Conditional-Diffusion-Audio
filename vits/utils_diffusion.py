@@ -125,6 +125,19 @@ def get_text_to_Z(net_g):
         return z, y_mask
     return text_to_Z
 
+def get_phoneme_embedder(net_g):
+
+    def text_to_phoneme_emb(text, hps):
+        stn_tst = get_text(text, hps)
+        with torch.no_grad():
+            x_tst = stn_tst.cuda().unsqueeze(0)
+            x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
+            # sid = torch.LongTensor([1]).cuda() speaker ID
+            x, m, logs, x_mask = net_g.enc_p(x_tst, x_tst_lengths)
+        return x, m, logs, x_mask
+    
+    return text_to_phoneme_emb
+
 
 def get_text_embedder(model="CLAP"):
     if model == "CLAP":
