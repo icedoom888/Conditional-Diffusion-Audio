@@ -7,7 +7,7 @@ training:
   wandb_log_every: 100
   train_batch_size: 20
   eval_batch_size: 4
-  num_epochs: 1000
+  num_epochs: 2500
   save_images_epochs: 10
   save_model_epochs: 50
   gradient_accumulation_steps: 2
