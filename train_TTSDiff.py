@@ -108,6 +108,7 @@ def main(conf):
         model.train()
         
         for step, batch in enumerate(train_dataloader):
+            break
 
             # extract the batch
             audio = batch["audio"]
@@ -191,6 +192,7 @@ def main(conf):
                 # extract the batch
                 audio = eval_batch["audio"]
                 clap_embed = eval_batch["clap_embed"]
+                phoneme_embed = eval_batch["phoneme_embed"]
                 sentence_embed = eval_batch["sentence_embed"] 
                 phoneme_embed = eval_batch["phoneme_embed"]
                 audio_lenght = eval_batch["audio_lenght"]
