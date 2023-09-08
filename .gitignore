@@ -6,7 +6,6 @@ vits/monotonic_align/vits
 DUMMY1
 LJS_Processed
 tester.ipynb
-process_lj.py
 .vscode
 *.egg-info
 *.zip
