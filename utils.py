@@ -61,7 +61,7 @@ def get_model(model_args, loss_fn):
             max_len=model_args.max_wav_len,
             net_t=UNetV0,
             dim=1, # 2D U-Net working on images
-            in_channels=3, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
+            in_channels=model_args.in_channels, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
             out_channels = 1, # 1 for the output image
             channels=list(model_args.channels), # U-Net: number of channels per layer
             factors=list(model_args.factors), # U-Net: image size reduction per layer
@@ -87,7 +87,7 @@ def get_model(model_args, loss_fn):
             max_len=model_args.max_wav_len,
             net_t=UNetV0,
             dim=1, # 2D U-Net working on images
-            in_channels=3, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
+            in_channels=model_args.in_channels, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
             out_channels = 1, # 1 for the output image
             channels=list(model_args.channels), # U-Net: number of channels per layer
             factors=list(model_args.factors), # U-Net: image size reduction per layer

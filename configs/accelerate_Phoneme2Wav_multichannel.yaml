@@ -1,5 +1,5 @@
 training:
-  output_dir: results/TTSDiff
+  output_dir: results/Phoneme2Wav_multichannel
   data_root: data/processed_LJSpeech
   dataset_name: SlidingWindow
   sr: 22050
@@ -42,13 +42,13 @@ model:
   embedding_features: 512
   text_emb_channels: 192
   max_wav_len: 98304
-  model_type: ConditionalDiffusionLLM
-  in_channels: 1
+  model_type: ConditionalDiffusionPhonemeToWav
+  in_channels: 32
 
 loss:
   use_l1: true
   l1_weight: 1.0
-  use_l2: false
+  use_l2: true
   l2_weight: 1.0
   use_mrstft: true
   mrstft_weight: 0.5

@@ -192,6 +192,7 @@ def main(conf):
                 audio = eval_batch["audio"]
                 clap_embed = eval_batch["clap_embed"]
                 sentence_embed = eval_batch["sentence_embed"] 
+                phoneme_embed = eval_batch["phoneme_embed"]
                 audio_lenght = eval_batch["audio_lenght"]
 
                 # print_sizes(eval_batch)

@@ -43,6 +43,7 @@ model:
   text_emb_channels: 192
   max_wav_len: 98304
   model_type: ConditionalDiffusionPhonemeToWav
+  in_channels: 1
 
 loss:
   use_l1: true

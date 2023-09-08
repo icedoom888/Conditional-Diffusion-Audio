@@ -392,7 +392,7 @@ class ConditionalDiffusionPhonemeToWav(DiffusionModel):
   
         super().__init__(
             net_t=AppendChannelsPlugin(net_t, channels=1),
-            in_channels=1,
+            in_channels=in_channels,
             **kwargs,
         )
 
@@ -400,23 +400,23 @@ class ConditionalDiffusionPhonemeToWav(DiffusionModel):
             
         # To append text emb to wav noise, has to be same size
         self.phoneme_to_emb = nn.Sequential(
-            nn.Conv1d(text_emb_channels, 512, kernel_size=5, stride=2),
+            nn.Conv1d(text_emb_channels, 512, kernel_size=5, stride=1),
             nn.ReLU(),
-            nn.Conv1d(512, 1024, kernel_size=5, stride=2),
+            nn.Conv1d(512, 256, kernel_size=5, stride=1),
             nn.ReLU(),
-            nn.Conv1d(1024, 1024, kernel_size=5, stride=2),
+            nn.Conv1d(256, 128, kernel_size=5, stride=1),
             nn.ReLU(),
-            nn.Conv1d(1024, 512, kernel_size=5, stride=2),
+            nn.Conv1d(128, 64, kernel_size=5, stride=1),
             nn.ReLU(),
-            nn.Conv1d(512, 256, kernel_size=5, stride=2),
+            nn.Conv1d(64, 32, kernel_size=5, stride=1),
             nn.ReLU()
         )
 
-        out_size = 1280
+        out_size = 236
         self.fw = nn.Linear(in_features=out_size, out_features=max_len)
         self.sigmoid = nn.Sigmoid()
 
-        self.duration_predictor = DurationPredictor(out_size, audio_emb_channels)
+        self.duration_predictor = DurationPredictor(out_size*32, audio_emb_channels)
 
         self.duration_loss = F.mse_loss
 
@@ -439,7 +439,7 @@ class ConditionalDiffusionPhonemeToWav(DiffusionModel):
         phoneme_emb = self.phoneme_to_emb(input_phoneme_embedding)
         phoneme_emb_flat = torch.flatten(phoneme_emb, start_dim=1).unsqueeze(1)
 
-        audio_text = self.sigmoid(self.fw(phoneme_emb_flat))
+        audio_text = self.sigmoid(self.fw(phoneme_emb))
         loss, loss_dict = super().forward(x, *args, append_channels=audio_text, **kwargs)
 
         # Compute duration prediction loss
@@ -470,7 +470,7 @@ class ConditionalDiffusionPhonemeToWav(DiffusionModel):
         phoneme_emb = self.phoneme_to_emb(input_phoneme_embedding)
         phoneme_emb_flat = torch.flatten(phoneme_emb, start_dim=1).unsqueeze(1)
 
-        audio_text = self.sigmoid(self.fw(phoneme_emb_flat))
+        audio_text = self.sigmoid(self.fw(phoneme_emb))
 
         # Compute duration prediction loss
         predicted_lenght = self.duration_predictor(text_emb=phoneme_emb_flat, audio_emb=audio_embedding)

@@ -1,1 +1,1 @@
-accelerate launch --config_file configs/accelerate_local.yaml train_TTSDiff.py --config configs/accelerate_Phoneme2Wav.yaml
+accelerate launch --config_file configs/accelerate_local.yaml train_TTSDiff.py --config configs/accelerate_Phoneme2Wav_multichannel.yaml

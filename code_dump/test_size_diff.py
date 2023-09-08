@@ -18,7 +18,8 @@ from vits.utils_diffusion import get_audio_to_Z, get_text_to_Z, load_vits_model,
 from einops import rearrange
 import wandb
 from torchaudio import save as save_audio
-from utils import print_sizes, CompositeLoss
+from utils import CompositeLoss
+from funcs import print_sizes
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -46,7 +47,7 @@ def main(conf):
         max_len=98304,
         net_t=UNetV0,
         dim=1, # 2D U-Net working on images
-        in_channels=3, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
+        in_channels=32, #IMAGE | MASK | OPTIONAL(INIT IMAGE)
         out_channels = 1, # 1 for the output image
         channels=list(model_args.channels), # U-Net: number of channels per layer
         factors=list(model_args.factors), # U-Net: image size reduction per layer
@@ -76,11 +77,12 @@ def main(conf):
 
     print_sizes(batch)
 
-    # run forward 
+    # Turn noise into new audio sample with diffusion
     loss, loss_dict = model(
                     audio,
-                    input_text_embedding=phoneme_embed,
-                    audio_text_embedding=clap_embed,
+                    text_embedding=sentence_embed,
+                    phoneme_embedding=phoneme_embed,
+                    audio_embedding=clap_embed,
                     audio_lenght=audio_lenght,
                     embedding=clap_embed,
                     embedding_mask_proba=train_args.CFG_mask_proba
@@ -90,8 +92,9 @@ def main(conf):
 
     # Turn noise into new audio sample with diffusion
     model_samples = model.sample(
-        input_text_embedding=phoneme_embed,
-        audio_text_embedding=clap_embed,
+        text_embedding=sentence_embed,
+        phoneme_embedding=phoneme_embed,
+        audio_embedding=clap_embed,
         embedding=clap_embed, # ImageBind / CLAP
         embedding_scale=1.0, # Higher for more text importance, suggested range: 1-15 (Classifier-Free Guidance Scale)
         num_steps=50 # Higher for better quality, suggested num_steps: 10-100
