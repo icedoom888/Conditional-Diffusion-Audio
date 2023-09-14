@@ -1,0 +1,1 @@
+accelerate launch --config_file configs/accelerate_hypnos_monogpu.yaml train_vocoder_speakeremb.py --config configs/accelerate_vocoder_flickr_speakerloss_speakeremb.yaml

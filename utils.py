@@ -8,7 +8,6 @@ import auraloss
 from torch import Tensor
 from audio_diffusion_pytorch import UNetV0, VDiffusion, VSampler, ConditionalDiffusionVocoder, ConditionalDiffusionLLM, ConditionalDiffusionPhonemeToWav
 from custom_dataset import SlidingWindow, Latent_Audio
-import laion_clap
 
 class SpeakerEmbedder(nn.Module):
     # https://github.com/RF5/simple-speaker-embedding
@@ -33,7 +32,7 @@ class SpeakerEmbedder(nn.Module):
         with torch.no_grad():
             in_embed = self.audio_embedder(resampled_in)
 
-        return in_embed
+        return in_embed.unsqueeze(1)
 
 class SpeakerLoss(nn.Module):
     # https://github.com/RF5/simple-speaker-embedding
@@ -58,6 +57,7 @@ class SpeakerLoss(nn.Module):
 class CLAPLoss(nn.Module):
     # TODO: ISSUE NOT DIFFERENTIABLE. UNUSABLE
     def __init__(self, sr: int):
+        import laion_clap
         super().__init__()
         self.sr = sr
         self.target_sr = 48000 # needed by CLAP encoder

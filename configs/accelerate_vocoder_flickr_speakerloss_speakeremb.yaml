@@ -39,7 +39,7 @@ model:
   use_initial_image: false
   use_embedding_cfg: true
   embedding_max_length: 64
-  embedding_features: 512
+  embedding_features: 256
   model_type: ConditionalDiffusionVocoder
   in_channels: 3
 
