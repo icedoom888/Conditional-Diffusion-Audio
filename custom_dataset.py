@@ -208,19 +208,19 @@ class SlidingWindow(Dataset):
             audio = audio / max(audio.max(), -audio.min())
         
         phoneme_embed = crop_or_pad_tensor(phoneme_embed, target_size=256)
-
+        
         data = {
-            "z_audio": z_audio.squeeze(1),
-            "y_mask": y_mask.squeeze(1),
-            "z_text": z_text.squeeze(1),
+            "z_audio": torch.squeeze(z_audio, 0),
+            "y_mask": torch.squeeze(y_mask, 0),
+            "z_text": torch.squeeze(z_text, 0),
             "clap_embed": clap_embed,
             "sentence_embed": sentence_embed,
             "phoneme_embed": phoneme_embed,
             "audio": audio,
             "audio_lenght": audio_lenght,
-            "z_audio_mask": z_audio_mask.squeeze(1),
-            "z_text_mask": z_text_mask.squeeze(1),
-            "y_mask_mask": y_mask_mask.squeeze(1),
+            "z_audio_mask": torch.squeeze(z_audio_mask, 0),
+            "z_text_mask": torch.squeeze(z_text_mask, 0),
+            "y_mask_mask": torch.squeeze(y_mask_mask, 0),
             "offset": 0,
             "z_audio_length": self.max_len_seq,
         }

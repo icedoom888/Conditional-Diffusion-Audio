@@ -48,7 +48,7 @@ def main(conf):
     loss_fn = CompositeLoss(loss_args)
 
     # Set up model
-    model = get_model(model_args, loss_fn)
+    model = get_model(model_args, train_args, loss_fn)
     
     # Set up optimizer
     optimizer = torch.optim.AdamW(
@@ -108,7 +108,6 @@ def main(conf):
         model.train()
         
         for step, batch in enumerate(train_dataloader):
-            break
 
             # extract the batch
             audio = batch["audio"]

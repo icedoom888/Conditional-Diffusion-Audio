@@ -13,7 +13,7 @@ from tqdm.auto import tqdm
 from omegaconf import OmegaConf
 import wandb
 from torchaudio import save as save_audio
-from utils import CompositeLoss, get_model, get_datasets
+from utils import CompositeLoss, SpeakerEmbedder, get_model, get_datasets
 from funcs import print_sizes
 import warnings
 warnings.filterwarnings("ignore")
@@ -49,6 +49,9 @@ def main(conf):
 
     # Set up model
     model = get_model(model_args, train_args, loss_fn)
+
+    # Set up speaker embedding
+    speaker_embedder = SpeakerEmbedder(train_args.sr)
     
     # Set up optimizer
     optimizer = torch.optim.AdamW(
@@ -115,11 +118,11 @@ def main(conf):
             z_audio_mask = batch["z_audio_mask"]
             z_text = batch["z_text"]
             z_text_mask = batch["z_text_mask"]
-            embeds = batch["clap_embed"]
 
-            # print_sizes(batch)
+            # Compute speaker embedding 
+            embeds = speaker_embedder(audio)
 
-            # process the pair to get the latents Z and the embeddings
+            # get the latents Z 
             input_spec = z_audio
             
             with accelerator.accumulate(model):
@@ -195,7 +198,9 @@ def main(conf):
                 z_audio_mask = eval_batch["z_audio_mask"]
                 z_text = eval_batch["z_text"]
                 z_text_mask = eval_batch["z_text_mask"]
-                embeds = eval_batch["clap_embed"]
+
+                # Compute speaker embedding 
+                embeds = speaker_embedder(audio)
                 
                 # Turn noise into new audio sample with diffusion
                 model_samples = model.sample(
@@ -239,6 +244,7 @@ def main(conf):
         accelerator.wait_for_everyone()
 
     accelerator.end_training()
+
 
 
 if __name__ == "__main__":

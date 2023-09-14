@@ -1,11 +1,11 @@
 training:
-  output_dir: results/Phoneme2Wav_multichannel
-  data_root: data/processed_LJSpeech
+  output_dir: results/vocoder_flickr_speakerloss_speakeremb
+  data_root: data/processed_flickr
   dataset_name: SlidingWindow
-  sr: 22050
+  sr: 16000
   wandb_project: natural_voices
   wandb_log_every: 100
-  train_batch_size: 20
+  train_batch_size: 24
   eval_batch_size: 4
   num_epochs: 1000
   save_images_epochs: 10
@@ -40,10 +40,8 @@ model:
   use_embedding_cfg: true
   embedding_max_length: 64
   embedding_features: 512
-  text_emb_channels: 192
-  max_wav_len: 98304
-  model_type: ConditionalDiffusionPhonemeToWav
-  in_channels: 32
+  model_type: ConditionalDiffusionVocoder
+  in_channels: 3
 
 loss:
   use_l1: true
@@ -52,5 +50,7 @@ loss:
   l2_weight: 1.0
   use_mrstft: true
   mrstft_weight: 0.5
-  use_calploss: true
+  use_claploss: false
   clap_weight: 3.0
+  use_speakerloss: true
+  speaker_weight: 100.0
