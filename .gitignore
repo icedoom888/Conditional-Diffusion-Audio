@@ -14,3 +14,9 @@ wandb
 assets
 data
 results
+ImageBind/5_speakers
+ImageBind/5_speakers_p
+ImageBind/bpe
+ImageBind/.checkpoints
+ImageBind/gender_data
+ImageBind/test_data
