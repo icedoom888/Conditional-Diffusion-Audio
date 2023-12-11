@@ -1,8 +1,13 @@
 training:
   output_dir: V0_img2img_deeper
+<<<<<<< HEAD
   dataset: LJS
   data_root: vits/LJS_Processed
   wandb_project: artificial-voices
+=======
+  data_root: data/processed_LJSpeech
+  wandb_project: natural-voices
+>>>>>>> 6c82f80d0ddfb471d0ae087e04792aa3376a104d
   wandb_log_every: 100
   train_batch_size: 8
   eval_batch_size: 4

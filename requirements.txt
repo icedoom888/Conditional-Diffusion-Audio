@@ -15,10 +15,4 @@ tornado
 transformers
 typing_extensions
 wandb
-torch_ema
-easydict
-rich
-prefetch_generator
-lmdb
-colored_traceback
 auraloss

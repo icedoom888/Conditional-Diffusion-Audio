@@ -5,11 +5,12 @@ sys.path.append(dirname)
 from mel_processing import spectrogram_torch
 from models import SynthesizerTrn
 from text.symbols import symbols
-import utils as vits_utils
+import vits.utils as vits_utils
 import torch
 from text import text_to_sequence
 import commons
-from transformers import AutoTokenizer, ClapTextModelWithProjection, ClapModel, AutoFeatureExtractor, AutoProcessor
+from transformers import AutoTokenizer, ClapTextModelWithProjection, ClapConfig, ClapModel, AutoFeatureExtractor, AutoModel
+import torch.nn.functional as F
 
 def get_text(text, hps):
     text_norm = text_to_sequence(text, hps.data.text_cleaners)
@@ -166,6 +167,19 @@ def get_text_to_Z(net_g):
         return z, y_mask
     return text_to_Z
 
+def get_phoneme_embedder(net_g):
+
+    def text_to_phoneme_emb(text, hps):
+        stn_tst = get_text(text, hps)
+        with torch.no_grad():
+            x_tst = stn_tst.cuda().unsqueeze(0)
+            x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
+            # sid = torch.LongTensor([1]).cuda() speaker ID
+            x, m, logs, x_mask = net_g.enc_p(x_tst, x_tst_lengths)
+        return x, m, logs, x_mask
+    
+    return text_to_phoneme_emb
+
 
 def get_text_to_Z_preflow(net_g):
     """Returns a function that takes text and returns the latent space representation.
@@ -192,27 +206,27 @@ def get_text_to_Z_preflow(net_g):
 
 def get_text_embedder(model="CLAP"):
     if model == "CLAP":
-        model = ClapModel.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
-        feature_extractor = AutoProcessor.from_pretrained("laion/clap-htsat-unfused")
+        model = ClapTextModelWithProjection.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
+        tokenizer = AutoTokenizer.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
 
         def text_embedder(text):
-            inputs = feature_extractor(text=text, return_tensors="pt", padding=True)
-
-            for k, v in inputs.items():
-                inputs[k] = v.to("cuda", non_blocking=True)
-
-            text_features = model.get_text_features(**inputs)
-            return text_features
+            tokens = tokenizer(text, padding=True, return_tensors="pt")
+            embeds = model(**tokens)['text_embeds']
+            return embeds
+        
         return text_embedder
-
-
+    
+    else:
+        raise NotImplementedError
+    
 def get_audio_embedder(model="CLAP"):
     if model == "CLAP":
         model = ClapModel.from_pretrained("laion/clap-htsat-unfused").to("cuda", non_blocking=True)
         feature_extractor = AutoFeatureExtractor.from_pretrained("laion/clap-htsat-unfused")
-        print("Make sure you upsample the audio to a sampling rate of 48000 before passing it to the audio embedder!")
 
         def audio_embedder(audio):
+            
+            # upsample the audio to a sampling rate of 48000 before passing it to the audio embedder
             inputs = feature_extractor(audio, return_tensors="pt", sampling_rate=48000)
 
             for k, v in inputs.items():
@@ -221,3 +235,35 @@ def get_audio_embedder(model="CLAP"):
             audio_features = model.get_audio_features(**inputs)
             return audio_features
         return audio_embedder
+
+
+def get_sentence_embedder(model='all-MiniLM-L6-v2'):
+    if model == 'all-MiniLM-L6-v2':
+        # Load model from HuggingFace Hub
+        tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+        model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+
+        # Mean Pooling - Take attention mask into account for correct averaging
+        def mean_pooling(model_output, attention_mask):
+            token_embeddings = model_output[0] #First element of model_output contains all token embeddings
+            input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+            return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+
+        def sentence_embedder(sentence):
+            encoded_input = tokenizer(sentence, padding=True, truncation=True, return_tensors='pt')
+
+            # Compute token embeddings
+            with torch.no_grad():
+                model_output = model(**encoded_input)
+                sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
+                sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+            
+            return sentence_embeddings
+
+        return sentence_embedder
+ 
+    else:
+        raise NotImplementedError
+    
+
+

@@ -203,6 +203,9 @@ class MelSpectrogram(nn.Module):
         self.normalize = normalize
         self.normalize_log = normalize_log
         self.hop_length = hop_length
+        self.n_fft = n_fft
+        self.win_length = win_length
+        self.center = center
 
         self.to_spectrogram = transforms.Spectrogram(
             n_fft=n_fft,
@@ -219,12 +222,19 @@ class MelSpectrogram(nn.Module):
     def forward(self, waveform: Tensor) -> Tensor:
         # Pack non-time dimension
         waveform, ps = pack([waveform], "* t")
+
         # Pad waveform
-        waveform = F.pad(waveform, [self.padding] * 2, mode="reflect")
+        waveform = F.pad(waveform.unsqueeze(1), [self.padding] * 2, mode="reflect")
+        waveform = waveform.squeeze(1)
         # Compute STFT
-        spectrogram = self.to_spectrogram(waveform)
+        # spectrogram = self.to_spectrogram(waveform)
+        spectrogram = torch.stft(waveform, self.n_fft, hop_length=self.hop_length, win_length=self.win_length, window=torch.hann_window(self.win_length).to(dtype=waveform.dtype, device=waveform.device),
+                      center=self.center, pad_mode='reflect', normalized=False, onesided=True)
+        spectrogram = torch.sqrt(spectrogram.pow(2).sum(-1) + 1e-6)
+
         # Compute magnitude
         spectrogram = torch.abs(spectrogram)
+        
         # Convert to mel scale
         mel_spectrogram = self.to_mel_scale(spectrogram)
         # Normalize
@@ -235,3 +245,34 @@ class MelSpectrogram(nn.Module):
             mel_spectrogram = torch.log(torch.clamp(mel_spectrogram, min=1e-5))
         # Unpack non-spectrogram dimension
         return unpack(mel_spectrogram, ps, "* f l")[0]
+
+
+class DurationPredictor(nn.Module):
+    def __init__(
+        self,
+        text_emb_channels: int, 
+        audio_emb_channels: int,
+    ):
+        super().__init__()
+
+        self.text_emb_channels = text_emb_channels
+        self.audio_emb_channels = audio_emb_channels
+        
+        self.model = nn.Sequential(
+            nn.Linear(self.audio_emb_channels + self.text_emb_channels, 256),
+            nn.ReLU(),
+            nn.Linear(256, 32),
+            nn.ReLU(),
+            nn.Linear(32, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, text_emb: Tensor, audio_emb: Tensor) -> Tensor:
+        # Pack non-time dimension
+        full_emb = torch.cat((text_emb, audio_emb), dim=2)
+        full_emb = torch.squeeze(full_emb, dim=1)
+
+        # use model to predict
+        pred = self.model(full_emb)
+        
+        return pred
