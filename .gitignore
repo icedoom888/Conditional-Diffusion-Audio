@@ -15,7 +15,6 @@ tester.ipynb
 *.zip
 samples
 wandb
-assets
 data
 results
 ImageBind/5_speakers
