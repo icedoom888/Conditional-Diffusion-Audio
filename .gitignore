@@ -24,3 +24,4 @@ ImageBind/bpe
 ImageBind/.checkpoints
 ImageBind/gender_data
 ImageBind/test_data
+codedump/
