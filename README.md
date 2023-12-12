@@ -53,11 +53,11 @@ Code for speaker embedding using ImageBind and CLAP can be found in the subdirec
 Here are also some results of speaker clustering:
 
 - CLAP 
-<p align="center"> <img src="assets/speaker_disent.png" alt="drawing" width="720"/> </p>
+<p align="center"> <img src="assets/clap.png" alt="drawing" width="720"/> </p>
 
 
 - ImageBind
-<p align="center"> <img src="assets/speaker_disent.png" alt="drawing" width="720"/> </p>
+<p align="center"> <img src="assets/imagebind.png" alt="drawing" width="720"/> </p>
 
 
 ## Prerequisites
