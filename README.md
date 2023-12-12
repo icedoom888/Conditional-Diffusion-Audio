@@ -2,6 +2,16 @@
 
 This repository contains the code of various experiments on conditioned Diffusion based Text-To-Speech generation.
 
+#
+## Table of Contents
+1. [Goal](#goal)
+2. [Experiments](#experiments)
+3. [Speaker disentagnlement in ImageBind and CLAP latent space](#speaker-disentagnlement-in-imagebind-and-clap-latent-space)
+4. [Prerequisites](#prerequisites)
+5. [Installation](#installation)
+6. [Running the experiments](#running-the-experiments)
+
+
 ## Goal
 
 Generate expressive speech samples given an input transcipt and some guidance vector.
@@ -30,7 +40,7 @@ Additionally we also show that while Spectogram to SPectrogram generation using 
 More details on this issues can be found int the [extensive report](assets/VITS_Adding_Control.pdf) from the MSc student Mathias Vogel.
 
 
-## Speaker disentagnlement in ImageBind / CLAP latent space
+## Speaker disentagnlement in ImageBind and CLAP latent space
 
 We show how the audio embeddings of pretrained models such as CLAP or ImageBind preserve speaker identity and are agnostic to actual speech content. 
 
