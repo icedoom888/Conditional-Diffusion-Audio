@@ -25,15 +25,15 @@ By emplying a stochastic diffusion process for speech generation, we aim at dive
 We ran the following experiments:
 
 - Spectograms + CLAP Embeddings -> Audio
-<img src="assets/spectogram.png" alt="drawing" width="720"/>
+<p align="center"> <img src="assets/spectogram.png" alt="drawing" width="720"/> </p>
 
 
 - Sentence Embedidng + CLAP Embeddings -> Audio
-<img src="assets/speaker.png" alt="drawing" width="720"/>
+<p align="center"> <img src="assets/speaker.png" alt="drawing" width="720"/> </p>
 
 
 - Phoneme Embedding + CLAP Embeddings -> Audio
-<img src="assets/phonema.png" alt="drawing" width="720"/>
+<p align="center"> <img src="assets/phonema.png" alt="drawing" width="720"/> </p>
 
 
 Additionally we also show that while Spectogram to SPectrogram generation using Audio diffusion Diffusion works, deplying a pretrained Vocoder (eg. VITS) doens't allow for speaker id transfer and novel voice generation. 
@@ -53,11 +53,11 @@ Code for speaker embedding using ImageBind and CLAP can be found in the subdirec
 Here are also some results of speaker clustering:
 
 - CLAP 
-<img src="assets/speaker_disent.png" alt="drawing" width="720"/>
+<p align="center"> <img src="assets/speaker_disent.png" alt="drawing" width="720"/> </p>
 
 
 - ImageBind
-<img src="assets/speaker_disent.png" alt="drawing" width="720"/>
+<p align="center"> <img src="assets/speaker_disent.png" alt="drawing" width="720"/> </p>
 
 
 ## Prerequisites
